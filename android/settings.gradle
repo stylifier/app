@@ -1,0 +1,3 @@
+rootProject.name = 'stylifier'
+
+include ':app'
