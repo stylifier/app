@@ -22,8 +22,11 @@
     "expo": "^27.0.1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
+    "react-native-device-info": "^0.21.5",
     "react-native-fontawesome": "^5.7.0",
+    "react-native-photo-upload": "^1.2.0",
     "react-native-vector-icons": "^4.6.0",
-    "react-navigation": "^2.6.2"
+    "react-navigation": "^2.6.2",
+    "react-redux": "^5.0.7"
   }
 }

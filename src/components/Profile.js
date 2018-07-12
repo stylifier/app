@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, SafeAreaView} from 'react-native';
+import {Text, SafeAreaView, Image} from 'react-native';
 
 class Profile extends Component {
   render() {

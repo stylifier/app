@@ -12,7 +12,7 @@ const BaseNavigator = createBottomTabNavigator({
     screen: Bookmarks,
     navigationOptions: () => ({
       tabBarIcon: ({tintColor}) => (
-        <FontAwesome style={{fontSize: 24, color: '#F5F5F5'}}>{Icons.bookmark}</FontAwesome>
+        <FontAwesome style={{fontSize: 24, color: tintColor}}>{Icons.bookmark}</FontAwesome>
       )
     })
   },
@@ -30,7 +30,7 @@ const BaseNavigator = createBottomTabNavigator({
     screen: Profile,
     navigationOptions: () => ({
       tabBarIcon: ({tintColor}) => (
-        <FontAwesome style={{fontSize: 24, color: '#F5F5F5'}}>{Icons.user}</FontAwesome>
+        <FontAwesome style={{fontSize: 24, color: tintColor}}>{Icons.user}</FontAwesome>
       )
     })
   }
