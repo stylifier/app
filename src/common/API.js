@@ -117,8 +117,6 @@ class API {
     var formData  = new FormData();
     formData.append('qqfile', {uri: img, name: 'qqfile', type: 'image/jpg'});
 
-    console.log(formData);
-
     const ret = fetch(this.baseAddress + '/media', {
       method: 'POST',
       headers:  {
@@ -270,6 +268,18 @@ class API {
   setStyle(mediaId, style) {
     if(!mediaId || !style) return Promise.resolve()
     return this.post(`/media/${mediaId}/style/${style}`, {})
+  }
+
+  bookmarkColorPallet(palletId, title) {
+    return this.post(`/color_pallets/${palletId}${title ? '?title=' + title : ''}`, {})
+  }
+
+  deleteBookmarkedColorPallet(palletId) {
+    return this.delete(`/color_pallets/${palletId}`, {})
+  }
+
+  getColorPalletBookmarks() {
+    return this.get('/color_pallets_bookmarks', [])
   }
 
   getStyles(q) {

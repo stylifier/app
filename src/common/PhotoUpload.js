@@ -31,8 +31,8 @@ export default class PhotoUpload extends React.Component {
   }
 
   state = {
-    height: this.props.height || 300,
-    width: this.props.width || 300,
+    height: this.props.height || 1000,
+    width: this.props.width || 1000,
     format: this.props.format || 'JPEG',
     quality: this.props.quality || 80,
     buttonDisabled: false
@@ -53,12 +53,8 @@ export default class PhotoUpload extends React.Component {
     // get image from image picker
     ImagePicker.showImagePicker(this.options, async response => {
       this.setState({buttonDisabled: false})
-      console.log('Response = ', response)
       let rotation = 0
       const {originalRotation} = response
-
-
-      if (this.props.onResponse) this.props.onResponse(response)
 
       if (response.didCancel) {
         console.log('User cancelled image picker')
@@ -73,6 +69,8 @@ export default class PhotoUpload extends React.Component {
         if (this.props.onTapCustomButton) this.props.onTapCustomButton(response.customButton)
         return
       }
+
+      if (this.props.onResponse) this.props.onResponse(response)
 
       let { height, width, quality, format } = this.state
 
@@ -96,20 +94,6 @@ export default class PhotoUpload extends React.Component {
         rotation
       )
 
-      if (this.props.onResizedImageUri) this.props.onResizedImageUri(resizedImageUri)
-
-      const filePath = Platform.OS === 'android' && resizedImageUri.uri.replace
-        ? resizedImageUri.uri.replace('file:/data', '/data')
-        : resizedImageUri.uri
-
-      // convert image back to base64 string
-      const photoData = await RNFS.readFile(filePath, 'base64')
-      let source = { uri: resizedImageUri.uri }
-      this.setState({
-        avatarSource: source
-      })
-
-      // handle photo in props functions as data string
       if (this.props.onPhotoSelect) this.props.onPhotoSelect(resizedImageUri.uri)
     })
   }
