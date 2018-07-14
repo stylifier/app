@@ -3,6 +3,7 @@ import {Text, SafeAreaView, Image, View, ScrollView, Button} from 'react-native'
 import tcomb from 'tcomb-form-native'
 import actions from '../actions'
 import { connect } from 'react-redux'
+const btoa = require('Base64').btoa
 const DeviceInfo = require('react-native-device-info')
 
 const deviceNameSafe = 'm_g_i_o_s_' +
