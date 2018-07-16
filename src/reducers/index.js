@@ -8,7 +8,7 @@ const todoApp = combineReducers({
   colorSuggestion,
   bookmarks,
   user,
-  nav
+  nav,
 })
 
 export default todoApp

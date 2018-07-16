@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.3.1",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-plugin-import": "^1.14.0",
+    "eslint-plugin-jsx-a11y": "^2.1.0",
+    "eslint-plugin-prefer-object-spread": "^1.1.0",
+    "eslint-plugin-react": "^6.1.2",
     "jest-expo": "~27.0.0",
     "react-native-scripts": "1.14.0",
     "react-test-renderer": "16.3.1"
@@ -22,10 +29,12 @@
   "dependencies": {
     "Base64": "^1.0.1",
     "expo": "^27.0.1",
+    "moment": "^2.22.2",
     "react": "16.3.1",
     "react-native": "~0.55.2",
     "react-native-device-info": "^0.21.5",
     "react-native-fontawesome": "^5.7.0",
+    "react-native-image-resizer": "^1.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.6.0",
     "react-native-photo-upload": "^1.2.0",
     "react-native-vector-icons": "^4.6.0",

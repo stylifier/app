@@ -1,15 +1,13 @@
 import React from 'react'
+import ImageResizer from 'react-native-image-resizer'
 import PropTypes from 'prop-types'
 import {
   View,
   Image,
   StyleSheet,
   TouchableOpacity,
-  Platform
 } from 'react-native'
 import ImagePicker from 'react-native-image-picker'
-import ImageResizer from 'react-native-image-resizer'
-import RNFS from 'react-native-fs'
 
 export default class PhotoUpload extends React.Component {
   static propTypes = {
@@ -35,53 +33,47 @@ export default class PhotoUpload extends React.Component {
     width: this.props.width || 1000,
     format: this.props.format || 'JPEG',
     quality: this.props.quality || 80,
-    buttonDisabled: false
+    buttonDisabled: false,
   }
 
   options = {
     title: this.props.pickerTitle || 'Select Photo',
     storageOptions: {
       skipBackup: true,
-      path: 'images'
-    }
+      path: 'images',
+    },
   }
 
   openImagePicker = () => {
-    this.setState({buttonDisabled: true})
+    this.setState({ buttonDisabled: true })
     if (this.props.onStart) this.props.onStart()
 
     // get image from image picker
     ImagePicker.showImagePicker(this.options, async response => {
-      this.setState({buttonDisabled: false})
+      this.setState({ buttonDisabled: false })
       let rotation = 0
-      const {originalRotation} = response
+      const { originalRotation } = response
 
       if (response.didCancel) {
-        console.log('User cancelled image picker')
         if (this.props.onCancel) this.props.onCancel('User cancelled image picker')
         return
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error)
         if (this.props.onError) this.props.onError(response.error)
         return
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton)
         if (this.props.onTapCustomButton) this.props.onTapCustomButton(response.customButton)
         return
       }
 
       if (this.props.onResponse) this.props.onResponse(response)
 
-      let { height, width, quality, format } = this.state
+      const { height, width, quality, format } = this.state
 
-      //Determining rotation param
-      if ( originalRotation === 90) {
+      if (originalRotation === 90) {
         rotation = 90
       } else if (originalRotation === 180) {
-        //For a few images rotation is 180.
         rotation = -180
-      } else if ( originalRotation === 270 )  {
-        //When taking images with the front camera (selfie), the rotation is 270.
+      } else if (originalRotation === 270) {
         rotation = -90
       }
       // resize image
@@ -98,15 +90,15 @@ export default class PhotoUpload extends React.Component {
     })
   }
 
-  renderChildren = props => {
-    return React.Children.map(props.children, child => {
+  renderChildren = props =>
+    React.Children.map(props.children, child => {
       if (child.type === Image && this.state.avatarSource) {
         return React.cloneElement(child, {
-          source: this.state.avatarSource
+          source: this.state.avatarSource,
         })
-      } else return child
+      }
+      return child
     })
-  }
 
   componentDidUpdate() {
     if (this.props.onAfterRender) this.props.onAfterRender(this.state)
@@ -131,6 +123,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 })

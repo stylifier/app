@@ -1,16 +1,17 @@
-import { AsyncStorage } from "react-native"
+import { AsyncStorage } from 'react-native'
+import moment from 'moment'
 
 class API {
   constructor() {
     this.baseAddress = 'https://cloud.stylifier.com'
     // this.baseAddress = 'http://localhost:3000'
-     AsyncStorage.getItem('user_token')
-    .then(t => this.token = t)
+    AsyncStorage.getItem('user_token')
+    .then(t => { this.token = t })
 
     this.userInfo = {}
 
     AsyncStorage.getItem('user_info')
-    .then(t => this.userInfo = t ? JSON.parse(t) : {})
+    .then(t => { this.userInfo = t ? JSON.parse(t) : {} })
   }
 
   setToken(token) {
@@ -20,7 +21,8 @@ class API {
 
   get(path, params, extraHeaders) {
     extraHeaders = extraHeaders || {}
-    const paramsStr = params && params.length > 0 ? '?' + params.join('&') : ''
+    const paramsStr = params &&
+      params.length > 0 ? `?${params.join('&')}` : ''
 
     const ret = fetch(this.baseAddress + path + paramsStr, {
         headers: Object.assign({
@@ -280,6 +282,11 @@ class API {
 
   getColorPalletBookmarks() {
     return this.get('/color_pallets_bookmarks', [])
+    .then(res => ({
+      ...res,
+      data: res.data
+      .sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+    }))
   }
 
   getStyles(q) {
