@@ -1,11 +1,20 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, TextInput } from 'react-native'
+import { View, TouchableOpacity, TextInput, Animated, Easing, Text } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import actions from '../actions'
 
 class ColorPallet extends Component {
+  constructor(props) {
+    super(props)
+
+    this.animationDict = []
+    this.state = {
+      openedIndex: -1
+    }
+  }
+
   renderTitle() {
     return (
       <TextInput
@@ -22,6 +31,35 @@ class ColorPallet extends Component {
         }}
       />
     )
+  }
+
+  componentWillMount() {
+    this.animationDict[0] = new Animated.Value(100)
+    this.animationDict[1] = new Animated.Value(60)
+    this.animationDict[2] = new Animated.Value(60)
+    this.animationDict[3] = new Animated.Value(60)
+  }
+
+  expandOne(k) {
+    this.animationDict.forEach((a, i) => {
+      Animated.timing(this.animationDict[i], {
+        toValue: i === k ? 200 : 60,
+        duration: 300,
+        easing: Easing.ease,
+      }).start()
+    })
+    this.setState({ openedIndex: k })
+  }
+
+  collapsedAll() {
+    this.animationDict.forEach((a, i) => {
+      Animated.timing(this.animationDict[i], {
+        toValue: i === 0 ? 100 : 60,
+        duration: 300,
+        easing: Easing.ease,
+      }).start()
+    })
+    this.setState({ openedIndex: -1 })
   }
 
   render() {
@@ -52,14 +90,46 @@ class ColorPallet extends Component {
           }}
         >
           {this.props.base.code.match(/.{1,6}/g).map((c, i) => (
-            <View
+            <Animated.View
               style={{
                 width: '100%',
-                height: i === 0 ? 100 : 60,
-                backgroundColor: `#${c}`,
+                height: this.animationDict[i],
               }}
               key={i}
-            />)
+            >
+              <TouchableOpacity
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: `#${c}`,
+                }}
+                underlayColor={`#${c}`}
+                onPress={() => {
+                  if (this.state.openedIndex === i) {
+                    this.collapsedAll()
+                    return
+                  }
+                  this.expandOne(i)
+                }}
+              >
+                {(this.state.openedIndex === i) && (<View
+                  style={{
+                    position: 'absolute',
+                    bottom: 7,
+                    right: 7,
+                    padding: 5,
+                    backgroundColor: 'rgba(59, 78, 104, 0.5)',
+                    borderRadius: 3,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#f5f5f5' }} >
+                    #{c}
+                  </Text>
+                </View>)}
+              </TouchableOpacity>
+            </Animated.View>)
           )}
           <TouchableOpacity
             style={{
@@ -89,6 +159,22 @@ class ColorPallet extends Component {
               {Icons.bookmark}
             </FontAwesome>
           </TouchableOpacity>
+          <View
+            style={{
+              position: 'absolute',
+              left: 7,
+              top: 7,
+              padding: 5,
+              backgroundColor: 'rgba(59, 78, 104, 0.5)',
+              borderRadius: 3,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ color: '#f5f5f5' }} >
+              Popularity: {Math.round(this.props.base.popularity * 10) / 10} / 5
+            </Text>
+          </View>
         </View>
       </View>
     )

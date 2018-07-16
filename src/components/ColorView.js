@@ -32,7 +32,7 @@ class ColorView extends Component {
 
 ColorView.propTypes = {
   onPress: PropTypes.func,
-  base: PropTypes.object,
+  base: PropTypes.string,
 }
 
 export default ColorView
