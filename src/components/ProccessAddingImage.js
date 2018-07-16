@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Text, SafeAreaView, Image, View, ScrollView, ActivityIndicator} from 'react-native';
+import {Text, SafeAreaView, Image, View, ActivityIndicator} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import actions from '../actions'
 import ColorView from './ColorView'
 import ColorPallet from './ColorPallet'
@@ -13,7 +14,7 @@ class ProccessAddingImage extends Component {
         flex: 1,
         alignItems: 'center'
       }}>
-        <ScrollView style={{
+        <KeyboardAwareScrollView style={{
           height: '100%',
           width: '100%'
         }}>
@@ -36,8 +37,7 @@ class ProccessAddingImage extends Component {
             />)
           })}
 
-        </ScrollView>
-
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }

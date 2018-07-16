@@ -37,11 +37,20 @@ const actions = {
   },
 
   refreshBookmarks: () => (dispatch, getState) => {
-    api.getColorPalletBookmarks()
-    .then(pallets => dispatch({
+    AsyncStorage.getItem('color_bookmarks')
+    .then((bms) => bms && dispatch({
       type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
-      payload: [...pallets.data]
+      payload: [...JSON.parse(bms)]
     }))
+
+    api.getColorPalletBookmarks()
+    .then(pallets => {
+      dispatch({
+        type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
+        payload: [...pallets.data]
+      })
+      AsyncStorage.setItem('color_bookmarks', JSON.stringify(pallets.data))
+    })
   },
 
   deleteBookmarkedColorPallet: (palletId) => (dispatch, getState) => {

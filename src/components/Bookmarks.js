@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Text, SafeAreaView, ScrollView, View} from 'react-native';
+import {Text, SafeAreaView, View} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { connect } from 'react-redux'
 import actions from '../actions'
 import ColorPallet from './ColorPallet'
@@ -31,17 +32,18 @@ class Bookmarks extends Component {
               </View>}
 
 
-        {bookmarks && bookmarks.length > 0 && <ScrollView style={{
+        {bookmarks && bookmarks.length > 0 && <KeyboardAwareScrollView style={{
           height: '100%',
           width: '100%'
         }}>
           {bookmarks.map((cp, i) => {
             return (<ColorPallet
+              showTitle={true}
               key={i}
               base={cp}
             />)
           })}
-        </ScrollView>}
+        </KeyboardAwareScrollView>}
       </SafeAreaView>
     );
   }
