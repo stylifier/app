@@ -10,6 +10,7 @@ import Bookmarks from '../components/Bookmarks'
 import Profile from '../components/Profile'
 import AddButton from '../components/AddButton'
 import ProccessAddingImage from '../components/ProccessAddingImage'
+import actions from '../actions'
 
 
 const RootNavigator = createBottomTabNavigator({
@@ -31,7 +32,8 @@ const RootNavigator = createBottomTabNavigator({
   Adding: {
     screen: ProccessAddingImage,
     navigationOptions: () => ({
-      tabBarIcon: <AddButton />,
+      tabBarIcon: <AddButton ref={t => { this.addRef = t }} />,
+      tabBarOnPress: () => this.addRef.store.dispatch(actions.toggleAddMenu())
     }),
   },
   Profile: {

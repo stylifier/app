@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, SafeAreaView, View, ScrollView } from 'react-native'
+import { Text, SafeAreaView, View } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import PropTypes from 'prop-types'

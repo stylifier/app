@@ -7,6 +7,7 @@ import actions from '../actions'
 import ColorView from './ColorView'
 import ColorPallet from './ColorPallet'
 
+
 class ProccessAddingImage extends Component {
   renderColorPick() {
     const { remoteImage } = this.props
@@ -38,6 +39,7 @@ class ProccessAddingImage extends Component {
   }
   render() {
     const { localImage, remoteImage, colorPalletRecommendation } = this.props
+
     return (
       <SafeAreaView
         style={{

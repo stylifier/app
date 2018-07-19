@@ -96,7 +96,8 @@ class Profile extends Component {
               auto: 'placeholders',
               fields: {
                 Username: {
-                  error: 'Your username must contain only lowercase letters, numbers and underscores',
+                  error: 'Your username must contain only ' +
+                  'lowercase letters, numbers and underscores',
                 },
                 Password: {
                   password: true,
@@ -144,7 +145,8 @@ class Profile extends Component {
                   error: 'Please enter your name',
                 },
                 Username: {
-                  error: 'Your username must contain only lowercase letters, numbers and underscores',
+                  error: 'Your username must contain only ' +
+                  'lowercase letters, numbers and underscores',
                 },
                 'Email Address': {
                   error: 'Please enter valid Email',

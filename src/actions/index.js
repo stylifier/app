@@ -63,6 +63,12 @@ const actions = {
     .then(() => dispatch(actions.refreshBookmarks()))
   },
 
+  toggleAddMenu: () => (dispatch) => {
+    dispatch({
+      type: 'TOGGLE_ADD_MENU',
+    })
+  },
+
   colorSuggestionImageResized: image => (dispatch) => {
     dispatch({
       type: 'COLOR_SUGGESTION_IMAGE_PICKED',

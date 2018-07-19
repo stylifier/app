@@ -11,7 +11,7 @@ class ColorPallet extends Component {
 
     this.animationDict = []
     this.state = {
-      openedIndex: -1
+      openedIndex: -1,
     }
   }
 
