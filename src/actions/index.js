@@ -98,7 +98,7 @@ const actions = {
     })
   },
 
-  registerUser: (username, password, email, fullname) => (dispatch) => {
+  registerUser: (username, password, email, fullname) => (dispatch, getState) => {
     dispatch({ type: 'REGISTERING_USER' })
 
     api.register({
@@ -109,6 +109,12 @@ const actions = {
       invite_code: deviceNameSafe,
     })
     .then(token => setTokenAndUserInfo(token))
+    .then(info =>
+      Promise.all(getState()
+        .bookmarks.reverse()
+        .map(cp => api.bookmarkColorPallet(cp.id, cp.title)))
+      .then(() => info)
+      .catch(() => info))
     .then(info => dispatch(actions.userInitiated(info)))
     .catch(e => dispatch({ type: 'USER_REGISTRATION_FAILED', payload: e }))
   },

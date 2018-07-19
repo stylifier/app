@@ -23,6 +23,7 @@ class ColorPallet extends Component {
         }}
         placeholder="Your custom title message"
         value={this.props.base.title}
+        returnKeyType="done"
         onChangeText={(text) => {
           clearTimeout(this.editTimer)
           this.editTimer = setTimeout(() =>

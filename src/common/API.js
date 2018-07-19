@@ -273,6 +273,7 @@ class API {
   }
 
   bookmarkColorPallet(palletId, title) {
+    console.log('-->', palletId, title)
     return this.post(`/color_pallets/${palletId}${title ? '?title=' + title : ''}`, {})
   }
 

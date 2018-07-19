@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, SafeAreaView, View, ScrollView } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import actions from '../actions'
@@ -55,7 +56,7 @@ class Bookmarks extends Component {
 
 
         {bookmarks && bookmarks.length > 0 &&
-          <ScrollView
+          <KeyboardAwareScrollView
             style={{
               height: '100%',
               width: '100%',
@@ -70,7 +71,7 @@ class Bookmarks extends Component {
             <View
               style={{ height: 150 }}
             />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         }
       </SafeAreaView>
     )
