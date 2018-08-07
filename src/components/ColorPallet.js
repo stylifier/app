@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, TouchableOpacity, TextInput, Animated, Easing, Text } from 'react-native'
+import { View, TouchableOpacity, TextInput, Animated, Easing, Text, Clipboard } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -125,9 +125,41 @@ class ColorPallet extends Component {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ color: '#f5f5f5' }} >
-                    #{c}
+                  {!this.state.showCopied ? <TouchableOpacity
+                    style={{flexDirection: "row"}}
+                    onPress={() => {
+                      Clipboard.setString(`#${c}`)
+                      this.setState({showCopied: true})
+                      
+                      setTimeout(() => {
+                        this.setState({showCopied: false})
+                      }, 1000)
+                    }}
+                  >
+                    <FontAwesome
+                      style={{
+                        marginRight: 7,
+                        color: '#F5F5F5'
+                      }}
+                    >
+                      {Icons.copy}
+                    </FontAwesome>
+                    <Text 
+                      style={{ 
+                        color: '#f5f5f5' 
+                      }}
+                    >
+                      #{c}
+                    </Text>
+                  </TouchableOpacity> :
+                  <Text 
+                    style={{ 
+                      color: '#f5f5f5' 
+                    }}
+                  >
+                    Copied!
                   </Text>
+                }
                 </View>)}
               </TouchableOpacity>
             </Animated.View>)
