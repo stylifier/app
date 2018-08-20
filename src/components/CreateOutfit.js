@@ -458,7 +458,7 @@ class CreateOutfit extends Component {
               justifyContent: 'center',
             }}
           >
-            {this.props.products.map((t, i) => (<ProductItem key={'ProductItem' + i} base={t} />))}
+            {this.props.products.map((t, i) => (<ProductItem key={'ProductItem' + i} base={{...t, colorPalletId: this.props.colorPalletId}} />))}
           </View>
           {this.props.isFetching && <ActivityIndicator size="small" color="#3b4e68" />}
         </ScrollView>
@@ -620,6 +620,7 @@ CreateOutfit.propTypes = {
   user: PropTypes.object,
   isFetching: PropTypes.bool,
   colorPallet: PropTypes.string,
+  colorPalletId: PropTypes.string,
 }
 
 const mapStateToProps = state => ({

@@ -45,10 +45,13 @@ class API {
     return ret
   }
 
-  delete(path, extraHeaders) {
+  delete(path, extraHeaders, params) {
     extraHeaders = extraHeaders || {}
 
-    const ret = fetch(this.baseAddress + path, {
+    const paramsStr = params &&
+      params.length > 0 ? `?${params.join('&')}` : ''
+
+    const ret = fetch(this.baseAddress + path + paramsStr, {
         headers: Object.assign({
           accept: 'json',
           Authorization: 'Bearer '+ this.token,
@@ -69,8 +72,11 @@ class API {
     return ret
   }
 
-  post(path, body) {
-    const ret = fetch(this.baseAddress + path, {
+  post(path, body, params) {
+    const paramsStr = params &&
+      params.length > 0 ? `?${params.join('&')}` : ''
+
+    const ret = fetch(this.baseAddress + path + paramsStr, {
         body: JSON.stringify(Object.assign({}, body)),
         headers: {
           'Content-Type': 'application/json',
@@ -289,6 +295,29 @@ class API {
       .sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
     }))
   }
+
+  bookmarkProduct(productId, palletId, title) {
+    return this.post(`/product/${productId}/bookmark`, {}, [
+      ...(palletId ? ['pallet_id=' + palletId] : []),
+      ...(title ? ['title=' + title] : [])
+    ])
+  }
+
+  deleteBookmarkedProduct(productId, palletId) {
+    return this.delete(`/product/${productId}/bookmark`, {}, [
+      ...(palletId ? ['pallet_id=' + palletId] : [])
+    ])
+  }
+
+  getProductBookmarks() {
+    return this.get('/product_bookmarks', [])
+    .then(res => ({
+      ...res,
+      data: res.data
+      .sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+    }))
+  }
+
 
   getStyles(q) {
     return this.get('/styles', [ ...(q ? ['q=' + encodeURIComponent(q)] : [])])

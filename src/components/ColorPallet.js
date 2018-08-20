@@ -17,6 +17,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import actions from '../actions'
 import CreateOutfit from './CreateOutfit'
+import ProductItem from './ProductItem.js'
 
 const btoa = require('Base64').btoa
 const DeviceInfo = require('react-native-device-info')
@@ -126,6 +127,7 @@ class ColorPallet extends Component {
     return (<CreateOutfit
       onDismissPressed={() => this.setModalVisible(false)}
       colorPallet={this.props.base.code}
+      colorPalletId={this.props.base.id}
     />)
   }
 
@@ -158,6 +160,11 @@ class ColorPallet extends Component {
   render() {
     const bookmarked =
       this.props.bookmarks.filter(p => p.code === this.props.base.code).length > 0
+
+    const productBookmarks =
+      this.props.productBookmarks.filter(p =>
+        p.palletId === this.props.base.id) || []
+
     return (
       <View
         style={{
@@ -180,137 +187,167 @@ class ColorPallet extends Component {
 
 
         {this.props.showTitle && this.renderTitle()}
+
         <View
           style={{
-            width: '100%',
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
             borderRadius: 10,
-            borderWidth: 2,
-            borderColor: '#3b4e68',
+            borderColor: '#66bfc7',
+            borderWidth: -2,
           }}
         >
-          {this.props.base.code.match(/.{1,6}/g).map((c, i) => (
-            <Animated.View
-              style={{
-                width: '100%',
-                height: this.animationDict[i],
-              }}
-              key={i}
-            >
-              <TouchableOpacity
+          <View
+            style={{
+              width: '100%',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              borderRadius: 10,
+              borderWidth: 2,
+              borderColor: '#3b4e68',
+            }}
+          >
+            {this.props.base.code.match(/.{1,6}/g).map((c, i) => (
+              <Animated.View
                 style={{
                   width: '100%',
-                  height: '100%',
-                  backgroundColor: `#${c}`,
+                  height: this.animationDict[i],
                 }}
-                underlayColor={`#${c}`}
-                onPress={() => {
-                  if (this.state.openedIndex === i) {
-                    this.collapsedAll()
-                    return
-                  }
-                  this.expandOne(i)
-                }}
+                key={i}
               >
-                {(this.state.openedIndex === i) && (<View
+                <TouchableOpacity
                   style={{
-                    position: 'absolute',
-                    bottom: 7,
-                    right: 7,
-                    padding: 5,
-                    backgroundColor: 'rgba(59, 78, 104, 0.5)',
-                    borderRadius: 3,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: `#${c}`,
+                  }}
+                  underlayColor={`#${c}`}
+                  onPress={() => {
+                    if (this.state.openedIndex === i) {
+                      this.collapsedAll()
+                      return
+                    }
+                    this.expandOne(i)
                   }}
                 >
-                  {!this.state.showCopied ?
-                    <TouchableOpacity
-                      style={{ flexDirection: 'row' }}
-                      onPress={() => {
-                        Clipboard.setString(`#${c}`)
-                        this.setState({ showCopied: true })
+                  {(this.state.openedIndex === i) && (<View
+                    style={{
+                      position: 'absolute',
+                      bottom: 7,
+                      right: 7,
+                      padding: 5,
+                      backgroundColor: 'rgba(59, 78, 104, 0.5)',
+                      borderRadius: 3,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {!this.state.showCopied ?
+                      <TouchableOpacity
+                        style={{ flexDirection: 'row' }}
+                        onPress={() => {
+                          Clipboard.setString(`#${c}`)
+                          this.setState({ showCopied: true })
 
-                        setTimeout(() => {
-                          this.setState({ showCopied: false })
-                        }, 1000)
-                      }}
-                    >
-                      <FontAwesome
-                        style={{
-                          marginRight: 7,
-                          color: '#F5F5F5',
+                          setTimeout(() => {
+                            this.setState({ showCopied: false })
+                          }, 1000)
                         }}
                       >
-                        {Icons.copy}
-                      </FontAwesome>
+                        <FontAwesome
+                          style={{
+                            marginRight: 7,
+                            color: '#F5F5F5',
+                          }}
+                        >
+                          {Icons.copy}
+                        </FontAwesome>
+                        <Text
+                          style={{
+                            color: '#f5f5f5',
+                          }}
+                        >
+                          #{c}
+                        </Text>
+                      </TouchableOpacity> :
                       <Text
                         style={{
                           color: '#f5f5f5',
                         }}
                       >
-                        #{c}
+                          Copied!
                       </Text>
-                    </TouchableOpacity> :
-                    <Text
-                      style={{
-                        color: '#f5f5f5',
-                      }}
-                    >
-                        Copied!
-                    </Text>
-                  }
-                </View>)}
-              </TouchableOpacity>
-            </Animated.View>)
-          )}
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              top: 7,
-              right: 7,
-              width: 35,
-              height: 35,
-              backgroundColor: 'rgba(59, 78, 104, 0.5)',
-              borderRadius: 3,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={() => {
-              if (bookmarked) {
-                return this.props.deleteBookmarkedColorPallet(this.props.base.id)
-              }
-              return this.props.bookmarkColorPallet(this.props.base.id)
-            }}
-          >
-            <FontAwesome
+                    }
+                  </View>)}
+                </TouchableOpacity>
+              </Animated.View>)
+            )}
+            <TouchableOpacity
               style={{
-                fontSize: 24,
-                color: bookmarked ? '#66bfc7' : '#f5f5f5',
+                position: 'absolute',
+                top: 7,
+                right: 7,
+                width: 35,
+                height: 35,
+                backgroundColor: 'rgba(59, 78, 104, 0.5)',
+                borderRadius: 3,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onPress={() => {
+                if (bookmarked) {
+                  return this.props.deleteBookmarkedColorPallet(this.props.base.id)
+                }
+                return this.props.bookmarkColorPallet(this.props.base.id)
               }}
             >
-              {Icons.bookmark}
-            </FontAwesome>
-          </TouchableOpacity>
-          <View
+              <FontAwesome
+                style={{
+                  fontSize: 24,
+                  color: bookmarked ? '#66bfc7' : '#f5f5f5',
+                }}
+              >
+                {Icons.bookmark}
+              </FontAwesome>
+            </TouchableOpacity>
+            <View
+              style={{
+                position: 'absolute',
+                left: 7,
+                top: 7,
+                padding: 5,
+                backgroundColor: 'rgba(59, 78, 104, 0.5)',
+                borderRadius: 3,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ color: '#f5f5f5' }} >
+                Popularity: {Math.round(this.props.base.popularity * 10) / 10} / 5
+              </Text>
+            </View>
+          </View>
+
+          {productBookmarks.length > 0 && <View
             style={{
-              position: 'absolute',
-              left: 7,
-              top: 7,
-              padding: 5,
-              backgroundColor: 'rgba(59, 78, 104, 0.5)',
-              borderRadius: 3,
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              width: '100%',
+              marginTop: -20,
+              padding: 10,
+              paddingTop: 40,
+              paddingBottom: 40,
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              borderWidth: 2,
+              borderColor: '#3b4e68',
+              borderTopWidth: 0,
             }}
           >
-            <Text style={{ color: '#f5f5f5' }} >
-              Popularity: {Math.round(this.props.base.popularity * 10) / 10} / 5
-            </Text>
-          </View>
+            {productBookmarks.map((t, i) => (
+              <ProductItem key={Math.random() * 100} base={{ ...t.product, colorPalletId: this.props.base.id }} />
+            ))}
+          </View>}
         </View>
       </View>
     )
@@ -322,12 +359,14 @@ ColorPallet.propTypes = {
   deleteBookmarkedColorPallet: PropTypes.func,
   base: PropTypes.object,
   bookmarks: PropTypes.array,
+  productBookmarks: PropTypes.array,
   showTitle: PropTypes.bool,
 }
 
 const mapStateToProps = state => ({
   user: state.user,
   bookmarks: state.bookmarks,
+  productBookmarks: state.productBookmarks,
 })
 
 const mapDispatchToProps = dispatch => ({

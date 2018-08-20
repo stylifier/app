@@ -2,10 +2,15 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Image, View, Text, Dimensions, TouchableOpacity, Linking } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
+import { connect } from 'react-redux'
+import actions from '../actions'
 
 class ProductItem extends Component {
   render() {
     const { base } = this.props
+    const bookmarked =
+      this.props.bookmarks.filter(p =>
+        p.productId === this.props.base.id && p.palletId === this.props.base.colorPalletId).length > 0
 
     return (
       <View
@@ -53,12 +58,15 @@ class ProductItem extends Component {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => {}}
+          onPress={() => (bookmarked ?
+            this.props.deleteBookmarkedProduct(base.id, base.colorPalletId) :
+            this.props.bookmarkProduct(base.id, base.colorPalletId))
+          }
         >
           <FontAwesome
             style={{
               fontSize: 24,
-              color: false ? '#66bfc7' : '#f5f5f5',
+              color: bookmarked ? '#66bfc7' : '#f5f5f5',
             }}
           >
             {Icons.bookmark}
@@ -71,6 +79,20 @@ class ProductItem extends Component {
 
 ProductItem.propTypes = {
   base: PropTypes.object,
+  bookmarks: PropTypes.array,
+  deleteBookmarkedProduct: PropTypes.func,
+  bookmarkProduct: PropTypes.func,
 }
 
-export default ProductItem
+const mapStateToProps = state => ({
+  bookmarks: state.productBookmarks,
+})
+
+const mapDispatchToProps = dispatch => ({
+  bookmarkProduct: (productId, palletId, title) =>
+    dispatch(actions.bookmarkProduct(productId, palletId, title)),
+  deleteBookmarkedProduct: (productId, palletId) =>
+    dispatch(actions.deleteBookmarkedProduct(productId, palletId)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProductItem)

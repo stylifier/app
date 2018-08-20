@@ -63,6 +63,21 @@ const actions = {
         })
         AsyncStorage.setItem('color_bookmarks', JSON.stringify(pallets.data))
       })
+
+    AsyncStorage.getItem('product_bookmarks')
+      .then((bms) => bms && dispatch({
+        type: 'UPDATE_PRODUCT_BOOKMARKS',
+        payload: [...JSON.parse(bms)],
+      }))
+
+    api.getProductBookmarks()
+      .then(p => {
+        dispatch({
+          type: 'UPDATE_PRODUCT_BOOKMARKS',
+          payload: [...p.data],
+        })
+        AsyncStorage.setItem('product_bookmarks', JSON.stringify(p.data))
+      })
   },
 
   deleteBookmarkedColorPallet: (palletId) => (dispatch) => {
@@ -72,6 +87,16 @@ const actions = {
 
   bookmarkColorPallet: (palletId, title) => (dispatch) => {
     api.bookmarkColorPallet(palletId, title)
+      .then(() => dispatch(actions.refreshBookmarks()))
+  },
+
+  deleteBookmarkedProduct: (productId, palletId) => (dispatch) => {
+    api.deleteBookmarkedProduct(productId, palletId)
+      .then(() => dispatch(actions.refreshBookmarks()))
+  },
+
+  bookmarkProduct: (productId, palletId, title) => (dispatch) => {
+    api.bookmarkProduct(productId, palletId, title)
       .then(() => dispatch(actions.refreshBookmarks()))
   },
 

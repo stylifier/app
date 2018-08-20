@@ -85,14 +85,23 @@ class AddButton extends Component {
                 return
               }
 
+              if (/Cannot access camera/g.test(e.message)) {
+                Alert.alert(
+                  'Cannot Access Camera',
+                  e.message.replace('Cannot access camera.', ''),
+                  [
+                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                    { text: 'OK', onPress: () => {} },
+                  ],
+                  { cancelable: false }
+                )
+                return
+              }
+
               Alert.alert(
-                'Cannot Access Camera',
-                e.message.replace('Cannot access camera.', ''),
-                [
-                  { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
-                  { text: 'OK', onPress: () => {} },
-                ],
-                { cancelable: false }
+                'Failed to Access Camera',
+                e.message,
+                [{ text: 'OK', onPress: () => {} }]
               )
             })
           }}
@@ -152,14 +161,23 @@ class AddButton extends Component {
                 return
               }
 
+              if (/Cannot access images/g.test(e.message)) {
+                Alert.alert(
+                  'Cannot Access Images',
+                  e.message.replace('Cannot access images.', ''),
+                  [
+                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                    { text: 'OK', onPress: () => {} },
+                  ],
+                  { cancelable: false }
+                )
+                return
+              }
+
               Alert.alert(
-                'Cannot Access Images',
-                e.message.replace('Cannot access images.', ''),
-                [
-                  { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
-                  { text: 'OK', onPress: () => {} },
-                ],
-                { cancelable: false }
+                'Failed to Get Images',
+                'Please try again',
+                [{ text: 'OK', onPress: () => {} }]
               )
             })
           }}
