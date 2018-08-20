@@ -29,6 +29,9 @@ const user = (state = {}, action) => {
     case 'USER_REGISTRATION_FAILED':
       return { ...state, registering: false, registeringError: action.payload }
 
+    case 'REFERESH_USER_INFO':
+      return { ...state, ...action.payload }
+
     default:
       break
   }

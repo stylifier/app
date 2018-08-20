@@ -316,12 +316,36 @@ class API {
     return this.post('/products', {media, name, code, price, shopAddress})
   }
 
-  fetchSelfProducts() {
-    return this.get('/self_products', [])
+  fetchSelfProducts(q, pagination) {
+    if(!q)
+      q = {}
+
+    return this.get('/products',
+      [
+        ...(q.name ? ['name=' + q.name] : []),
+        ...(q.color ? ['color=' + q.color] : []),
+        ...(q.subColor ? ['sub_color=' + q.subColor] : []),
+        ...(q.category ? ['category=' + q.category] : []),
+        ...(q.hex ? ['hex=' + q.hex] : []),
+        ...(pagination ? ['pagination=' + pagination] : [])
+      ]
+    )
   }
 
-  getUserProduct(q) {
-    return this.get('/products', [ ...(q ? ['q=' + encodeURIComponent(q)] : [])])
+  fetchUserProducts(username, q, pagination) {
+    if(!q)
+      q = {}
+
+    return this.get(`/users/${username}/products`,
+      [
+        ...(q.name ? ['name=' + q.name] : []),
+        ...(q.color ? ['color=' + q.color] : []),
+        ...(q.subColor ? ['sub_color=' + q.subColor] : []),
+        ...(q.category ? ['category=' + q.category] : []),
+        ...(q.hex ? ['hex=' + q.hex] : []),
+        ...(pagination ? ['pagination=' + pagination] : [])
+      ]
+    )
   }
 
   setProfilePicture(media) {
@@ -374,6 +398,18 @@ class API {
 
   setOrderStatus(orderId, status) {
     return this.post(`/orders/${orderId}/status/${status}`, {})
+  }
+
+  askForApproval(metadata) {
+    if (!metadata) {
+      metadata = {}
+    }
+
+    return this.post('/user/self/request_approval', metadata)
+  }
+
+  approveUser(username) {
+    return this.post(`/users/${username}/approve`, {})
   }
 }
 
