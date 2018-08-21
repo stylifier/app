@@ -79,6 +79,8 @@ class ColorPallet extends Component {
           }}
           onPress={() => {
             this.props.refereshUserInfo()
+            this.props.refreshCategories()
+            this.props.refreshColorCode()
 
             if (this.props.user.username === deviceNameSafe) {
               Alert.alert(
@@ -357,6 +359,9 @@ class ColorPallet extends Component {
 ColorPallet.propTypes = {
   bookmarkColorPallet: PropTypes.func,
   deleteBookmarkedColorPallet: PropTypes.func,
+  refereshUserInfo: PropTypes.func,
+  refreshCategories: PropTypes.func,
+  refreshColorCode: PropTypes.func,
   base: PropTypes.object,
   bookmarks: PropTypes.array,
   productBookmarks: PropTypes.array,
@@ -376,6 +381,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.deleteBookmarkedColorPallet(palletId)),
   refereshUserInfo: () =>
     dispatch(actions.refereshUserInfo()),
+  refreshCategories: () =>
+    dispatch(actions.refreshCategories()),
+  refreshColorCode: () =>
+    dispatch(actions.refreshColorCode()),
   navigateToLogin: () => dispatch(
     NavigationActions.navigate({ routeName: 'Profile' })
   ),

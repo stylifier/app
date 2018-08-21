@@ -440,6 +440,14 @@ class API {
   approveUser(username) {
     return this.post(`/users/${username}/approve`, {})
   }
+
+  fetchColorCodes() {
+    return this.get('/color_codes')
+  }
+
+  fetchCategories() {
+    return this.get('/product_categories')
+  }
 }
 
 export default API

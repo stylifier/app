@@ -135,7 +135,7 @@ class Profile extends Component {
               Fullname: tcomb.String,
               Username: tcomb.subtype(tcomb.String, (t) => /^[a-z0-9_]{3,25}$/.test(t)),
               'Email Address':
-                tcomb.subtype(tcomb.String, (t) => /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(t)),
+                tcomb.subtype(tcomb.String, (t) => /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(t)),
               Password: tcomb.subtype(tcomb.String, (t) => /^.{8,400}$/.test(t)),
             })}
             options={{

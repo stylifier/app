@@ -11,35 +11,8 @@ import SlideView from './slideView.js'
 import ProductItem from './ProductItem.js'
 import actions from '../actions'
 
-const categories = require('./categories.json')
 const countries = require('country-list')()
 const chroma = require('chroma-js')
-
-const subColor = {
-  '#16738F': 'BLUE',
-  '#0000AA': 'BLUE',
-  '#303481': 'BLUE',
-  '#6a759b': 'BLUE',
-  '#21273d': 'BLUE',
-  '#b9d4f1': 'BLUE',
-  '#6B8E23': 'GREEN',
-  '#008000': 'GREEN',
-  '#50c19a': 'GREEN',
-  '#535238': 'GREEN',
-  '#808080': 'GRAY',
-  '#FFC0CB': 'RED',
-  '#990000': 'RED',
-  '#fe4e6e': 'RED',
-  '#FFA500': 'ORANGE',
-  '#654321': 'ORANGE',
-  '#686354': 'ORANGE',
-  '#FFFF00': 'YELLOW',
-  '#F5F5DC': 'YELLOW',
-  '#551A8B': 'PURPLE',
-  '#433751': 'PURPLE',
-  '#FFFFFF': 'WHITE',
-  '#000000': 'BLACK',
-}
 
 class CreateOutfit extends Component {
   constructor(props) {
@@ -75,9 +48,8 @@ class CreateOutfit extends Component {
         this.startLightingBackgroundColorAnimation()
 
         this.props.fetchProducts({
-          subColor: subColor[Object.keys(subColor)
-            .sort((a, b) =>
-              chroma.deltaE(color, a) - chroma.deltaE(color, b))[0]],
+          subColor: this.props.colorCodes.sort((a, b) =>
+            chroma.deltaE(color, a.code) - chroma.deltaE(color, b.code))[0].name,
           hex: color,
           category: this.state.category,
         })
@@ -245,12 +217,7 @@ class CreateOutfit extends Component {
                   borderRadius: 10,
                 }}
                 key={i}
-                onPress={() => {
-                  console.log(`#${c}`, subColor[Object.keys(subColor)
-                    .sort((a, b) =>
-                      chroma.deltaE(`#${c}`, a) - chroma.deltaE(`#${c}`, b))[0]])
-                  this.setState({ color: `#${c}` })
-                }}
+                onPress={() => this.setState({ color: `#${c}` })}
               />
             ))
           }
@@ -270,6 +237,7 @@ class CreateOutfit extends Component {
       `${this.state.gender}>`
 
     const { category } = this.state
+    const { categories } = this.props
 
     return (
       <SlideView
@@ -345,6 +313,7 @@ class CreateOutfit extends Component {
 
   renderProductChoice() {
     const { category, gender } = this.state
+    const { categories } = this.props
     const active =
       typeof this.state.gender !== 'undefined' &&
       typeof this.state.color !== 'undefined' &&
@@ -365,7 +334,7 @@ class CreateOutfit extends Component {
             flexDirection: 'row',
             padding: 10,
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           <TouchableOpacity
@@ -621,10 +590,14 @@ CreateOutfit.propTypes = {
   isFetching: PropTypes.bool,
   colorPallet: PropTypes.string,
   colorPalletId: PropTypes.string,
+  colorCodes: PropTypes.array,
+  categories: PropTypes.array,
 }
 
 const mapStateToProps = state => ({
   user: state.user,
+  colorCodes: state.metadata.colorCodes,
+  categories: state.metadata.categories,
   products: state.productSuggestion.items,
   isFetching: state.productSuggestion.loading,
 })

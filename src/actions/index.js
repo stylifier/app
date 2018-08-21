@@ -80,6 +80,40 @@ const actions = {
       })
   },
 
+  refreshColorCode: () => (dispatch) => {
+    AsyncStorage.getItem('color_codes')
+      .then((data) => data && dispatch({
+        type: 'UPDATE_COLOR_CODE',
+        payload: [...JSON.parse(data)],
+      }))
+
+    api.fetchColorCodes()
+      .then(data => {
+        dispatch({
+          type: 'UPDATE_COLOR_CODE',
+          payload: [...data],
+        })
+        AsyncStorage.setItem('color_code', JSON.stringify(data))
+      })
+  },
+
+  refreshCategories: () => (dispatch) => {
+    AsyncStorage.getItem('categories')
+      .then((data) => data && dispatch({
+        type: 'UPDATE_CATEGORIES',
+        payload: [...JSON.parse(data)],
+      }))
+
+    api.fetchCategories()
+      .then(data => {
+        dispatch({
+          type: 'UPDATE_CATEGORIES',
+          payload: [...data],
+        })
+        AsyncStorage.setItem('categories', JSON.stringify(data))
+      })
+  },
+
   deleteBookmarkedColorPallet: (palletId) => (dispatch) => {
     api.deleteBookmarkedColorPallet(palletId)
       .then(() => dispatch(actions.refreshBookmarks()))
@@ -171,6 +205,8 @@ const actions = {
       payload: info,
     })
     dispatch(actions.refreshBookmarks())
+    dispatch(actions.refreshCategories())
+    dispatch(actions.refreshColorCode())
   },
 
   loginUser: (username, password) => (dispatch) => {
