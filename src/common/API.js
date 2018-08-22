@@ -4,7 +4,7 @@ import moment from 'moment'
 class API {
   constructor() {
     this.baseAddress = 'https://cloud.stylifier.com'
-    // this.baseAddress = 'http://localhost:3000'
+    this.baseAddress = 'http://localhost:3000'
     AsyncStorage.getItem('user_token')
     .then(t => { this.token = t })
 
@@ -429,12 +429,12 @@ class API {
     return this.post(`/orders/${orderId}/status/${status}`, {})
   }
 
-  askForApproval(metadata) {
-    if (!metadata) {
-      metadata = {}
-    }
-
+  askForApproval(metadata = {}) {
     return this.post('/user/self/request_approval', metadata)
+  }
+
+  report(metadata = {}) {
+    return this.post('/report', metadata)
   }
 
   approveUser(username) {

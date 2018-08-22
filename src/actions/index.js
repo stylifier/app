@@ -1,5 +1,5 @@
 import { NavigationActions } from 'react-navigation'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, Alert } from 'react-native'
 import API from '../common/API.js'
 
 const btoa = require('Base64').btoa
@@ -23,6 +23,14 @@ const deviceNameSafe = `m_g_i_o_s_${btoa(
   .toLowerCase()}`
 
 const actions = {
+  reportCreateOutfitIssues: (payload) => () => {
+    api.report(Object.assign(payload, { type: 'CreateOutfit' }))
+    .then(() =>
+      Alert.alert('Thanks for reporting the issue, we will resolve it as soon as possible.'))
+    .catch(() =>
+      Alert.alert('Ops... Something went wrong, please try again later.'))
+  },
+
   refereshUserInfo: () => (dispatch) => {
     api.fetchUserInfo()
       .then((info) =>
@@ -138,7 +146,7 @@ const actions = {
     dispatch({ type: 'CLEAR_PRODUCT_SUGGESTION' })
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zzz', q)
+    api.fetchUserProducts('zalando', q)
       .then(products => {
         dispatch({
           type: 'RENEW_PRODUCT_SUGGESTION',
@@ -154,13 +162,13 @@ const actions = {
   fetchMoreProducts: () => (dispatch, getState) => {
     const { productSuggestion } = getState()
 
-    if (productSuggestion.loading) {
+    if (productSuggestion.loading || productSuggestion.finished) {
       return
     }
 
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zzz', productSuggestion.queries, productSuggestion.pagination)
+    api.fetchUserProducts('zalando', productSuggestion.queries, productSuggestion.pagination)
       .then(products => {
         dispatch({
           type: 'ADD_TO_PRODUCT_SUGGESTION',
@@ -174,8 +182,12 @@ const actions = {
 
   askForApproval: (metadata) => () => {
     api.askForApproval(metadata)
-      .then(() => {})
-      .catch(() => {})
+    .then(() =>
+      AsyncStorage.setItem('guest_submitted', 'true'))
+    .then(() =>
+      Alert.alert('Thanks for your submission. We will inform you when your account is ready.'))
+    .catch(() =>
+      Alert.alert('Ops... Something went wrong, please try again later.'))
   },
 
   toggleAddMenu: () => (dispatch) => {
@@ -244,7 +256,9 @@ const actions = {
 
   logoutUser: () => (dispatch) => {
     AsyncStorage.removeItem('user_info')
-      .then(() => dispatch(actions.initiateUser()))
+    .then(() =>
+      AsyncStorage.removeItem('guest_submitted'))
+    .then(() => dispatch(actions.initiateUser()))
   },
 
   initiateUser: () => (dispatch) => {

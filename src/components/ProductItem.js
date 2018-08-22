@@ -18,7 +18,7 @@ class ProductItem extends Component {
           width: (Dimensions.get('window').width / 2) - 40,
           height: (Dimensions.get('window').height / 2) - 50,
           paddingTop: 10,
-          marginBottom: 20,
+          marginBottom: 30,
           alignItems: 'center',
           marginLeft: 'auto',
           marginRight: 'auto',
@@ -39,8 +39,11 @@ class ProductItem extends Component {
           <Text style={{ fontWeight: 'bold' }} >
             {base.brand}
           </Text>
-          <Text>
+          <Text style={{ fontSize: 12 }}>
             {base.name.length > 20 ? `${base.name.slice(0, 20)}...` : base.name}
+          </Text>
+          <Text style={{ fontSize: 12, color: '#5babb3' }}>
+            More info...
           </Text>
           <Text style={{ fontWeight: 'bold', textAlign: 'right', marginTop: 10 }}>
             {base.price.original}

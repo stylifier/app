@@ -1,5 +1,5 @@
 const productSuggestion = (
-  state = { pagination: 0, items: [], queries: {}, loading: false }, action) => {
+  state = { pagination: 0, items: [], queries: {}, loading: false, finished: false }, action) => {
   switch (action.type) {
     case 'CLEAR_PRODUCT_SUGGESTION':
       return {
@@ -16,6 +16,7 @@ const productSuggestion = (
         pagination: action.payload.pagination,
         queries: action.payload.queries,
         loading: false,
+        finished: action.payload.items.length <= 0,
       }
 
     case 'ADD_TO_PRODUCT_SUGGESTION':
@@ -23,6 +24,7 @@ const productSuggestion = (
         ...state,
         items: [...state.items, ...action.payload.items],
         pagination: action.payload.pagination,
+        finished: action.payload.items.length <= 0,
         loading: false,
       }
 

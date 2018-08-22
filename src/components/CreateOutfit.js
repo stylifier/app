@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   View, TouchableOpacity, Text, Picker, StatusBar,
-  Animated, ScrollView, ActivityIndicator } from 'react-native'
+  Animated, ScrollView, ActivityIndicator, AsyncStorage } from 'react-native'
 import { connect } from 'react-redux'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import FadeView from 'react-native-fade-view'
@@ -25,6 +25,10 @@ class CreateOutfit extends Component {
       // category: 'men>clothing>t-shirts',
     }
 
+    AsyncStorage.getItem('guest_submitted')
+    .then(t => t && this.setState({ isSubmited: true }))
+
+    // this.Animation = new Animated.Value(1)
     this.Animation = new Animated.Value(0)
   }
 
@@ -70,6 +74,18 @@ class CreateOutfit extends Component {
           backgroundColor: '#f5f5f5',
         }}
       >
+        {this.state.isSubmited && <View
+          style={{
+            width: '100%',
+            marginTop: 40,
+            height: '100%',
+          }}
+        >
+          <Text>
+            You have submitted for this feature. We will inform you once your account is ready.
+          </Text>
+        </View>}
+        {!this.state.isSubmited &&
         <View
           style={{
             flex: 2,
@@ -85,9 +101,9 @@ class CreateOutfit extends Component {
             You can submit your country of residence and in
             case the feature become available we will notify you immediately.
           </Text>
-        </View>
+        </View>}
 
-        <View style={{ flex: 8 }}>
+        {!this.state.isSubmited && <View style={{ flex: 8 }}>
           <Picker
             selectedValue={this.state.country}
             style={{ height: 50, width: '100%' }}
@@ -96,17 +112,17 @@ class CreateOutfit extends Component {
             <Picker.Item label="Select your country" value="" />
             {countries.getNames().map((t, i) => <Picker.Item key={i} label={t} value={t} />)}
           </Picker>
-        </View>
+        </View>}
 
         <View
           style={{
-            flex: 2,
             width: '80%',
             marginLeft: '10%',
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'row',
-            height: '100%',
+            position: 'absolute',
+            bottom: 30,
           }}
         >
           <TouchableOpacity
@@ -119,7 +135,7 @@ class CreateOutfit extends Component {
           >
             <Text>Dismiss</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {!this.state.isSubmited && <TouchableOpacity
             disabled={this.state.country === ''}
             onPress={() => {
               this.props.askForApproval({ country: this.state.country, ...this.props.user })
@@ -133,7 +149,7 @@ class CreateOutfit extends Component {
             >
               Submit
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </View>
     )
@@ -306,19 +322,72 @@ class CreateOutfit extends Component {
   }
 
   isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20
+    const paddingToBottom = 70
     return layoutMeasurement.height + contentOffset.y >=
       contentSize.height - paddingToBottom
   }
 
-  renderProductChoice() {
+  renderCategoryGuide() {
     const { category, gender } = this.state
     const { categories } = this.props
+
+    const iconStyle = {
+      marginRight: 5,
+      marginTop: 5,
+    }
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            height: 20,
+            marginRight: 5,
+          }}
+          onPress={() => this.setState({ gender: undefined, category: undefined })}
+        >
+          <Text style={{ fontSize: 18 }}>
+            {gender && gender.slice(0, 1).toUpperCase() + gender.slice(1)}
+          </Text>
+        </TouchableOpacity>
+        <FontAwesome style={iconStyle} >
+          {Icons.chevronRight}
+        </FontAwesome>
+        <FontAwesome style={iconStyle} >
+          {Icons.ellipsisH}
+        </FontAwesome>
+        <FontAwesome style={iconStyle} >
+          {Icons.chevronRight}
+        </FontAwesome>
+        {category && (<TouchableOpacity
+          style={{
+            height: 20,
+          }}
+          onPress={() =>
+            this.setState({
+              category: `${category.slice(0, category.lastIndexOf('>'))}...`,
+            })}
+        >
+          <Text style={{ fontSize: 18 }}>
+            {category && category.length > 3 &&
+              categories.filter(r => r.address === category)[0] &&
+              categories.filter(r => r.address === category)[0].lable}
+          </Text>
+        </TouchableOpacity>)}
+      </View>
+    )
+  }
+
+  renderProductChoice() {
+    const { color, gender, category } = this.state
+    const { products, colorPalletId, isFetching, colorCodes, reportCreateOutfitIssues } = this.props
     const active =
-      typeof this.state.gender !== 'undefined' &&
-      typeof this.state.color !== 'undefined' &&
-      typeof this.state.category !== 'undefined' &&
-      !this.state.category.endsWith('...')
+      typeof gender !== 'undefined' &&
+      typeof color !== 'undefined' &&
+      typeof category !== 'undefined' && !category.endsWith('...')
 
     return (
       <SlideView
@@ -337,61 +406,9 @@ class CreateOutfit extends Component {
             justifyContent: 'center',
           }}
         >
-          <TouchableOpacity
-            style={{
-              alignSelf: 'flex-end',
-              height: 50,
-              padding: 4,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={() => this.setState({ gender: undefined, category: undefined })}
-          >
-            <Text style={{ fontSize: 18 }}>
-              {gender && gender.slice(0, 1).toUpperCase() + gender.slice(1)}
-            </Text>
-          </TouchableOpacity>
-          <FontAwesome
-            style={{
-              marginRight: 5,
-              marginTop: 3,
-            }}
-          >
-            {Icons.chevronRight}
-          </FontAwesome>
-          <FontAwesome
-            style={{
-              marginRight: 5,
-              marginTop: 3,
-            }}
-          >
-            {Icons.ellipsisH}
-          </FontAwesome>
-          <FontAwesome
-            style={{
-              marginRight: 5,
-              marginTop: 3,
-            }}
-          >
-            {Icons.chevronRight}
-          </FontAwesome>
-          {category && (<TouchableOpacity
-            style={{
-              height: 50,
-              paddingTop: 'auto',
-              justifyContent: 'center',
-            }}
-            onPress={() =>
-              this.setState({
-                category: `${category.slice(0, category.lastIndexOf('>'))}...`,
-              })}
-          >
-            <Text style={{ fontSize: 18 }}>
-              {category && category.length > 3 &&
-                categories.filter(r => r.address === category)[0] &&
-                categories.filter(r => r.address === category)[0].lable}
-            </Text>
-          </TouchableOpacity>)}
+          <View>
+            {this.renderCategoryGuide()}
+          </View>
           <TouchableOpacity
             style={{
               padding: 10,
@@ -401,7 +418,7 @@ class CreateOutfit extends Component {
               borderWidth: 2,
               borderColor: 'black',
               marginLeft: 'auto',
-              backgroundColor: this.state.color,
+              backgroundColor: color,
               borderRadius: 10,
             }}
             onPress={() => this.setState({ color: undefined })}
@@ -427,10 +444,30 @@ class CreateOutfit extends Component {
               justifyContent: 'center',
             }}
           >
-            {this.props.products.map((t, i) => (<ProductItem key={'ProductItem' + i} base={{...t, colorPalletId: this.props.colorPalletId}} />))}
+            {products.map((t, i) =>
+              (<ProductItem key={`ProductItem${i}`} base={{ ...t, colorPalletId }} />))}
           </View>
-          {this.props.isFetching && <ActivityIndicator size="small" color="#3b4e68" />}
+          {isFetching && <ActivityIndicator size="small" color="#3b4e68" />}
         </ScrollView>
+        <TouchableOpacity
+          style={{
+            paddingLeft: 10,
+            paddingRight: 10,
+            paddingTop: 5,
+            marginBottom: -5,
+          }}
+          onPress={() => reportCreateOutfitIssues({
+            subColor: colorCodes.sort((a, b) =>
+              chroma.deltaE(color, a.code) - chroma.deltaE(color, b.code))[0].name,
+            hex: color,
+            category,
+            products,
+          })}
+        >
+          <Text style={{ color: '#3b4e68', fontSize: 12 }}>
+            Result(s) does not match? Report to improve this feature.
+          </Text>
+        </TouchableOpacity>
       </SlideView>
     )
   }
@@ -586,10 +623,12 @@ CreateOutfit.propTypes = {
   askForApproval: PropTypes.func,
   fetchProducts: PropTypes.func,
   fetchMoreProducts: PropTypes.func,
+  reportCreateOutfitIssues: PropTypes.func,
   user: PropTypes.object,
   isFetching: PropTypes.bool,
   colorPallet: PropTypes.string,
   colorPalletId: PropTypes.string,
+  products: PropTypes.array,
   colorCodes: PropTypes.array,
   categories: PropTypes.array,
 }
@@ -606,6 +645,7 @@ const mapDispatchToProps = dispatch => ({
   askForApproval: (metadata) => dispatch(actions.askForApproval(metadata)),
   fetchProducts: (q) => dispatch(actions.fetchProducts(q)),
   fetchMoreProducts: () => dispatch(actions.fetchMoreProducts()),
+  reportCreateOutfitIssues: (payload) => dispatch(actions.reportCreateOutfitIssues(payload)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateOutfit)
