@@ -146,7 +146,7 @@ const actions = {
     dispatch({ type: 'CLEAR_PRODUCT_SUGGESTION' })
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zalando', q)
+    api.fetchUserProducts('zzz', q)
       .then(products => {
         dispatch({
           type: 'RENEW_PRODUCT_SUGGESTION',
@@ -168,7 +168,7 @@ const actions = {
 
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zalando', productSuggestion.queries, productSuggestion.pagination)
+    api.fetchUserProducts('zzz', productSuggestion.queries, productSuggestion.pagination)
       .then(products => {
         dispatch({
           type: 'ADD_TO_PRODUCT_SUGGESTION',
