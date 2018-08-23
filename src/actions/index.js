@@ -25,10 +25,11 @@ const deviceNameSafe = `m_g_i_o_s_${btoa(
 const actions = {
   reportCreateOutfitIssues: (payload) => () => {
     api.report(Object.assign(payload, { type: 'CreateOutfit' }))
-    .then(() =>
-      Alert.alert('Thanks for reporting the issue, we will resolve it as soon as possible.'))
-    .catch(() =>
-      Alert.alert('Ops... Something went wrong, please try again later.'))
+      .then(() =>
+        Alert.alert('Thanks for reporting the issue, we will resolve it as soon as possible.'))
+      .catch(() => {
+        Alert.alert('Ops... Something went wrong, please try again later.')
+      })
   },
 
   refereshUserInfo: () => (dispatch) => {

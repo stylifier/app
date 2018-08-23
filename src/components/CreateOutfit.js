@@ -461,7 +461,13 @@ class CreateOutfit extends Component {
               chroma.deltaE(color, a.code) - chroma.deltaE(color, b.code))[0].name,
             hex: color,
             category,
-            products,
+            products: products.map(p => ({
+              id: p.id,
+              name: p.name,
+              code: p.code,
+              colorPallet: p.colorPallet,
+              media: p.media.slice(0, 1),
+            })),
           })}
         >
           <Text style={{ color: '#3b4e68', fontSize: 12 }}>
