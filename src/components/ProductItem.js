@@ -7,20 +7,19 @@ import actions from '../actions'
 
 class ProductItem extends Component {
   render() {
-    const { base } = this.props
+    const { base, colorPalletId, title } = this.props
     const bookmarked =
       this.props.bookmarks.filter(p =>
-        p.productId === this.props.base.id && p.palletId === this.props.base.colorPalletId).length > 0
+        p.productId === this.props.base.id && p.palletId === colorPalletId).length > 0
 
     return (
       <View
         style={{
-          width: (Dimensions.get('window').width / 2) - 40,
+          width: (Dimensions.get('window').width / 2) - 30,
           height: (Dimensions.get('window').height / 2) - 50,
           paddingTop: 10,
           marginBottom: 30,
           alignItems: 'center',
-          marginLeft: 'auto',
           marginRight: 'auto',
         }}
       >
@@ -62,8 +61,8 @@ class ProductItem extends Component {
             justifyContent: 'center',
           }}
           onPress={() => (bookmarked ?
-            this.props.deleteBookmarkedProduct(base.id, base.colorPalletId) :
-            this.props.bookmarkProduct(base.id, base.colorPalletId))
+            this.props.deleteBookmarkedProduct(base.id, colorPalletId) :
+            this.props.bookmarkProduct(base.id, colorPalletId, title))
           }
         >
           <FontAwesome
@@ -85,6 +84,8 @@ ProductItem.propTypes = {
   bookmarks: PropTypes.array,
   deleteBookmarkedProduct: PropTypes.func,
   bookmarkProduct: PropTypes.func,
+  colorPalletId: PropTypes.string,
+  title: PropTypes.string,
 }
 
 const mapStateToProps = state => ({

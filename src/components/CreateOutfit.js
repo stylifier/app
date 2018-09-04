@@ -95,7 +95,7 @@ class CreateOutfit extends Component {
           }}
         >
           <Text>
-            "Create Outfit" is still a beta feature and not available in all locations.
+            "Create Outfit" is not available in all locations.
           </Text>
           <Text style={{ marginTop: 10 }} >
             You can submit your country of residence and in
@@ -383,7 +383,7 @@ class CreateOutfit extends Component {
 
   renderProductChoice() {
     const { color, gender, category } = this.state
-    const { products, colorPalletId, isFetching, colorCodes, reportCreateOutfitIssues } = this.props
+    const { products, colorPalletId, isFetching, colorCodes, reportCreateOutfitIssues, title } = this.props
     const active =
       typeof gender !== 'undefined' &&
       typeof color !== 'undefined' &&
@@ -445,7 +445,13 @@ class CreateOutfit extends Component {
             }}
           >
             {products.map((t, i) =>
-              (<ProductItem key={`ProductItem${i}`} base={{ ...t, colorPalletId }} />))}
+              <ProductItem
+                key={`ProductItem${i}`}
+                base={t}
+                colorPalletId={colorPalletId}
+                title={title}
+              />
+            )}
           </View>
           {isFetching && <ActivityIndicator size="small" color="#3b4e68" />}
         </ScrollView>
@@ -634,6 +640,7 @@ CreateOutfit.propTypes = {
   isFetching: PropTypes.bool,
   colorPallet: PropTypes.string,
   colorPalletId: PropTypes.string,
+  title: PropTypes.string,
   products: PropTypes.array,
   colorCodes: PropTypes.array,
   categories: PropTypes.array,

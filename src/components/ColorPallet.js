@@ -28,6 +28,16 @@ const deviceNameSafe = `m_g_i_o_s_${btoa(
   .replace(/=/g, '')
   .toLowerCase()}`
 
+const makeid = () => {
+  let text = ''
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  for (let i = 0; i < 5; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length))
+  }
+  return text
+}
+
+
 class ColorPallet extends Component {
   constructor(props) {
     super(props)
@@ -37,6 +47,60 @@ class ColorPallet extends Component {
       modalVisible: false,
       openedIndex: -1,
     }
+  }
+
+  renderCreateOutfitButton(outfitId) {
+    return (<TouchableOpacity
+      style={{
+        flexDirection: 'row',
+        backgroundColor: '#ea5e85',
+        borderRadius: 10,
+        marginLeft: 7,
+        marginTop: 7,
+        marginBottom: 7,
+        padding: 4,
+        paddingRight: 7,
+        paddingLeft: 7,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      onPress={() => {
+        this.props.refereshUserInfo()
+        this.props.refreshCategories()
+        this.props.refreshColorCode()
+
+        if (this.props.user.username === deviceNameSafe) {
+          Alert.alert(
+            'You are not logged in',
+            'In order to use "Creating Outfit" feature you need to login or create a user.',
+            [
+              { text: 'Dismiss' },
+              { text: 'Login', onPress: () => this.props.navigateToLogin() },
+            ],
+            { cancelable: false }
+          )
+          return
+        }
+        this.setState({ outfitTitle: outfitId || makeid() })
+        this.setModalVisible(!this.state.modalVisible)
+      }}
+    >
+      <FontAwesome
+        style={{
+          marginRight: 7,
+          color: '#F5F5F5',
+        }}
+      >
+        {Icons.plus}
+      </FontAwesome>
+      <Text
+        style={{
+          color: '#f5f5f5',
+        }}
+      >
+        {outfitId ? 'Add More Item' : 'Create Outfit'}
+      </Text>
+    </TouchableOpacity>)
   }
 
   renderTitle() {
@@ -63,57 +127,7 @@ class ColorPallet extends Component {
             , 2000)
           }}
         />
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            backgroundColor: '#ea5e85',
-            borderRadius: 10,
-            marginLeft: 7,
-            marginTop: 7,
-            marginBottom: 7,
-            padding: 4,
-            paddingRight: 7,
-            paddingLeft: 7,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => {
-            this.props.refereshUserInfo()
-            this.props.refreshCategories()
-            this.props.refreshColorCode()
-
-            if (this.props.user.username === deviceNameSafe) {
-              Alert.alert(
-                'You are not logged in',
-                'In order to use "Creating Outfit" feature you need to login or create a user.',
-                [
-                  { text: 'Dismiss' },
-                  { text: 'Login', onPress: () => this.props.navigateToLogin() },
-                ],
-                { cancelable: false }
-              )
-              return
-            }
-
-            this.setModalVisible(!this.state.modalVisible)
-          }}
-        >
-          <FontAwesome
-            style={{
-              marginRight: 7,
-              color: '#F5F5F5',
-            }}
-          >
-            {Icons.plus}
-          </FontAwesome>
-          <Text
-            style={{
-              color: '#f5f5f5',
-            }}
-          >
-            Create Outfit (Beta)
-          </Text>
-        </TouchableOpacity>
+        {this.renderCreateOutfitButton()}
       </View>
     )
   }
@@ -130,6 +144,7 @@ class ColorPallet extends Component {
       onDismissPressed={() => this.setModalVisible(false)}
       colorPallet={this.props.base.code}
       colorPalletId={this.props.base.id}
+      title={this.state.outfitTitle}
     />)
   }
 
@@ -157,6 +172,43 @@ class ColorPallet extends Component {
 
   setModalVisible(visible) {
     this.setState({ modalVisible: visible })
+  }
+
+  renderOutfits() {
+    const productBookmarks =
+      this.props.productBookmarks.filter(p =>
+        p.palletId === this.props.base.id) || []
+
+    const titles = productBookmarks
+      .map(tt => tt.title)
+      .filter((item, ii, ar) => ar.indexOf(item) === ii)
+
+    return titles.map((title, i) => (
+      <View
+        key={i}
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          width: '100%',
+          padding: 10,
+
+        }}
+      >
+        {productBookmarks
+          .filter(pt => pt.title === title)
+          .map((t) => (
+            <ProductItem
+              key={Math.random() * 100}
+              base={t.product}
+              colorPalletId={this.props.base.id}
+            />
+          ))}
+        <View style={{ width: '100%' }}>
+          <View style={{ width: 'auto', marginLeft: 'auto' }}>
+            {this.renderCreateOutfitButton(title)}
+          </View>
+        </View>
+      </View>))
   }
 
   render() {
@@ -330,26 +382,22 @@ class ColorPallet extends Component {
             </View>
           </View>
 
-          {productBookmarks.length > 0 && <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              width: '100%',
-              marginTop: -20,
-              padding: 10,
-              paddingTop: 40,
-              paddingBottom: 40,
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-              borderWidth: 2,
-              borderColor: '#3b4e68',
-              borderTopWidth: 0,
-            }}
-          >
-            {productBookmarks.map((t, i) => (
-              <ProductItem key={Math.random() * 100} base={{ ...t.product, colorPalletId: this.props.base.id }} />
-            ))}
-          </View>}
+          {productBookmarks.length > 0 &&
+            <View
+              style={{
+                width: '100%',
+                marginTop: -20,
+                paddingTop: 30,
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
+                borderWidth: 2,
+                borderColor: '#3b4e68',
+                borderTopWidth: 0,
+              }}
+            >
+              {this.renderOutfits()}
+            </View>
+          }
         </View>
       </View>
     )
