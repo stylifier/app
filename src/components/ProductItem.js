@@ -48,7 +48,7 @@ class ProductItem extends Component {
             {base.price.original}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {!this.props.hideBookmarkBotton && <TouchableOpacity
           style={{
             position: 'absolute',
             top: 0,
@@ -73,7 +73,7 @@ class ProductItem extends Component {
           >
             {Icons.bookmark}
           </FontAwesome>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
     )
   }
@@ -85,6 +85,7 @@ ProductItem.propTypes = {
   deleteBookmarkedProduct: PropTypes.func,
   bookmarkProduct: PropTypes.func,
   colorPalletId: PropTypes.string,
+  hideBookmarkBotton: PropTypes.bool,
   title: PropTypes.string,
 }
 

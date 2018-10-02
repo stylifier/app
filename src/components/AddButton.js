@@ -6,7 +6,6 @@ import FontAwesome, { Icons } from 'react-native-fontawesome'
 import ImageCropPicker from 'react-native-image-crop-picker'
 import actions from '../actions'
 
-const SIZE = 80
 const durationIn = 200
 const durationOut = 110
 
@@ -18,9 +17,35 @@ class AddButton extends Component {
     this.icon2 = new Animated.Value(0)
     this.icon3 = new Animated.Value(0)
 
+    this.state = {
+      addButtonSize: 80,
+      secondaryButtonsSize: 40,
+    }
+
     ImageCropPicker.clean()
-    .then(() => {})
-    .catch(() => {})
+      .then(() => {})
+      .catch(() => {})
+
+    this.addButtonSizeAnimation = new Animated.Value(0)
+  }
+
+  componentWillUpdate(nextProps) {
+    if (nextProps.nav.index !== this.props.nav.index) {
+      Animated.timing(
+        this.addButtonSizeAnimation,
+        {
+          toValue: nextProps.nav.index === 3 ? 1 : 0,
+          duration: 500,
+          easing: Easing.bounce
+        }
+      ).start()
+
+      if (nextProps.nav.index === 3) {
+        this.setState({ addButtonSize: 50 })
+      } else {
+        setTimeout(() => this.setState({ addButtonSize: 80 }), 200)
+      }
+    }
   }
 
   toggleView() {
@@ -53,13 +78,20 @@ class AddButton extends Component {
   }
 
   renderCameraPick() {
+    const { addButtonSize, secondaryButtonsSize } = this.state
     const x = this.icon3.interpolate({
       inputRange: [0, 1],
-      outputRange: [20, 60],
+      outputRange: [
+        (addButtonSize / 2) - (secondaryButtonsSize / 2),
+        ((addButtonSize / 2) - (secondaryButtonsSize / 2)) + 40,
+      ],
     })
     const y = this.icon3.interpolate({
       inputRange: [0, 1],
-      outputRange: [10, -50],
+      outputRange: [
+        (addButtonSize / 2) - (secondaryButtonsSize / 2),
+        -60,
+      ],
     })
     return (
       <Animated.View
@@ -80,38 +112,38 @@ class AddButton extends Component {
               this.props.imagePicked()
               this.props.imageResized(image.path)
             })
-            .catch((e) => {
-              if (/cancelled/g.test(e.message)) {
-                return
-              }
+              .catch((e) => {
+                if (/cancelled/g.test(e.message)) {
+                  return
+                }
 
-              if (/Cannot access camera/g.test(e.message)) {
+                if (/Cannot access camera/g.test(e.message)) {
+                  Alert.alert(
+                    'Cannot Access Camera',
+                    e.message.replace('Cannot access camera.', ''),
+                    [
+                      { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                      { text: 'OK', onPress: () => {} },
+                    ],
+                    { cancelable: false }
+                  )
+                  return
+                }
+
                 Alert.alert(
-                  'Cannot Access Camera',
-                  e.message.replace('Cannot access camera.', ''),
-                  [
-                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
-                    { text: 'OK', onPress: () => {} },
-                  ],
-                  { cancelable: false }
+                  'Failed to Access Camera',
+                  e.message,
+                  [{ text: 'OK', onPress: () => {} }]
                 )
-                return
-              }
-
-              Alert.alert(
-                'Failed to Access Camera',
-                e.message,
-                [{ text: 'OK', onPress: () => {} }]
-              )
-            })
+              })
           }}
           style={{
             position: 'absolute',
             alignItems: 'center',
             justifyContent: 'center',
-            width: SIZE / 1.8,
-            height: SIZE / 1.8,
-            borderRadius: SIZE / 2,
+            width: secondaryButtonsSize,
+            height: secondaryButtonsSize,
+            borderRadius: secondaryButtonsSize,
             backgroundColor: '#66bfc7',
           }}
         >
@@ -129,13 +161,17 @@ class AddButton extends Component {
   }
 
   renderImagePick() {
+    const { addButtonSize, secondaryButtonsSize } = this.state
     const x = this.icon1.interpolate({
       inputRange: [0, 1],
-      outputRange: [20, -20],
+      outputRange: [
+        (addButtonSize / 2) - (secondaryButtonsSize / 2),
+        ((addButtonSize / 2) - (secondaryButtonsSize / 2)) - 40,
+      ],
     })
     const y = this.icon1.interpolate({
       inputRange: [0, 1],
-      outputRange: [10, -50],
+      outputRange: [(addButtonSize / 2) - (secondaryButtonsSize / 2), -60],
     })
     return (
       <Animated.View
@@ -156,38 +192,38 @@ class AddButton extends Component {
               this.props.imagePicked()
               this.props.imageResized(image.path)
             })
-            .catch((e) => {
-              if (/cancelled/g.test(e.message)) {
-                return
-              }
+              .catch((e) => {
+                if (/cancelled/g.test(e.message)) {
+                  return
+                }
 
-              if (/Cannot access images/g.test(e.message)) {
+                if (/Cannot access images/g.test(e.message)) {
+                  Alert.alert(
+                    'Cannot Access Images',
+                    e.message.replace('Cannot access images.', ''),
+                    [
+                      { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                      { text: 'OK', onPress: () => {} },
+                    ],
+                    { cancelable: false }
+                  )
+                  return
+                }
+
                 Alert.alert(
-                  'Cannot Access Images',
-                  e.message.replace('Cannot access images.', ''),
-                  [
-                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
-                    { text: 'OK', onPress: () => {} },
-                  ],
-                  { cancelable: false }
+                  'Failed to Get Images',
+                  'Please try again',
+                  [{ text: 'OK', onPress: () => {} }]
                 )
-                return
-              }
-
-              Alert.alert(
-                'Failed to Get Images',
-                'Please try again',
-                [{ text: 'OK', onPress: () => {} }]
-              )
-            })
+              })
           }}
           style={{
             position: 'absolute',
             alignItems: 'center',
             justifyContent: 'center',
-            width: SIZE / 1.8,
-            height: SIZE / 1.8,
-            borderRadius: SIZE / 2,
+            width: secondaryButtonsSize,
+            height: secondaryButtonsSize,
+            borderRadius: secondaryButtonsSize,
             backgroundColor: '#66bfc7',
           }}
         >
@@ -207,6 +243,12 @@ class AddButton extends Component {
   render() {
     this.toggleView()
 
+    const addButtonSizeInterpolate = this.addButtonSizeAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [80, 50],
+    })
+
+    const { addButtonSize } = this.state
     const rotation = this.mode.interpolate({
       inputRange: [0, 1],
       outputRange: ['0deg', '45deg'],
@@ -227,9 +269,9 @@ class AddButton extends Component {
             ],
             alignItems: 'center',
             justifyContent: 'center',
-            width: SIZE,
-            height: SIZE,
-            borderRadius: SIZE / 2,
+            width: addButtonSizeInterpolate,
+            height: addButtonSizeInterpolate,
+            borderRadius: 100,
             backgroundColor: '#ea5e85',
           }}
         >
@@ -237,9 +279,9 @@ class AddButton extends Component {
             style={{
               alignItems: 'center',
               justifyContent: 'center',
-              width: SIZE,
-              height: SIZE,
-              borderRadius: SIZE / 2,
+              width: addButtonSize,
+              height: addButtonSize,
+              borderRadius: addButtonSize / 2,
             }}
           >
             <FontAwesome
@@ -263,10 +305,12 @@ AddButton.propTypes = {
   imagePicked: PropTypes.func,
   bookmarks: PropTypes.array,
   user: PropTypes.object,
+  nav: PropTypes.object,
 }
 
 const mapStateToProps = (state) => ({
   user: state.user,
+  nav: state.nav,
 })
 
 const mapDispatchToProps = dispatch => ({

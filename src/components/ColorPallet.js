@@ -19,14 +19,6 @@ import actions from '../actions'
 import CreateOutfit from './CreateOutfit'
 import ProductItem from './ProductItem.js'
 
-const btoa = require('Base64').btoa
-const DeviceInfo = require('react-native-device-info')
-
-const deviceNameSafe = `m_g_i_o_s_${btoa(
-  unescape(
-    encodeURIComponent(DeviceInfo.getUniqueID())))
-  .replace(/=/g, '')
-  .toLowerCase()}`
 
 const makeid = () => {
   let text = ''
@@ -69,7 +61,7 @@ class ColorPallet extends Component {
         this.props.refreshCategories()
         this.props.refreshColorCode()
 
-        if (this.props.user.username === deviceNameSafe) {
+        if (this.props.user.isLoggedInUser) {
           Alert.alert(
             'You are not logged in',
             'In order to use "Creating Outfit" feature you need to login or create a user.',
@@ -191,7 +183,6 @@ class ColorPallet extends Component {
           flexWrap: 'wrap',
           width: '100%',
           padding: 10,
-
         }}
       >
         {productBookmarks
@@ -414,6 +405,8 @@ ColorPallet.propTypes = {
   bookmarks: PropTypes.array,
   productBookmarks: PropTypes.array,
   showTitle: PropTypes.bool,
+  user: PropTypes.object,
+  navigateToLogin: PropTypes.func,
 }
 
 const mapStateToProps = state => ({

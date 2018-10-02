@@ -7,6 +7,7 @@ import {
   createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers'
 import Bookmarks from '../components/Bookmarks'
+import Messages from '../components/Messages'
 import Profile from '../components/Profile'
 import AddButton from '../components/AddButton'
 import ProccessAddingImage from '../components/ProccessAddingImage'
@@ -14,44 +15,83 @@ import actions from '../actions'
 
 
 const RootNavigator = createBottomTabNavigator({
-  Bookmarks: {
-    screen: Bookmarks,
-    navigationOptions: () => ({
-      tabBarIcon: ({ tintColor }) => (
-        <FontAwesome
-          style={{
-            fontSize: 24,
-            color: tintColor,
-          }}
-        >
-          {Icons.bookmark}
-        </FontAwesome>
-      ),
-    }),
+  ...{
+    Bookmarks: {
+      screen: Bookmarks,
+      navigationOptions: () => ({
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome
+            style={{
+              fontSize: 24,
+              color: tintColor,
+            }}
+          >
+            {Icons.bookmark}
+          </FontAwesome>
+        ),
+      }),
+    },
   },
-  Adding: {
-    screen: ProccessAddingImage,
-    navigationOptions: () => ({
-      tabBarIcon: <AddButton ref={t => { this.addRef = t }} />,
-      tabBarOnPress: () => this.addRef.store.dispatch(actions.toggleAddMenu())
-    }),
+  ...{
+    Feeds: {
+      screen: Bookmarks,
+      navigationOptions: () => ({
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome
+            style={{
+              fontSize: 24,
+              color: tintColor,
+            }}
+          >
+            {Icons.newspaperO}
+          </FontAwesome>
+        ),
+      }),
+    },
   },
-  Profile: {
-    screen: Profile,
-    navigationOptions: () => ({
-      tabBarIcon: ({ tintColor }) => (
-        <FontAwesome
-          style={{
-            fontSize: 24,
-            color: tintColor,
-          }}
-        >
-          {Icons.user}
-        </FontAwesome>
-      ),
-    }),
+  ...{
+    Adding: {
+      screen: ProccessAddingImage,
+      navigationOptions: () => ({
+        tabBarIcon: <AddButton ref={t => { this.addRef = t }} />,
+        tabBarOnPress: () => this.addRef.store.dispatch(actions.toggleAddMenu()),
+      }),
+    },
+    ...{
+      Messages: {
+        screen: Messages,
+        navigationOptions: () => ({
+          tabBarIcon: ({ tintColor }) => (
+            <FontAwesome
+              style={{
+                fontSize: 24,
+                color: tintColor,
+              }}
+            >
+              {Icons.comment}
+            </FontAwesome>
+          ),
+        }),
+      },
+    },
+    Profile: {
+      screen: Profile,
+      navigationOptions: () => ({
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome
+            style={{
+              fontSize: 24,
+              color: tintColor,
+            }}
+          >
+            {Icons.user}
+          </FontAwesome>
+        ),
+      }),
+    },
   },
-}, {
+},
+{
   tabBarOptions: {
     showLabel: false,
     activeTintColor: '#66bfc7',

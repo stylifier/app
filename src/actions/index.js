@@ -32,6 +32,12 @@ const actions = {
       })
   },
 
+  addSubsctiption: (id) => () => {
+    api.addSubsctiption(id)
+      .then(() => {})
+      .catch(() => {})
+  },
+
   refereshUserInfo: () => (dispatch) => {
     api.fetchUserInfo()
       .then((info) =>
@@ -40,7 +46,57 @@ const actions = {
             type: 'REFERESH_USER_INFO',
             payload: { ...info },
           }))
+          .catch(() => {})
       )
+      .catch(() => {})
+  },
+
+  createMessage: (threadId, text, media, products) => (dispatch) => {
+    api.createMessage(threadId, text, media, products)
+      .then(() => dispatch(actions.fetchTopMessages(threadId)))
+      .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
+  },
+
+  fetchButtomMessages: (threadId) => (dispatch, getState) => {
+    const { messages } = getState()
+
+    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
+    api.fetchMessages(threadId, messages.messagesPagination)
+      .then((msgs) =>
+        dispatch({ type: 'ADD_BOTTOM_MESSAGES', payload: msgs }) &&
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+  },
+
+  fetchTopMessages: (threadId) => (dispatch) => {
+    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
+    api.fetchMessages(threadId)
+      .then((msgs) =>
+        dispatch({ type: 'ADD_TOP_MESSAGES', payload: msgs }) &&
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+  },
+
+  fetchMessages: (threadId) => (dispatch) => {
+    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
+    api.fetchMessages(threadId)
+      .then((msgs) =>
+        dispatch({ type: 'REFERESH_MESSAGES', payload: msgs }) &&
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+  },
+
+  getMoreThreads: () => (dispatch, getState) => {
+    const { messages } = getState()
+
+    if (messages.threadLoading) { return }
+
+    dispatch({ type: 'LOADING_THREAD_FETCH' })
+    api.fetchThreads(undefined, messages.pagination)
+      .then((tds) =>
+        dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
+        dispatch({ type: 'FINISHED_THREAD_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
   colorSuggestionImagePicked: () => (dispatch) => {
@@ -220,6 +276,7 @@ const actions = {
     dispatch(actions.refreshBookmarks())
     dispatch(actions.refreshCategories())
     dispatch(actions.refreshColorCode())
+    dispatch(actions.getMoreThreads())
   },
 
   loginUser: (username, password) => (dispatch) => {

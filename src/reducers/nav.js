@@ -3,7 +3,7 @@ import { RootNavigator } from '../navigation'
 const firstAction = RootNavigator.router.getActionForPathAndParams('Bookmarks')
 const initialNavState = RootNavigator.router.getStateForAction(firstAction)
 
-const nav = (state = initialNavState, action) => {
+const nav = (state = { ...initialNavState }, action) => {
   let nextState
 
   switch (action.type) {
@@ -16,6 +16,18 @@ const nav = (state = initialNavState, action) => {
     case 'Profile':
       nextState = RootNavigator.router.getStateForAction(
         NavigationActions.navigate({ routeName: 'Profile' }),
+        state
+      )
+      break
+    case 'Messages':
+      nextState = RootNavigator.router.getStateForAction(
+        NavigationActions.navigate({ routeName: 'Messages' }),
+        state
+      )
+      break
+    case 'Feeds':
+      nextState = RootNavigator.router.getStateForAction(
+        NavigationActions.navigate({ routeName: 'Feeds' }),
         state
       )
       break

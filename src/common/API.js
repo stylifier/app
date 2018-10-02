@@ -103,10 +103,12 @@ class API {
     const ret = fetch(this.baseAddress + path, {
         body: JSON.stringify(Object.assign({}, body)),
         headers: {
+          'Content-Type': 'application/json',
           accept: 'json',
           Authorization: 'Bearer '+ this.token,
           'x-consumer-username': this.userInfo.username
-        }
+        },
+        method: 'PUT'
       })
       .then((response) => {
         if (response.status >= 200 && response.status < 300)

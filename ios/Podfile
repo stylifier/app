@@ -20,6 +20,8 @@ target 'stylifier' do
   ]
 
   pod 'RNImageCropPicker', :path =>  '../node_modules/react-native-image-crop-picker'
+  pod 'react-native-onesignal', :path => '../node_modules/react-native-onesignal'
+
 end
 
 # very important to have, unless you removed React dependencies for Libraries
