@@ -238,9 +238,9 @@ class API {
     return this.get(`/threads/${threadId}/messages`, pagination ? ['pagination=' + pagination] : [])
   }
 
-  addSubsctiption(id) {
+  addSubsctiption(id, name) {
     if(!id) return Promise.resolve()
-    return this.post(`/subscriptions/${id}`, {})
+    return this.post(`/subscriptions/${id}?name=${name}`, {})
   }
 
   shareMedia(id) {

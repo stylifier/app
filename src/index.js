@@ -30,6 +30,8 @@ class MainView extends React.Component {
     OneSignal.addEventListener('received', this.onReceivedListener)
     OneSignal.addEventListener('opened', this.onOpenedListener)
     OneSignal.addEventListener('ids', this.onIdsListener)
+
+    OneSignal.inFocusDisplaying(0)
   }
 
   componentWillUnmount() {

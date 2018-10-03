@@ -33,7 +33,7 @@ const actions = {
   },
 
   addSubsctiption: (id) => () => {
-    api.addSubsctiption(id)
+    api.addSubsctiption(id, 'IOS_NOTIFICATION')
       .then(() => {})
       .catch(() => {})
   },
