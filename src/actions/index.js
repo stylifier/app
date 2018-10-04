@@ -33,7 +33,8 @@ const actions = {
   },
 
   addSubsctiption: (id) => () => {
-    api.addSubsctiption(id, 'IOS_NOTIFICATION')
+    AsyncStorage.setItem('subscription_id', id)
+      .then(() => api.addSubsctiption(id, 'IOS_NOTIFICATION'))
       .then(() => {})
       .catch(() => {})
   },
@@ -269,14 +270,14 @@ const actions = {
   },
 
   userInitiated: (info) => (dispatch) => {
-    dispatch({
-      type: 'USER_INITIATED',
-      payload: info,
-    })
+    dispatch({ type: 'USER_INITIATED', payload: info })
     dispatch(actions.refreshBookmarks())
     dispatch(actions.refreshCategories())
     dispatch(actions.refreshColorCode())
     dispatch(actions.getMoreThreads())
+
+    AsyncStorage.getItem('subscription_id')
+      .then((sid) => sid && dispatch(actions.addSubsctiption(sid)))
   },
 
   loginUser: (username, password) => (dispatch) => {

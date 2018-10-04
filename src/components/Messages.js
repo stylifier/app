@@ -111,10 +111,10 @@ class Messages extends Component {
                   }}
                 >
                   {props.currentMessage.products
-                    .map((t) => (
+                    .map((t, ind) => (
                       <ProductItem
                         hideBookmarkBotton
-                        key={Math.random() * 100}
+                        key={ind}
                         base={t}
                       />
                     ))}

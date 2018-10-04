@@ -41,14 +41,25 @@ class MainView extends React.Component {
   }
 
   onReceived(notification) {
-    console.log('Notification received: ', notification)
+    const { additionalData } = notification.payload
+
+    if (!additionalData.url) return
+
+    const param =
+      additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
+
+    console.log('-->>>', param)
   }
 
   onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body)
-    console.log('Data: ', openResult.notification.payload.additionalData)
-    console.log('isActive: ', openResult.notification.isAppInFocus)
-    console.log('openResult: ', openResult)
+    const { additionalData } = openResult.notification.payload
+
+    if (!additionalData.url) return
+
+    const param =
+      additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
+
+    console.log('-->>>', param)
   }
 
   onIds(device) {

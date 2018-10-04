@@ -34,7 +34,7 @@ const RootNavigator = createBottomTabNavigator({
   },
   ...{
     Feeds: {
-      screen: Bookmarks,
+      screen: Profile,
       navigationOptions: () => ({
         tabBarIcon: ({ tintColor }) => (
           <FontAwesome

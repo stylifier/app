@@ -187,9 +187,9 @@ class ColorPallet extends Component {
       >
         {productBookmarks
           .filter(pt => pt.title === title)
-          .map((t) => (
+          .map((t, ind) => (
             <ProductItem
-              key={Math.random() * 100}
+              key={ind}
               base={t.product}
               colorPalletId={this.props.base.id}
             />
