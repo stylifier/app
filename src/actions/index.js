@@ -80,11 +80,26 @@ const actions = {
 
   fetchMessages: (threadId) => (dispatch) => {
     dispatch({ type: 'LOADING_MESSAGES_FETCH' })
+    dispatch({ type: 'CLEAR_MESSAGES' })
     api.fetchMessages(threadId)
       .then((msgs) =>
         dispatch({ type: 'REFERESH_MESSAGES', payload: msgs }) &&
         dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+  },
+
+  setSelectedThreadId: (threadId, refetchThreads = false) => (dispatch) => {
+    if (refetchThreads) {
+      return dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
+    }
+
+    dispatch({ type: 'LOADING_THREAD_FETCH' })
+    return api.fetchThreads(undefined, 0)
+      .then((tds) =>
+        dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
+        dispatch({ type: 'FINISHED_THREAD_FETCH' }) &&
+        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId }))
+      .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
   getMoreThreads: () => (dispatch, getState) => {

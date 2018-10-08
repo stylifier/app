@@ -59,7 +59,9 @@ class MainView extends React.Component {
     const param =
       additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
 
-    console.log('-->>>', param)
+    if (param[0] === 'messages') {
+      this.props.setSelectedThreadId(param[1], true)
+    }
   }
 
   onIds(device) {
@@ -70,6 +72,7 @@ class MainView extends React.Component {
 MainView.propTypes = {
   initiateUser: PropTypes.func,
   addSubsctiption: PropTypes.func,
+  setSelectedThreadId: PropTypes.func,
 }
 
 const styles = StyleSheet.create({
@@ -82,6 +85,9 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = dispatch => ({
   initiateUser: () => dispatch(actions.initiateUser()),
   addSubsctiption: (id) => dispatch(actions.addSubsctiption(id)),
+  setSelectedThreadId: (threadId, refetchThreads) => dispatch(
+    actions.setSelectedThreadId(threadId, refetchThreads)
+  ),
 })
 
 export default connect(() => ({}), mapDispatchToProps)(MainView)

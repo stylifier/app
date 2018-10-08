@@ -11,27 +11,11 @@ import Messages from '../components/Messages'
 import Profile from '../components/Profile'
 import AddButton from '../components/AddButton'
 import ProccessAddingImage from '../components/ProccessAddingImage'
+import MessagingButton from '../components/MessagingButton'
 import actions from '../actions'
 
 
 const RootNavigator = createBottomTabNavigator({
-  ...{
-    Bookmarks: {
-      screen: Bookmarks,
-      navigationOptions: () => ({
-        tabBarIcon: ({ tintColor }) => (
-          <FontAwesome
-            style={{
-              fontSize: 24,
-              color: tintColor,
-            }}
-          >
-            {Icons.bookmark}
-          </FontAwesome>
-        ),
-      }),
-    },
-  },
   ...{
     Feeds: {
       screen: Profile,
@@ -50,6 +34,23 @@ const RootNavigator = createBottomTabNavigator({
     },
   },
   ...{
+    Bookmarks: {
+      screen: Bookmarks,
+      navigationOptions: () => ({
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome
+            style={{
+              fontSize: 24,
+              color: tintColor,
+            }}
+          >
+            {Icons.bookmark}
+          </FontAwesome>
+        ),
+      }),
+    },
+  },
+  ...{
     Adding: {
       screen: ProccessAddingImage,
       navigationOptions: () => ({
@@ -62,14 +63,7 @@ const RootNavigator = createBottomTabNavigator({
         screen: Messages,
         navigationOptions: () => ({
           tabBarIcon: ({ tintColor }) => (
-            <FontAwesome
-              style={{
-                fontSize: 24,
-                color: tintColor,
-              }}
-            >
-              {Icons.comment}
-            </FontAwesome>
+            <MessagingButton tintColor={tintColor} />
           ),
         }),
       },

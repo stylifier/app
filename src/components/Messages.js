@@ -14,24 +14,16 @@ import ImageItem from './ImageItem.js'
 
 
 class Messages extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      selectedThread: undefined,
-    }
-  }
-
   onSend(messages = []) {
     messages.forEach(m =>
-      this.props.createMessage(this.state.selectedThread.id, m.text))
+      this.props.createMessage(this.props.messages.selectedThreadId, m.text))
   }
 
   componentDidMount() {
     this.fetchNewMessageInterval = setInterval(() => {
-      if (!this.state.selectedThread) return
+      if (!this.props.messages.selectedThreadId) return
 
-      this.props.fetchTopMessages(this.state.selectedThread.id)
+      this.props.fetchTopMessages(this.props.messages.selectedThreadId)
     }, 2000)
   }
 
@@ -40,8 +32,27 @@ class Messages extends Component {
   }
 
   renderMessaging() {
-    const { selectedThread } = this.state
+    const { messages } = this.props
+    const selectedThread = messages.threads
+      .filter(t => t.id === this.props.messages.selectedThreadId)[0]
     const isFromMe = selectedThread.from.username === this.props.user.username
+
+    // <TouchableOpacity
+    //   style={{
+    //     marginRight: 'auto',
+    //     flexDirection: 'row',
+    //     paddingTop: 10,
+    //     position: 'absolute',
+    //     right: 10,
+    //   }}
+    //   onPress={() => {
+    //     this.props.setSelectedThreadId(undefined)
+    //   }}
+    // >
+    //   <Text
+    //     style={{ color: 'black', fontSize: 16 }}
+    //   >Finish</Text>
+    // </TouchableOpacity>
 
     return (
       <View style={{ width: '100%', height: '100%' }}>
@@ -53,7 +64,9 @@ class Messages extends Component {
               paddingTop: 10,
               marginLeft: 10,
             }}
-            onPress={() => this.setState({ selectedThread: undefined })}
+            onPress={() => {
+              this.props.setSelectedThreadId(undefined)
+            }}
           >
             <FontAwesome
               style={{
@@ -67,20 +80,6 @@ class Messages extends Component {
             <Text
               style={{ color: 'black', fontSize: 16 }}
             >Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              marginRight: 'auto',
-              flexDirection: 'row',
-              paddingTop: 10,
-              position: 'absolute',
-              right: 10,
-            }}
-            onPress={() => this.setState({ selectedThread: undefined })}
-          >
-            <Text
-              style={{ color: 'black', fontSize: 16 }}
-            >Finish</Text>
           </TouchableOpacity>
         </View>
         <GiftedChat
@@ -97,7 +96,7 @@ class Messages extends Component {
               _id: selectedThread.to.id,
             })
           }
-          onLoadEarlier={() => this.props.fetchButtomMessages(selectedThread.id)}
+          onLoadEarlier={() => this.props.fetchButtomMessages(this.props.messages.selectedThreadId)}
           loadEarlier
           renderBubble={(props) => (
             <Bubble
@@ -147,7 +146,7 @@ class Messages extends Component {
                 _id: selectedThread.to.id,
               }),
           }))}
-          onSend={messages => this.onSend(messages)}
+          onSend={msgs => this.onSend(msgs)}
         />
       </View>
     )
@@ -162,13 +161,13 @@ class Messages extends Component {
 
     return (
       <KeyboardAwareScrollView>
-        {this.props.messages.threads.map((t, i) =>
+        {messages.threads.map((t, i) =>
           <ThreadItem
             key={i}
             base={t}
             currentUser={this.props.user}
             onPress={(trd) => {
-              this.setState({ selectedThread: trd })
+              this.props.setSelectedThreadId(trd.id)
               this.props.fetchMessages(trd.id)
             }}
           />
@@ -223,8 +222,8 @@ class Messages extends Component {
 
     return (
       <SafeAreaView style={{ width: '100%', height: '100%' }}>
-        {this.state.selectedThread && this.renderMessaging()}
-        {!this.state.selectedThread && this.renderThreads()}
+        {this.props.messages.selectedThreadId && this.renderMessaging()}
+        {!this.props.messages.selectedThreadId && this.renderThreads()}
       </SafeAreaView>
     )
   }
@@ -236,6 +235,7 @@ Messages.propTypes = {
   createMessage: PropTypes.func,
   fetchTopMessages: PropTypes.func,
   fetchButtomMessages: PropTypes.func,
+  setSelectedThreadId: PropTypes.func,
   user: PropTypes.object,
   messages: PropTypes.object,
 }
@@ -260,6 +260,9 @@ const mapDispatchToProps = dispatch => ({
   ),
   fetchButtomMessages: (threadId) => dispatch(
     actions.fetchButtomMessages(threadId)
+  ),
+  setSelectedThreadId: (threadId, refetchThreads) => dispatch(
+    actions.setSelectedThreadId(threadId, refetchThreads)
   ),
 })
 
