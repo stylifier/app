@@ -7,6 +7,7 @@ import actions from '../actions'
 
 class MessagingButton extends Component {
   render() {
+    const { messages } = this.props
     return (
       <View>
         <FontAwesome
@@ -17,7 +18,7 @@ class MessagingButton extends Component {
         >
           {Icons.comment}
         </FontAwesome>
-        <View
+        {messages.unreadThreadIds.length > 0 && <View
           style={{
             backgroundColor: '#ea5e85',
             position: 'absolute',
@@ -38,9 +39,9 @@ class MessagingButton extends Component {
               marginBottom: 'auto',
             }}
           >
-          1
+            {messages.unreadThreadIds.length}
           </Text>
-        </View>
+        </View>}
       </View>
     )
   }

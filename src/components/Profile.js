@@ -234,7 +234,7 @@ class Profile extends Component {
         }}
       >
         <Text style={{ marginBottom: 50 }}>
-          You are logged in as '{user.username.replace('m_g_i_o_s_', '')}'
+          You are logged in as '{user.username && user.username.replace('m_g_i_o_s_', '')}'
         </Text>
         <Button
           title="Logout"

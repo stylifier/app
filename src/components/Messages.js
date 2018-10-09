@@ -19,18 +19,6 @@ class Messages extends Component {
       this.props.createMessage(this.props.messages.selectedThreadId, m.text))
   }
 
-  componentDidMount() {
-    this.fetchNewMessageInterval = setInterval(() => {
-      if (!this.props.messages.selectedThreadId) return
-
-      this.props.fetchTopMessages(this.props.messages.selectedThreadId)
-    }, 2000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.fetchNewMessageInterval)
-  }
-
   renderMessaging() {
     const { messages } = this.props
     const selectedThread = messages.threads
@@ -166,6 +154,7 @@ class Messages extends Component {
             key={i}
             base={t}
             currentUser={this.props.user}
+            isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
             onPress={(trd) => {
               this.props.setSelectedThreadId(trd.id)
               this.props.fetchMessages(trd.id)

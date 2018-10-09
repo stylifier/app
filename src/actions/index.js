@@ -1,5 +1,6 @@
 import { NavigationActions } from 'react-navigation'
 import { AsyncStorage, Alert } from 'react-native'
+import moment from 'moment'
 import API from '../common/API.js'
 
 const btoa = require('Base64').btoa
@@ -30,6 +31,14 @@ const actions = {
       .catch(() => {
         Alert.alert('Ops... Something went wrong, please try again later.')
       })
+  },
+
+  addUnreadThread: (threadId) => (dispatch) => {
+    dispatch({ type: 'ADD_UNREAD_THREAD', payload: threadId })
+  },
+
+  removeUnreadThread: (threadId) => (dispatch) => {
+    dispatch({ type: 'REMOVE_UNREAD_THREAD', payload: threadId })
   },
 
   addSubsctiption: (id) => () => {
@@ -84,7 +93,8 @@ const actions = {
     api.fetchMessages(threadId)
       .then((msgs) =>
         dispatch({ type: 'REFERESH_MESSAGES', payload: msgs }) &&
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }) &&
+        dispatch(actions.removeUnreadThread(threadId)))
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
   },
 
@@ -98,8 +108,27 @@ const actions = {
       .then((tds) =>
         dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
         dispatch({ type: 'FINISHED_THREAD_FETCH' }) &&
-        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId }))
+        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId }) &&
+        dispatch(actions.updateUnreadThreads(tds.data)))
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
+  },
+
+  updateUnreadThreads: (threads) => (dispatch, getState) => {
+    const { user } = getState()
+
+    threads.forEach(thread => {
+      const isFromMe = thread.from.username === user.username
+
+      if (isFromMe &&
+        moment(thread.to_last_message_at) > moment(thread.from_last_message_read_at)) {
+        dispatch(actions.addUnreadThread(thread.id))
+      }
+
+      if (!isFromMe &&
+        moment(thread.from_last_message_at) > moment(thread.to_last_message_read_at)) {
+        dispatch(actions.addUnreadThread(thread.id))
+      }
+    })
   },
 
   getMoreThreads: () => (dispatch, getState) => {
@@ -111,8 +140,21 @@ const actions = {
     api.fetchThreads(undefined, messages.pagination)
       .then((tds) =>
         dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
-        dispatch({ type: 'FINISHED_THREAD_FETCH' }))
+        dispatch({ type: 'FINISHED_THREAD_FETCH' }) &&
+        dispatch(actions.updateUnreadThreads(tds.data)))
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
+  },
+
+  refetchTopThreads: () => (dispatch) => {
+    api.fetchThreads(undefined, 0)
+      .then((tds) =>
+        dispatch({ type: 'REFETCH_TOP_THREADS', payload: tds }) &&
+        dispatch(actions.updateUnreadThreads(tds.data)))
+      .catch(() => {})
+  },
+
+  moveToPage: (page) => (dispatch) => {
+    dispatch(NavigationActions.navigate({ routeName: page }))
   },
 
   colorSuggestionImagePicked: () => (dispatch) => {
@@ -330,9 +372,9 @@ const actions = {
 
   logoutUser: () => (dispatch) => {
     AsyncStorage.removeItem('user_info')
-    .then(() =>
-      AsyncStorage.removeItem('guest_submitted'))
-    .then(() => dispatch(actions.initiateUser()))
+      .then(() =>
+        AsyncStorage.removeItem('guest_submitted'))
+      .then(() => dispatch(actions.initiateUser()))
   },
 
   initiateUser: () => (dispatch) => {

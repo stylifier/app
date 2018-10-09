@@ -41,26 +41,47 @@ class MainView extends React.Component {
   }
 
   onReceived(notification) {
-    const { additionalData } = notification.payload
+    try {
+      const { additionalData } = notification.payload
+      const { messages, fetchTopMessages, addUnreadThread, refetchTopThreads } = this.props
 
-    if (!additionalData.url) return
+      if (!additionalData.url) return
 
-    const param =
-      additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
+      const param =
+        additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
 
-    console.log('-->>>', param)
+      if (param[0] === 'messages') {
+        if (messages.selectedThreadId && messages.selectedThreadId === param[1]) {
+          fetchTopMessages(messages.selectedThreadId)
+        }
+        if (messages.selectedThreadId !== param[1]) {
+          addUnreadThread(param[1])
+        }
+
+        if (messages.threads.filter(t => t.id === param[1]).length <= 0) {
+          refetchTopThreads()
+        }
+      }
+    } catch (e) {
+      console.error('onReceived error:', e)
+    }
   }
 
   onOpened(openResult) {
-    const { additionalData } = openResult.notification.payload
+    try {
+      const { additionalData } = openResult.notification.payload
 
-    if (!additionalData.url) return
+      if (!additionalData.url) return
 
-    const param =
-      additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
+      const param =
+        additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
 
-    if (param[0] === 'messages') {
-      this.props.setSelectedThreadId(param[1], true)
+      if (param[0] === 'messages') {
+        this.props.setSelectedThreadId(param[1], true)
+        this.props.moveToPage('Messages')
+      }
+    } catch (e) {
+      console.log('onReceived error:', e)
     }
   }
 
@@ -73,6 +94,11 @@ MainView.propTypes = {
   initiateUser: PropTypes.func,
   addSubsctiption: PropTypes.func,
   setSelectedThreadId: PropTypes.func,
+  addUnreadThread: PropTypes.func,
+  moveToPage: PropTypes.func,
+  fetchTopMessages: PropTypes.func,
+  refetchTopThreads: PropTypes.func,
+  messages: PropTypes.object,
 }
 
 const styles = StyleSheet.create({
@@ -88,6 +114,14 @@ const mapDispatchToProps = dispatch => ({
   setSelectedThreadId: (threadId, refetchThreads) => dispatch(
     actions.setSelectedThreadId(threadId, refetchThreads)
   ),
+  addUnreadThread: (threadId) => dispatch(actions.addUnreadThread(threadId)),
+  fetchTopMessages: (threadId) => dispatch(actions.fetchTopMessages(threadId)),
+  moveToPage: (page) => dispatch(actions.moveToPage(page)),
+  refetchTopThreads: () => dispatch(actions.refetchTopThreads()),
 })
 
-export default connect(() => ({}), mapDispatchToProps)(MainView)
+const mapStateToProps = state => ({
+  messages: state.messages,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainView)

@@ -5,10 +5,11 @@ import moment from 'moment'
 
 class ThreadItem extends Component {
   render() {
-    const { base, currentUser, onPress } = this.props
+    const { base, currentUser, onPress, isUnread } = this.props
 
     const isFromMe = base.from.username === currentUser.username
     const recipient = isFromMe ? base.to : base.from
+    const textColor = isUnread ? '#f5f5f5' : 'black'
 
     return (
       <TouchableOpacity
@@ -18,6 +19,7 @@ class ThreadItem extends Component {
           borderBottomWidth: 1,
           borderBottomColor: '#5b7495',
           flexDirection: 'row',
+          backgroundColor: isUnread ? '#5b7495' : '#f5f5f5',
         }}
         onPress={() => onPress && onPress(base)}
       >
@@ -26,14 +28,16 @@ class ThreadItem extends Component {
           source={{ uri: recipient.profile_picture }}
         />
         <View style={{ marginLeft: 40, flex: 7 }}>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={{ fontWeight: 'bold', color: textColor }}>
             {recipient.full_name}
           </Text>
-          <Text>
+          <Text style={{ color: textColor }}>
             @{recipient.username}
           </Text>
-          <Text style={{ position: 'absolute', right: 0, bottom: 0 }}>
-            {moment(base.created_time).fromNow()}
+          <Text style={{ position: 'absolute', right: 0, bottom: 0, color: textColor }}>
+            {isFromMe ?
+              moment(base.to_last_message_at || base.created_time).fromNow() :
+              moment(base.from_last_message_at || base.created_time).fromNow()}
           </Text>
         </View>
       </TouchableOpacity>
@@ -45,6 +49,7 @@ ThreadItem.propTypes = {
   base: PropTypes.object,
   onPress: PropTypes.func,
   currentUser: PropTypes.object,
+  isUnread: PropTypes.bool,
 }
 
 export default ThreadItem
