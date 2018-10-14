@@ -205,7 +205,7 @@ class Messages extends Component {
   render() {
     const { user } = this.props
 
-    if (user.is_guest === true) {
+    if (!user.isLoggedInUser) {
       return this.renderUserIsGuest()
     }
 

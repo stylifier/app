@@ -1,11 +1,11 @@
 const btoa = require('Base64').btoa
 const DeviceInfo = require('react-native-device-info')
 
-const deviceNameSafe = `m_g_i_o_s_${btoa(
+const deviceNameSafe = btoa(
   unescape(
     encodeURIComponent(DeviceInfo.getUniqueID())))
   .replace(/=/g, '')
-  .toLowerCase()}`
+  .toLowerCase()
 
 const user = (state = {}, action) => {
   if (action.type.startsWith('Navigation')) {
@@ -21,7 +21,7 @@ const user = (state = {}, action) => {
         registering: false,
         registeringError: undefined,
         addMenuClosed: true,
-        isLoggedInUser: deviceNameSafe === action.payload.username,
+        isLoggedInUser: deviceNameSafe !== action.payload.username.replace('m_g_i_o_s_', ''),
       }
 
     case 'LOGGING_IN':
@@ -58,7 +58,7 @@ const user = (state = {}, action) => {
       return {
         ...state,
         ...action.payload,
-        isLoggedInUser: deviceNameSafe === action.payload.username,
+        isLoggedInUser: deviceNameSafe !== action.payload.username.replace('m_g_i_o_s_', ''),
       }
 
     default:

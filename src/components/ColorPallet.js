@@ -61,7 +61,7 @@ class ColorPallet extends Component {
         this.props.refreshCategories()
         this.props.refreshColorCode()
 
-        if (this.props.user.isLoggedInUser) {
+        if (!this.props.user.isLoggedInUser) {
           Alert.alert(
             'You are not logged in',
             'In order to use "Creating Outfit" feature you need to login or create a user.',

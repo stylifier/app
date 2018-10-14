@@ -33,6 +33,103 @@ const actions = {
       })
   },
 
+  fetchUserFollowers: (username) => (dispatch, getState) => {
+    const { user } = getState()
+    dispatch({ type: 'LOADING_FOLLOWERS_FETCH' })
+
+    api.fetchUserFollowers(username)
+      .then((r) => {
+        if (user.username === username) {
+          dispatch({ type: 'SET_FOLLOWERS', payload: { ...r } })
+        } else {
+          dispatch({ type: 'ADD_USER_FOLLOWERS', payload: { ...r, username } })
+        }
+
+        dispatch({ type: 'FINISHED_FOLLOWERS_FETCH' })
+      })
+      .catch(() => dispatch({ type: 'FINISHED_FOLLOWERS_FETCH' }))
+  },
+
+  followUser: (username) => (dispatch, getState) => {
+    const { user } = getState()
+    dispatch({ type: 'LOADING_FOLLOWERS_FETCH' })
+
+    api.followUser(username)
+      .then(() => {
+        dispatch(actions.fetchUserFollowers(username))
+        dispatch(actions.fetchUserFollowers(user.username))
+      })
+      .catch(() => dispatch({ type: 'FINISHED_FOLLOWERS_FETCH' }))
+  },
+
+  fetchFeeds: () => (dispatch, getState) => {
+    const { feeds } = getState()
+    if (feeds.loading) {
+      return
+    }
+
+    dispatch({ type: 'LOADING_TOP_FEEDS_FETCH' })
+
+    api.fetchFeeds(0)
+      .then((r) => dispatch({ type: 'SET_FEEDS', payload: r }))
+      .catch(() => dispatch({ type: 'FINISH_TOP_FEEDS_FETCH' }))
+  },
+
+  fetchMoreFeeds: () => (dispatch, getState) => {
+    const { feeds } = getState()
+
+    if (feeds.noMore || feeds.loading) {
+      return
+    }
+
+    dispatch({ type: 'LOADING_BOTTOM_FEEDS_FETCH' })
+
+    api.fetchFeeds(feeds.pagination)
+      .then((r) => dispatch({ type: 'ADD_MORE_FEEDS', payload: r }))
+      .catch(() => dispatch({ type: 'FINISH_BOTTOM_FEEDS_FETCH' }))
+  },
+
+  fetchUserInfo: (username) => (dispatch) => {
+    api.fetchUser(username)
+      .then((r) => dispatch({ type: 'ADD_USER_INFO', payload: r }))
+      .catch(() => {})
+  },
+
+  fetchUserMedia: (username) => (dispatch) => {
+    api.fetchUserMedia(username, 0)
+      .then((r) => dispatch({ type: 'ADD_USER_MEDIA', payload: { ...r, username } }))
+      .catch(() => {})
+  },
+
+  setFeedsSearchPhrase: (phrase) => (dispatch) => {
+    dispatch({ type: 'SET_SEARCH_PHRASE', payload: phrase })
+
+    api.searchMedia(phrase, 0)
+      .then((r) => dispatch({ type: 'SET_STYLE_SEARCH_RESULT', payload: r }))
+      .catch(() => dispatch({
+        type: 'SET_STYLE_SEARCH_RESULT',
+        payload: { data: [], pagination: 0 },
+      }))
+
+    api.fetchBrands(phrase, 0)
+      .then((r) => dispatch({ type: 'SET_BRAND_SEARCH_RESULT', payload: r }))
+      .catch(() => dispatch({
+        type: 'SET_BRAND_SEARCH_RESULT',
+        payload: { data: [], pagination: 0 },
+      }))
+
+    api.fetchUsers(phrase, 0)
+      .then((r) => dispatch({ type: 'SET_USER_SEARCH_RESULT', payload: r }))
+      .catch(() => dispatch({
+        type: 'SET_USER_SEARCH_RESULT',
+        payload: { data: [], pagination: 0 },
+      }))
+  },
+
+  clearFeedsSearchPhrase: () => (dispatch) => {
+    dispatch({ type: 'CLEAR_SEARCH_PHRASE' })
+  },
+
   addUnreadThread: (threadId) => (dispatch) => {
     dispatch({ type: 'ADD_UNREAD_THREAD', payload: threadId })
   },
@@ -332,6 +429,8 @@ const actions = {
     dispatch(actions.refreshCategories())
     dispatch(actions.refreshColorCode())
     dispatch(actions.getMoreThreads())
+    dispatch(actions.fetchUserFollowers(info.username))
+    dispatch(actions.fetchFeeds())
 
     AsyncStorage.getItem('subscription_id')
       .then((sid) => sid && dispatch(actions.addSubsctiption(sid)))
@@ -340,7 +439,7 @@ const actions = {
   loginUser: (username, password) => (dispatch) => {
     dispatch({ type: 'LOGGING_IN' })
 
-    api.login({ username: `m_g_i_o_s_${username}`, password })
+    api.login({ username, password })
       .then(token =>
         setTokenAndUserInfo(token)
           .then(info => dispatch(actions.userInitiated(info))))
@@ -353,7 +452,7 @@ const actions = {
     dispatch({ type: 'REGISTERING_USER' })
 
     api.register({
-      username: `m_g_i_o_s_${username}`,
+      username,
       password,
       email,
       full_name: fullname,
@@ -397,7 +496,7 @@ const actions = {
             }
 
             api.register({
-              username: deviceNameSafe,
+              username: deviceNameSafe.replace('m_g_i_o_s_', ''),
               password: deviceNameSafe,
               email: `${deviceNameSafe}@guest.guest`,
               full_name: deviceNameSafe,

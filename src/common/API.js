@@ -300,7 +300,6 @@ class API {
   bookmarkProduct(productId, palletId, title) {
     title = title === 'undefined' ? undefined : title
 
-    console.log('--->', title);
     return this.post(`/product/${productId}/bookmark`, {}, [
       ...(palletId ? ['pallet_id=' + palletId] : []),
       ...(title ? ['title=' + title] : [])

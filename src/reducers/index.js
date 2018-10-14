@@ -7,6 +7,9 @@ import productSuggestion from './productSuggestion'
 import productBookmarks from './productBookmarks'
 import messages from './messages'
 import metadata from './metadata'
+import feeds from './feeds'
+import followers from './followers'
+import searchs from './searchs'
 
 const todoApp = combineReducers({
   colorSuggestion,
@@ -16,6 +19,9 @@ const todoApp = combineReducers({
   productBookmarks,
   metadata,
   messages,
+  feeds,
+  searchs,
+  followers,
   nav,
 })
 

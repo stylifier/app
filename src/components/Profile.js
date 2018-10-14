@@ -6,15 +6,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import tcomb from 'tcomb-form-native'
 import actions from '../actions'
 
-const btoa = require('Base64').btoa
-const DeviceInfo = require('react-native-device-info')
-
-const deviceNameSafe = `m_g_i_o_s_${btoa(
-    unescape(
-      encodeURIComponent(DeviceInfo.getUniqueID())))
-  .replace(/=/g, '')
-  .toLowerCase()}`
-
 const Form = tcomb.form.Form
 
 class Profile extends Component {
@@ -218,7 +209,7 @@ class Profile extends Component {
         </SafeAreaView>)
     }
 
-    if (user.username === deviceNameSafe) {
+    if (!user.isLoggedInUser) {
       return this.renderLoginRegisterView()
     }
 

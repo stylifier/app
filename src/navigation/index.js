@@ -9,6 +9,7 @@ import {
 import Bookmarks from '../components/Bookmarks'
 import Messages from '../components/Messages'
 import Profile from '../components/Profile'
+import Feeds from '../components/Feeds'
 import AddButton from '../components/AddButton'
 import ProccessAddingImage from '../components/ProccessAddingImage'
 import MessagingButton from '../components/MessagingButton'
@@ -18,7 +19,7 @@ import actions from '../actions'
 const RootNavigator = createBottomTabNavigator({
   ...{
     Feeds: {
-      screen: Profile,
+      screen: Feeds,
       navigationOptions: () => ({
         tabBarIcon: ({ tintColor }) => (
           <FontAwesome
