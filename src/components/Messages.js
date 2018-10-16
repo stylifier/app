@@ -1,75 +1,250 @@
 import React, { Component } from 'react'
-import { Text, SafeAreaView, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import {
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  View,
+  Alert,
+  Linking,
+  Modal,
+} from 'react-native'
 import { GiftedChat, Bubble } from 'react-native-gifted-chat'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { NavigationActions } from 'react-navigation'
+import ImageCropPicker from 'react-native-image-crop-picker'
 import PropTypes from 'prop-types'
+import { Icon } from 'react-native-elements'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import actions from '../actions'
-import ThreadItem from './ThreadItem'
 import ProductItem from './ProductItem.js'
+import Viewer from './Viewer'
 import ImageItem from './ImageItem.js'
 
 
 class Messages extends Component {
-  onSend(messages = []) {
-    messages.forEach(m =>
-      this.props.createMessage(this.props.messages.selectedThreadId, m.text))
+  constructor(props) {
+    super(props)
+    this.state = {
+      showProductPickerModal: false,
+    }
+  }
+  onSend(items = []) {
+    const { navigator, messages } = this.props
+    const { selectedThreadId } = messages
+
+    if (selectedThreadId === 'new') navigator.pop()
+
+    items.forEach(m =>
+      this.props.createMessage(selectedThreadId, m.text))
+  }
+
+  componentDidUpdate(prevProps) {
+    const { messages } = this.props
+
+    if (prevProps.messages.selectedThreadId !== messages.selectedThreadId &&
+      !messages.selectedThreadId) {
+      this.props.navigator.pop()
+    }
+  }
+
+  renderProductPick() {
+    return (
+      <TouchableOpacity
+        onPress={() => this.setState({ showProductPickerModal: true })}
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          marginLeft: 10,
+          backgroundColor: '#66bfc7',
+        }}
+      >
+        <Icon name="ios-shirt" type="ionicon" size={28} color="#f5f5f5" />
+      </TouchableOpacity>
+    )
+  }
+
+  renderCameraPick() {
+    const { messages, sendImageMessage } = this.props
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          ImageCropPicker.openCamera({
+            width: 500,
+            height: 500,
+            cropping: true,
+          }).then(image => sendImageMessage(messages.selectedThreadId, image.path))
+            .catch((e) => {
+              if (/cancelled/g.test(e.message)) {
+                return
+              }
+
+              if (/Cannot access camera/g.test(e.message)) {
+                Alert.alert(
+                  'Cannot Access Camera',
+                  e.message.replace('Cannot access camera.', ''),
+                  [
+                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                    { text: 'OK', onPress: () => {} },
+                  ],
+                  { cancelable: false }
+                )
+                return
+              }
+
+              Alert.alert(
+                'Failed to Access Camera',
+                e.message,
+                [{ text: 'OK', onPress: () => {} }]
+              )
+            })
+        }}
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          marginLeft: 10,
+          backgroundColor: '#66bfc7',
+        }}
+      >
+        <FontAwesome
+          style={{
+            fontSize: 24,
+            color: '#F5F5F5',
+          }}
+        >
+          {Icons.camera}
+        </FontAwesome>
+      </TouchableOpacity>
+    )
+  }
+
+  renderImagePick() {
+    const { messages, sendImageMessage } = this.props
+    return (<TouchableOpacity
+      onPress={() => {
+        ImageCropPicker.openPicker({
+          width: 500,
+          height: 500,
+          cropping: true,
+        })
+          .then(image => sendImageMessage(messages.selectedThreadId, image.path))
+          .catch((e) => {
+            if (/cancelled/g.test(e.message)) {
+              return
+            }
+
+            if (/Cannot access images/g.test(e.message)) {
+              Alert.alert(
+                'Cannot Access Images',
+                e.message.replace('Cannot access images.', ''),
+                [
+                  { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                  { text: 'OK', onPress: () => {} },
+                ],
+                { cancelable: false }
+              )
+              return
+            }
+
+            Alert.alert(
+              'Failed to Get Images',
+              'Please try again',
+              [{ text: 'OK', onPress: () => {} }]
+            )
+          })
+      }}
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#66bfc7',
+      }}
+    >
+      <FontAwesome
+        style={{
+          fontSize: 24,
+          color: '#F5F5F5',
+        }}
+      >
+        {Icons.image}
+      </FontAwesome>
+    </TouchableOpacity>)
+  }
+
+  renderProductPickModal() {
+    const { productBookmarks, createMessage, messages } = this.props
+
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.showProductPickerModal}
+      >
+        <SafeAreaView
+          style={{
+            justifyContent: 'center',
+            padding: 20,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        >
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignSelf: 'flex-end',
+              padding: 10,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => this.setState({ showProductPickerModal: false })}
+            >
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 16,
+                }}
+              >Close</Text>
+            </TouchableOpacity>
+          </View>
+          <Viewer
+            items={productBookmarks.map(t => t.product)}
+            BaseItem={ProductItem}
+            itemExtraProps={{
+              hideBookmarkBotton: true,
+              onClick: (item) => {
+                createMessage(messages.selectedThreadId, '', [], [item])
+                this.setState({ showProductPickerModal: false })
+              },
+            }}
+          />
+        </SafeAreaView>
+      </Modal>
+    )
   }
 
   renderMessaging() {
-    const { messages } = this.props
-    const selectedThread = messages.threads
-      .filter(t => t.id === this.props.messages.selectedThreadId)[0]
-    const isFromMe = selectedThread.from.username === this.props.user.username
+    const { messages, user } = this.props
+    const selectedThread =
+      messages.threads.filter(t => t.id === messages.selectedThreadId)[0]
 
-    // <TouchableOpacity
-    //   style={{
-    //     marginRight: 'auto',
-    //     flexDirection: 'row',
-    //     paddingTop: 10,
-    //     position: 'absolute',
-    //     right: 10,
-    //   }}
-    //   onPress={() => {
-    //     this.props.setSelectedThreadId(undefined)
-    //   }}
-    // >
-    //   <Text
-    //     style={{ color: 'black', fontSize: 16 }}
-    //   >Finish</Text>
-    // </TouchableOpacity>
+    if (!selectedThread) {
+      return (<View />)
+    }
+
+    const isFromMe = selectedThread.from.username === user.username
 
     return (
       <View style={{ width: '100%', height: '100%' }}>
-        <View>
-          <TouchableOpacity
-            style={{
-              marginRight: 'auto',
-              flexDirection: 'row',
-              paddingTop: 10,
-              marginLeft: 10,
-            }}
-            onPress={() => {
-              this.props.setSelectedThreadId(undefined)
-            }}
-          >
-            <FontAwesome
-              style={{
-                marginRight: 5,
-                marginTop: 3,
-                color: 'black',
-              }}
-            >
-              {Icons.chevronLeft}
-            </FontAwesome>
-            <Text
-              style={{ color: 'black', fontSize: 16 }}
-            >Back</Text>
-          </TouchableOpacity>
-        </View>
+        {this.renderProductPickModal()}
         <GiftedChat
           bottomOffset={50}
           user={isFromMe ?
@@ -86,6 +261,13 @@ class Messages extends Component {
           }
           onLoadEarlier={() => this.props.fetchButtomMessages(this.props.messages.selectedThreadId)}
           loadEarlier
+          renderChatFooter={() => (
+            <View style={{ flexDirection: 'row', padding: 10 }}>
+              {this.renderImagePick()}
+              {this.renderCameraPick()}
+              {this.renderProductPick()}
+            </View>
+          )}
           renderBubble={(props) => (
             <Bubble
               {...props}
@@ -94,17 +276,21 @@ class Messages extends Component {
                   style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    padding: 10,
+                    padding: 0,
                   }}
                 >
-                  {props.currentMessage.products
-                    .map((t, ind) => (
-                      <ProductItem
-                        hideBookmarkBotton
-                        key={ind}
-                        base={t}
-                      />
-                    ))}
+                  <View style={{ padding: 5 }} >
+                    {props.currentMessage.products
+                      .map((t, ind) => (
+                        <ProductItem
+                          hideBookmarkBotton
+                          darkBackground
+                          rounded
+                          key={ind}
+                          base={t}
+                        />
+                      ))}
+                  </View>
                   {props.currentMessage.media
                     .map((t, i) => (
                       <ImageItem
@@ -116,7 +302,7 @@ class Messages extends Component {
               )}
             />
           )}
-          messages={this.props.messages.messages.map(m => ({
+          messages={messages.messages.map(m => ({
             _id: m.id,
             text: m.text,
             products: m.products,
@@ -140,68 +326,6 @@ class Messages extends Component {
     )
   }
 
-  renderThreads() {
-    const { messages } = this.props
-
-    if (messages.threadLoading) {
-      return <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" />
-    }
-
-    return (
-      <KeyboardAwareScrollView>
-        {messages.threads.map((t, i) =>
-          <ThreadItem
-            key={i}
-            base={t}
-            currentUser={this.props.user}
-            isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
-            onPress={(trd) => {
-              this.props.setSelectedThreadId(trd.id)
-              this.props.fetchMessages(trd.id)
-            }}
-          />
-        )}
-      </KeyboardAwareScrollView>
-    )
-  }
-
-  renderUserIsGuest() {
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '100%',
-          padding: 20,
-          backgroundColor: '#f5f5f5',
-        }}
-      >
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            marginTop: 40,
-            height: '100%',
-          }}
-        >
-          <Text style={{ fontWeight: 'bold', marginBottom: 40 }}>
-            You are not logged in
-          </Text>
-          <Text style={{ marginBottom: 40 }}>
-            In order to use this feature you need to login or create an account.
-          </Text>
-          <TouchableOpacity onPress={() => this.props.navigateToLogin()}>
-            <Text style={{ color: 'black', fontSize: 16 }}>
-              Login / Register
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
-  }
-
   render() {
     const { user } = this.props
 
@@ -211,8 +335,7 @@ class Messages extends Component {
 
     return (
       <SafeAreaView style={{ width: '100%', height: '100%' }}>
-        {this.props.messages.selectedThreadId && this.renderMessaging()}
-        {!this.props.messages.selectedThreadId && this.renderThreads()}
+        {this.renderMessaging()}
       </SafeAreaView>
     )
   }
@@ -220,38 +343,37 @@ class Messages extends Component {
 
 Messages.propTypes = {
   navigateToLogin: PropTypes.func,
-  fetchMessages: PropTypes.func,
   createMessage: PropTypes.func,
-  fetchTopMessages: PropTypes.func,
   fetchButtomMessages: PropTypes.func,
   setSelectedThreadId: PropTypes.func,
+  sendImageMessage: PropTypes.func,
   user: PropTypes.object,
+  productBookmarks: PropTypes.array,
   messages: PropTypes.object,
+  navigator: PropTypes.object,
 }
 
 const mapStateToProps = state => ({
   user: state.user,
   messages: state.messages,
+  productBookmarks: state.productBookmarks,
 })
 
 const mapDispatchToProps = dispatch => ({
   navigateToLogin: () => dispatch(
     NavigationActions.navigate({ routeName: 'Profile' })
   ),
-  fetchMessages: (threadId) => dispatch(
-    actions.fetchMessages(threadId)
-  ),
   createMessage: (threadId, text, media, products) => dispatch(
     actions.createMessage(threadId, text, media, products)
-  ),
-  fetchTopMessages: (threadId) => dispatch(
-    actions.fetchTopMessages(threadId)
   ),
   fetchButtomMessages: (threadId) => dispatch(
     actions.fetchButtomMessages(threadId)
   ),
   setSelectedThreadId: (threadId, refetchThreads) => dispatch(
     actions.setSelectedThreadId(threadId, refetchThreads)
+  ),
+  sendImageMessage: (threadId, localPath) => dispatch(
+    actions.sendImageMessage(threadId, localPath)
   ),
 })
 

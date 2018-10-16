@@ -7,7 +7,7 @@ import actions from '../actions'
 
 class ProductItem extends Component {
   render() {
-    const { base, colorPalletId, title } = this.props
+    const { base, colorPalletId, title, onClick, rounded } = this.props
     const bookmarked =
       this.props.bookmarks.filter(p =>
         p.productId === this.props.base.id && p.palletId === colorPalletId).length > 0
@@ -17,20 +17,31 @@ class ProductItem extends Component {
         style={{
           width: (Dimensions.get('window').width / 2) - 30,
           height: (Dimensions.get('window').height / 2) - 50,
-          paddingTop: 10,
-          marginBottom: 30,
           alignItems: 'center',
           marginRight: 'auto',
+          backgroundColor: '#f5f5f5',
+          borderRadius: 10,
         }}
       >
-        <Image
+        <TouchableOpacity
           style={{ width: '100%', height: '70%' }}
-          source={{ uri: base.media[0].standard_resolution.url }}
-        />
+          onPress={() => {
+            if (onClick) {
+              onClick(base)
+            }
+          }}
+        >
+          <Image
+            style={{ width: '100%', height: '100%', borderRadius: rounded ? 10 : 0 }}
+            source={{ uri: base.media[0].standard_resolution.url }}
+          />
+        </TouchableOpacity>
         <TouchableOpacity
           style={{ width: '90%', marginTop: 20 }}
           onPress={() => {
-            if (base.externalURL) {
+            if (onClick) {
+              onClick(base)
+            } else if (base.externalURL) {
               Linking.openURL(base.externalURL)
             }
           }}
@@ -84,8 +95,10 @@ ProductItem.propTypes = {
   bookmarks: PropTypes.array,
   deleteBookmarkedProduct: PropTypes.func,
   bookmarkProduct: PropTypes.func,
+  onClick: PropTypes.func,
   colorPalletId: PropTypes.string,
   hideBookmarkBotton: PropTypes.bool,
+  rounded: PropTypes.bool,
   title: PropTypes.string,
 }
 

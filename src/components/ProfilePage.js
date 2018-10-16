@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { View, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
-import { Button, Avatar, h3, h4, Text } from 'react-native-elements'
+import { Button, Avatar, Text } from 'react-native-elements'
 import actions from '../actions'
 import FeedItem from './FeedItem'
 import Viewer from './Viewer'
@@ -22,7 +22,16 @@ class ProfilePage extends Component {
   }
 
   render() {
-    const { base, searchs, user, followers, followUser } = this.props
+    const {
+      attemptToCreateNewThread,
+      base,
+      searchs,
+      user,
+      followers,
+      followUser,
+      onDismissPressed,
+      logoutUser,
+    } = this.props
     const { usersMetadata } = searchs
 
     const metadata = usersMetadata[base.username] || {}
@@ -33,7 +42,7 @@ class ProfilePage extends Component {
 
     return (
       <SafeAreaView>
-        <View
+        {onDismissPressed && <View
           style={{
             width: '100%',
           }}
@@ -55,8 +64,8 @@ class ProfilePage extends Component {
               }}
             >Close</Text>
           </TouchableOpacity>
-        </View>
-        <ScrollView style={{ width: '100%', marginTop: 40 }}>
+        </View>}
+        <ScrollView style={{ width: '100%', marginTop: onDismissPressed ? 40 : 0 }}>
           <View
             style={{
               width: '100%',
@@ -75,7 +84,7 @@ class ProfilePage extends Component {
 
             {!isMe && (
               <Button
-                style={{ margin: 10, marginTop: 10 }}
+                style={{ margin: 10, marginTop: 20 }}
                 rounded
                 raised
                 onPress={() => followUser(base.username)}
@@ -83,6 +92,32 @@ class ProfilePage extends Component {
                 loading={followers.loading}
                 backgroundColor={'#ea5e85'}
                 title={isFollowing ? 'Following' : 'Follow'}
+              />
+            )}
+
+            {!isMe && (
+              <Button
+                style={{ margin: 10, marginTop: 10 }}
+                rounded
+                raised
+                onPress={() => {
+                  attemptToCreateNewThread(base)
+                  this.props.onDismissPressed()
+                }}
+                backgroundColor={'#5b7495'}
+                title="Send a Message"
+              />
+            )}
+
+            {isMe && (
+              <Button
+                style={{ margin: 10 }}
+                rounded
+                raised
+                onPress={() => logoutUser()}
+                loading={user.loggingIn}
+                backgroundColor={'#5b7495'}
+                title="Logout"
               />
             )}
 
@@ -112,6 +147,8 @@ ProfilePage.propTypes = {
   fetchUserInfo: PropTypes.func,
   fetchUserFollowers: PropTypes.func,
   followUser: PropTypes.func,
+  logoutUser: PropTypes.func,
+  attemptToCreateNewThread: PropTypes.func,
 }
 
 const mapStateToProps = state => ({
@@ -125,6 +162,8 @@ const mapDispatchToProps = dispatch => ({
   fetchUserInfo: (username) => dispatch(actions.fetchUserInfo(username)),
   fetchUserFollowers: (username) => dispatch(actions.fetchUserFollowers(username)),
   followUser: (username) => dispatch(actions.followUser(username)),
+  logoutUser: () => dispatch(actions.logoutUser()),
+  attemptToCreateNewThread: (to) => dispatch(actions.attemptToCreateNewThread(to)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage)

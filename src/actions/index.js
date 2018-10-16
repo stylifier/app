@@ -24,6 +24,25 @@ const deviceNameSafe = `m_g_i_o_s_${btoa(
   .toLowerCase()}`
 
 const actions = {
+  attemptToCreateNewThread: (to) => (dispatch, getState) => {
+    const { user, messages } = getState()
+
+    dispatch({
+      type: 'GET_MORE_THREADS',
+      payload: {
+        data: [{
+          id: 'new',
+          to,
+          from: user,
+        }],
+        pagination: messages.pagination,
+      },
+    })
+    dispatch({ type: 'CLEAR_MESSAGES' })
+    dispatch(actions.moveToPage('Messages'))
+    setTimeout(() => dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: 'new' }), 1000)
+  },
+
   reportCreateOutfitIssues: (payload) => () => {
     api.report(Object.assign(payload, { type: 'CreateOutfit' }))
       .then(() =>
@@ -158,10 +177,32 @@ const actions = {
       .catch(() => {})
   },
 
-  createMessage: (threadId, text, media, products) => (dispatch) => {
+  sendImageMessage: (threadId, image) => (dispatch) => {
+    dispatch({ type: 'MESSAGING_UPLOADING_IMAGE' })
+    api.uploadImage(image)
+      .then(imageMetaDate => {
+        dispatch(actions.createMessage(threadId, '', [imageMetaDate]))
+        dispatch({ type: 'MESSAGING_FINISHED_UPLOADING_IMAGE' })
+      })
+  },
+
+  createMessage: (threadId, text, media, products) => (dispatch, getState) => {
+    if (threadId === 'new') {
+      const { messages } = getState()
+      const thread = messages.threads.filter(t => t.id === threadId)[0]
+      api.createThread(thread.to.username)
+        .then(tr => api.createMessage(tr.id, text, media, products).then(() => tr))
+        .then(tr => {
+          dispatch(actions.setSelectedThreadId(tr.id))
+          dispatch(actions.fetchTopMessages(tr.id))
+        })
+        .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
+      return
+    }
+
     api.createMessage(threadId, text, media, products)
       .then(() => dispatch(actions.fetchTopMessages(threadId)))
-      .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
+      .catch((e) => console.log(e, threadId))
   },
 
   fetchButtomMessages: (threadId) => (dispatch, getState) => {
@@ -169,18 +210,21 @@ const actions = {
 
     dispatch({ type: 'LOADING_MESSAGES_FETCH' })
     api.fetchMessages(threadId, messages.messagesPagination)
-      .then((msgs) =>
-        dispatch({ type: 'ADD_BOTTOM_MESSAGES', payload: msgs }) &&
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .then((msgs) => {
+        dispatch({ type: 'ADD_BOTTOM_MESSAGES', payload: msgs })
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+      })
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
   },
 
   fetchTopMessages: (threadId) => (dispatch) => {
     dispatch({ type: 'LOADING_MESSAGES_FETCH' })
     api.fetchMessages(threadId)
-      .then((msgs) =>
-        dispatch({ type: 'ADD_TOP_MESSAGES', payload: msgs }) &&
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .then((msgs) => {
+        dispatch({ type: 'ADD_TOP_MESSAGES', payload: msgs })
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+        dispatch(actions.removeUnreadThread(threadId))
+      })
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
   },
 
@@ -188,25 +232,24 @@ const actions = {
     dispatch({ type: 'LOADING_MESSAGES_FETCH' })
     dispatch({ type: 'CLEAR_MESSAGES' })
     api.fetchMessages(threadId)
-      .then((msgs) =>
-        dispatch({ type: 'REFERESH_MESSAGES', payload: msgs }) &&
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' }) &&
-        dispatch(actions.removeUnreadThread(threadId)))
+      .then((msgs) => {
+        dispatch({ type: 'REFERESH_MESSAGES', payload: msgs })
+        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+        dispatch(actions.removeUnreadThread(threadId))
+      })
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
   },
 
-  setSelectedThreadId: (threadId, refetchThreads = false) => (dispatch) => {
-    if (refetchThreads) {
-      return dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
-    }
-
+  setSelectedThreadId: (threadId) => (dispatch) => {
     dispatch({ type: 'LOADING_THREAD_FETCH' })
     return api.fetchThreads(undefined, 0)
-      .then((tds) =>
-        dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
-        dispatch({ type: 'FINISHED_THREAD_FETCH' }) &&
-        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId }) &&
-        dispatch(actions.updateUnreadThreads(tds.data)))
+      .then((tds) => {
+        dispatch(actions.fetchTopMessages(threadId))
+        dispatch({ type: 'GET_MORE_THREADS', payload: tds })
+        dispatch({ type: 'FINISHED_THREAD_FETCH' })
+        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
+        dispatch(actions.updateUnreadThreads(tds.data))
+      })
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
@@ -235,19 +278,22 @@ const actions = {
 
     dispatch({ type: 'LOADING_THREAD_FETCH' })
     api.fetchThreads(undefined, messages.pagination)
-      .then((tds) =>
-        dispatch({ type: 'GET_MORE_THREADS', payload: tds }) &&
-        dispatch({ type: 'FINISHED_THREAD_FETCH' }) &&
-        dispatch(actions.updateUnreadThreads(tds.data)))
+      .then((tds) => {
+        dispatch({ type: 'GET_MORE_THREADS', payload: tds })
+        dispatch({ type: 'FINISHED_THREAD_FETCH' })
+        dispatch(actions.updateUnreadThreads(tds.data))
+      })
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
   refetchTopThreads: () => (dispatch) => {
+    dispatch({ type: 'LOADING_REFETCH_TOP_THREADS' })
     api.fetchThreads(undefined, 0)
-      .then((tds) =>
-        dispatch({ type: 'REFETCH_TOP_THREADS', payload: tds }) &&
-        dispatch(actions.updateUnreadThreads(tds.data)))
-      .catch(() => {})
+      .then((tds) => {
+        dispatch({ type: 'REFETCH_TOP_THREADS', payload: tds })
+        dispatch(actions.updateUnreadThreads(tds.data))
+      })
+      .catch(() => dispatch({ type: 'FINISH_LOADING_REFETCH_TOP_THREADS' }))
   },
 
   moveToPage: (page) => (dispatch) => {

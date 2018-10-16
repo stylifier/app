@@ -7,7 +7,7 @@ import {
   createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers'
 import Bookmarks from '../components/Bookmarks'
-import Messages from '../components/Messages'
+import MessagingPage from '../components/MessagingPage'
 import Profile from '../components/Profile'
 import Feeds from '../components/Feeds'
 import AddButton from '../components/AddButton'
@@ -61,7 +61,7 @@ const RootNavigator = createBottomTabNavigator({
     },
     ...{
       Messages: {
-        screen: Messages,
+        screen: MessagingPage,
         navigationOptions: () => ({
           tabBarIcon: ({ tintColor }) => (
             <MessagingButton tintColor={tintColor} />

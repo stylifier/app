@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import tcomb from 'tcomb-form-native'
 import actions from '../actions'
+import ProfilePage from './ProfilePage'
 
 const Form = tcomb.form.Form
 
@@ -48,7 +49,7 @@ class Profile extends Component {
     const { user } = this.props
 
     return (
-      <SafeAreaView
+      <View
         style={{
           justifyContent: 'center',
           marginTop: 50,
@@ -186,7 +187,7 @@ class Profile extends Component {
             style={{ height: 50 }}
           />
         </KeyboardAwareScrollView>
-      </SafeAreaView>
+      </View>
     )
   }
 
@@ -219,26 +220,12 @@ class Profile extends Component {
           justifyContent: 'center',
           marginTop: 50,
           padding: 20,
-          width: '90%',
+          width: '100%',
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
       >
-        <Text style={{ marginBottom: 50 }}>
-          You are logged in as '{user.username && user.username.replace('m_g_i_o_s_', '')}'
-        </Text>
-        <Button
-          title="Logout"
-          onPress={() => {
-            this.setState({
-              loginFormValue: null,
-              termAgreed: false,
-              registerFormValue: null,
-              termErrorShow: false,
-            })
-            this.props.logoutUser()
-          }}
-        />
+        <ProfilePage base={user} style={{ width: '100%' }} />
       </SafeAreaView>
     )
   }

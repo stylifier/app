@@ -14,7 +14,6 @@ import PropTypes from 'prop-types'
 import actions from '../actions'
 import Viewer from './Viewer'
 import UserItem from './UserItem'
-import BrandItem from './BrandItem'
 import FeedItem from './FeedItem'
 
 
@@ -62,12 +61,18 @@ class Feeds extends Component {
 
     return (
       <ScrollView style={{ width: '100%' }}>
-        {userResult.length > 0 && <Text style={tst}> Users with phrase "{searchPhrase}" </Text>}
-        <Viewer items={userResult} BaseItem={UserItem} />
-        {brandResult.length > 0 && <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>}
-        <Viewer items={brandResult} BaseItem={UserItem} />
-        {styleResult.length > 0 && <Text style={tst}> Images with phrase "{searchPhrase}" </Text>}
-        <Viewer items={styleResult} BaseItem={FeedItem} />
+        {userResult.length > 0 && (<View>
+          <Viewer items={userResult} BaseItem={UserItem} />
+          <Text style={tst}> Users with phrase "{searchPhrase}" </Text>
+        </View>)}
+        {brandResult.length > 0 && (<View>
+          <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>)}
+          <Viewer items={brandResult} BaseItem={UserItem} />
+        </View>)}
+        {styleResult.length > 0 && (<View>
+          <Text style={tst}> Images with phrase "{searchPhrase}" </Text>)}
+          <Viewer items={styleResult} BaseItem={FeedItem} />
+        </View>)}
       </ScrollView>
     )
   }
