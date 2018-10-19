@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, Modal, SafeAreaView, ScrollView } from 'react-native'
-import { Header, Item, Input, Icon, Text, Button as BaseButton } from 'native-base'
+import { View, Modal, ScrollView } from 'react-native'
+import { Header, Item, Input, Icon, Text, Button as BaseButton, Container } from 'native-base'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import actions from '../actions'
@@ -55,33 +55,31 @@ class StyleSelector extends React.Component {
           visible={show}
           onRequestClose={() => {}}
         >
-          <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-            <View>
-              <Header searchBar rounded>
-                <Item>
-                  <Icon name="ios-search" />
-                  <Input
-                    autoCorrect={false}
-                    placeholder={'Search for Style...'}
-                    onChangeText={t => {
-                      this.setState({ phrase: t })
-                      this.props.updateStyles(t)
-                    }}
-                  />
-                </Item>
-                <BaseButton transparent onPress={() => this.setState({ show: false })}>
-                  <Text>Cancel</Text>
-                </BaseButton>
-              </Header>
-              <ScrollView>
-                {[
-                  phrase,
-                  ...styles.filter(r => (!phrase || phrase.toLowerCase().indexOf(r) === -1)),
-                ]
-                  .filter(t => t && t.trim()).map((item, index) => this.renderItem(item, index))}
-              </ScrollView>
-            </View>
-          </SafeAreaView>
+          <Container>
+            <Header searchBar rounded>
+              <Item>
+                <Icon name="ios-search" />
+                <Input
+                  autoCorrect={false}
+                  placeholder={'Search for Style...'}
+                  onChangeText={t => {
+                    this.setState({ phrase: t })
+                    this.props.updateStyles(t)
+                  }}
+                />
+              </Item>
+              <BaseButton transparent onPress={() => this.setState({ show: false })}>
+                <Text>Cancel</Text>
+              </BaseButton>
+            </Header>
+            <ScrollView>
+              {[
+                phrase,
+                ...styles.filter(r => (!phrase || phrase.toLowerCase().indexOf(r) === -1)),
+              ]
+                .filter(t => t && t.trim()).map((item, index) => this.renderItem(item, index))}
+            </ScrollView>
+          </Container>
         </Modal>
         <Button
           onPress={() => {

@@ -1,17 +1,15 @@
 import React, { Component } from 'react'
 import {
   Text,
-  SafeAreaView,
   View,
   TouchableOpacity,
   RefreshControl,
   ScrollView,
   ActivityIndicator,
 } from 'react-native'
-import { Header, Item, Input, Icon, Button as BaseButton } from 'native-base'
+import { Header, Item, Input, Icon, Button as BaseButton, Container } from 'native-base'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { connect } from 'react-redux'
-import { Button } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import actions from '../actions'
 import Viewer from './Viewer'
@@ -192,16 +190,7 @@ class Feeds extends Component {
     }
 
     return (
-      <SafeAreaView
-        style={{
-          justifyContent: 'center',
-          padding: 20,
-          marginTop: -20,
-          width: '100%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
+      <Container>
         <Header searchBar rounded>
           <Item>
             <Icon name="ios-search" />
@@ -222,7 +211,7 @@ class Feeds extends Component {
             </BaseButton>}
         </Header>
         {searchPhrase.trim().length > 0 ? this.renderSearch() : this.renderFeeds()}
-      </SafeAreaView>
+      </Container>
     )
   }
 }
