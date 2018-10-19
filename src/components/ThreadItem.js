@@ -32,7 +32,7 @@ class ThreadItem extends Component {
             {recipient.full_name}
           </Text>
           <Text style={{ color: textColor }}>
-            @{recipient.username}
+            @{recipient.username.replace('m_g_i_o_s_', '')}
           </Text>
           <Text style={{ position: 'absolute', right: 0, bottom: 0, color: textColor }}>
             {isFromMe ?

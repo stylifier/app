@@ -79,7 +79,9 @@ class ProfilePage extends Component {
             <Avatar
               xlarge
               rounded
-              source={{ uri: base.profile_picture }}
+              source={{
+                uri: (metadata.info && metadata.info.profile_picture) || base.profile_picture,
+              }}
             />
 
             {!isMe && (
@@ -128,7 +130,6 @@ class ProfilePage extends Component {
             <Text style={{ marginTop: 15, marginBottom: 50 }}>
               {metadata.info && metadata.info.bio}
             </Text>
-
             <Viewer items={metadata.media || []} BaseItem={FeedItem} />
           </View>
         </ScrollView>

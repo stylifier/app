@@ -106,12 +106,12 @@ const feeds = (state = {
       return {
         ...state,
         usersMetadata: {
-          ...this.usersMetadata,
+          ...state.usersMetadata,
           ...{
             [action.payload.username]: {
               ...state.usersMetadata[action.payload.username],
               ...{
-                media: action.payload.data,
+                media: [...action.payload.data],
                 pagination: action.payload.pagination,
               },
             },
@@ -123,11 +123,11 @@ const feeds = (state = {
       return {
         ...state,
         usersMetadata: {
-          ...this.usersMetadata,
+          ...state.usersMetadata,
           ...{
             [action.payload.username]: {
               ...state.usersMetadata[action.payload.username],
-              ...{ info: action.payload },
+              ...{ info: { ...action.payload } },
             },
           },
         },
@@ -137,11 +137,11 @@ const feeds = (state = {
       return {
         ...state,
         usersMetadata: {
-          ...this.usersMetadata,
+          ...state.usersMetadata,
           ...{
             [action.payload.username]: {
               ...state.usersMetadata[action.payload.username],
-              ...{ followers: action.payload.data.map(t => t.username) },
+              ...{ followers: [...action.payload.data.map(t => t.username)] },
             },
           },
         },

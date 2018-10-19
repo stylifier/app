@@ -101,15 +101,15 @@ class API {
 
   put(path, body) {
     const ret = fetch(this.baseAddress + path, {
-        body: JSON.stringify(Object.assign({}, body)),
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'json',
-          Authorization: 'Bearer '+ this.token,
-          'x-consumer-username': this.userInfo.username
-        },
-        method: 'PUT'
-      })
+      body: JSON.stringify(body.length ? [...body] : { ...body }),
+      headers: {
+        'Content-Type': 'application/json',
+        accept: 'json',
+        Authorization: 'Bearer '+ this.token,
+        'x-consumer-username': this.userInfo.username
+      },
+      method: 'PUT'
+    })
       .then((response) => {
         if (response.status >= 200 && response.status < 300)
           return Promise.resolve(response)
@@ -206,6 +206,10 @@ class API {
     return this.put(`/threads/${threadId}/messages`, {text: text, media: media, products})
   }
 
+  addProductToMedia(product, mediaId) {
+    return this.put(`/media/${mediaId}/products`, [product])
+  }
+
   addMediaToThread(threadId, media) {
     return this.put(`/threads/${threadId}/media`, {media: media})
   }
@@ -245,6 +249,10 @@ class API {
 
   shareMedia(id) {
     return this.post(`/media/${id}/share`, {})
+  }
+
+  unshareMedia(id) {
+    return this.post(`/media/${id}/unshare`, {})
   }
 
   addDescriptionToMedia(id, description) {

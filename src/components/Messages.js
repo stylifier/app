@@ -16,6 +16,7 @@ import PropTypes from 'prop-types'
 import { Icon } from 'react-native-elements'
 import moment from 'moment'
 import { connect } from 'react-redux'
+import ProfilePage from './ProfilePage'
 import actions from '../actions'
 import ProductItem from './ProductItem.js'
 import Viewer from './Viewer'
@@ -27,6 +28,8 @@ class Messages extends Component {
     super(props)
     this.state = {
       showProductPickerModal: false,
+      showProfile: false,
+      selectedProfile: '',
     }
   }
   onSend(items = []) {
@@ -233,6 +236,7 @@ class Messages extends Component {
 
   renderMessaging() {
     const { messages, user } = this.props
+    const { selectedProfile } = this.state
     const selectedThread =
       messages.threads.filter(t => t.id === messages.selectedThreadId)[0]
 
@@ -245,6 +249,20 @@ class Messages extends Component {
     return (
       <View style={{ width: '100%', height: '100%' }}>
         {this.renderProductPickModal()}
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.showProfile}
+        >
+          <ProfilePage
+            onDismissPressed={() => this.setState({ showProfile: false })}
+            key={selectedProfile}
+            base={
+              selectedThread.from.username === selectedProfile ?
+                selectedThread.from : selectedThread.to
+            }
+          />
+        </Modal>
         <GiftedChat
           bottomOffset={50}
           user={isFromMe ?
@@ -261,6 +279,7 @@ class Messages extends Component {
           }
           onLoadEarlier={() => this.props.fetchButtomMessages(this.props.messages.selectedThreadId)}
           loadEarlier
+          onPressAvatar={u => this.setState({ showProfile: true, selectedProfile: u.name })}
           renderChatFooter={() => (
             <View style={{ flexDirection: 'row', padding: 10 }}>
               {this.renderImagePick()}
@@ -279,18 +298,19 @@ class Messages extends Component {
                     padding: 0,
                   }}
                 >
-                  <View style={{ padding: 5 }} >
-                    {props.currentMessage.products
-                      .map((t, ind) => (
-                        <ProductItem
-                          hideBookmarkBotton
-                          darkBackground
-                          rounded
-                          key={ind}
-                          base={t}
-                        />
-                      ))}
-                  </View>
+                  {props.currentMessage.products.length > 0 && (
+                    <View style={{ padding: 3 }}>
+                      {props.currentMessage.products
+                        .map((t, ind) => (
+                          <ProductItem
+                            hideBookmarkBotton
+                            darkBackground
+                            rounded
+                            key={ind}
+                            base={t}
+                          />
+                        ))}
+                    </View>)}
                   {props.currentMessage.media
                     .map((t, i) => (
                       <ImageItem

@@ -24,6 +24,57 @@ const deviceNameSafe = `m_g_i_o_s_${btoa(
   .toLowerCase()}`
 
 const actions = {
+  updateStyles: (q) => (dispatch) => {
+    api.getStyles(q)
+      .then((r) => {
+        dispatch({ type: 'UPDATE_STYLES', payload: r })
+      })
+      .catch(() => {})
+  },
+
+  setProfilePicture: (media) => (dispatch) => {
+    api.setProfilePicture(media)
+      .then(() => dispatch(actions.fetchUserInfo(media.userUsername)))
+      .catch(() => {})
+  },
+
+  addProductToMedia: (product, mediaId) => () => {
+    api.addProductToMedia(product, mediaId)
+      .then(() => {})
+      .catch(() => {})
+  },
+
+  setDescription: (id, description) => () => {
+    api.addDescriptionToMedia(id, description)
+      .then(() => {})
+      .catch(() => {})
+  },
+
+  setStyle: (id, style) => () => {
+    api.setStyle(id, style)
+      .then(() => {})
+      .catch(() => {})
+  },
+
+  unshareMedia: (media) => (dispatch) => {
+    api.unshareMedia(media.id)
+      .then(() => dispatch(actions.fetchUserMedia(media.userUsername)))
+      .catch(() => {
+        Alert.alert('Ops... Something went wrong, please try again later.')
+      })
+  },
+
+  shareMedia: (media) => (dispatch) => {
+    api.shareMedia(media.id)
+      .then(() => {
+        dispatch(actions.moveToPage('Profile'))
+        dispatch(actions.fetchUserMedia(media.userUsername))
+      })
+      .catch(() => {
+        Alert.alert('Ops... Something went wrong, please try again later.')
+      })
+  },
+
   attemptToCreateNewThread: (to) => (dispatch, getState) => {
     const { user, messages } = getState()
 
@@ -202,7 +253,7 @@ const actions = {
 
     api.createMessage(threadId, text, media, products)
       .then(() => dispatch(actions.fetchTopMessages(threadId)))
-      .catch((e) => console.log(e, threadId))
+      .catch(() => {})
   },
 
   fetchButtomMessages: (threadId) => (dispatch, getState) => {
@@ -440,12 +491,12 @@ const actions = {
 
   askForApproval: (metadata) => () => {
     api.askForApproval(metadata)
-    .then(() =>
-      AsyncStorage.setItem('guest_submitted', 'true'))
-    .then(() =>
-      Alert.alert('Thanks for your submission. We will inform you when your account is ready.'))
-    .catch(() =>
-      Alert.alert('Ops... Something went wrong, please try again later.'))
+      .then(() =>
+        AsyncStorage.setItem('guest_submitted', 'true'))
+      .then(() =>
+        Alert.alert('Thanks for your submission. We will inform you when your account is ready.'))
+      .catch(() =>
+        Alert.alert('Ops... Something went wrong, please try again later.'))
   },
 
   toggleAddMenu: () => (dispatch) => {
@@ -471,6 +522,8 @@ const actions = {
 
   userInitiated: (info) => (dispatch) => {
     dispatch({ type: 'USER_INITIATED', payload: info })
+    dispatch({ type: 'CLEAR_FEEDS' })
+    dispatch({ type: 'CLEAR_SEARCH_PHRASE' })
     dispatch(actions.refreshBookmarks())
     dispatch(actions.refreshCategories())
     dispatch(actions.refreshColorCode())

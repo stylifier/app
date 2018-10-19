@@ -8,7 +8,6 @@ import actions from '../actions'
 import ColorPallet from './ColorPallet'
 
 class Bookmarks extends Component {
-
   render() {
     const { bookmarks } = this.props
     return (

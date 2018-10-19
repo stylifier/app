@@ -8,8 +8,10 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native'
-import { SearchBar } from 'react-native-elements'
+import { Header, Item, Input, Icon, Button as BaseButton } from 'native-base'
+import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { connect } from 'react-redux'
+import { Button } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import actions from '../actions'
 import Viewer from './Viewer'
@@ -55,30 +57,102 @@ class Feeds extends Component {
     )
   }
 
+  renderEmptyFeeds() {
+    return (
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <FontAwesome
+          style={{
+            marginTop: '40%',
+            marginBottom: 10,
+            fontSize: 70,
+            color: '#3b4e68',
+          }}
+        >
+          {Icons.road}
+        </FontAwesome>
+        <Text style={{ textAlign: 'center' }} >
+          It's lonely here!
+        </Text>
+        <Text style={{ textAlign: 'center' }} >
+          You can search and follow
+        </Text>
+        <Text style={{ textAlign: 'center' }} >
+          your favorite users...
+        </Text>
+      </View>)
+  }
+
+  renderEmptySearch() {
+    const {
+      searchs,
+    } = this.props
+    const { searchPhrase } = searchs
+
+    return (
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <FontAwesome
+          style={{
+            marginTop: '30%',
+            marginBottom: 30,
+            fontSize: 70,
+            color: '#3b4e68',
+          }}
+        >
+          {Icons.search}
+        </FontAwesome>
+        <Text style={{ textAlign: 'center' }} >
+          No result with phrase "{searchPhrase}"
+        </Text>
+        <Text style={{ textAlign: 'center' }} >
+          was found.
+        </Text>
+      </View>)
+  }
+
   renderSearch() {
     const { userResult, brandResult, styleResult, searchPhrase } = this.props.searchs
     const tst = { marginLeft: 'auto', marginRight: 'auto' }
 
     return (
-      <ScrollView style={{ width: '100%' }}>
-        {userResult.length > 0 && (<View>
-          <Viewer items={userResult} BaseItem={UserItem} />
-          <Text style={tst}> Users with phrase "{searchPhrase}" </Text>
-        </View>)}
-        {brandResult.length > 0 && (<View>
-          <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>)}
-          <Viewer items={brandResult} BaseItem={UserItem} />
-        </View>)}
-        {styleResult.length > 0 && (<View>
-          <Text style={tst}> Images with phrase "{searchPhrase}" </Text>)}
-          <Viewer items={styleResult} BaseItem={FeedItem} />
-        </View>)}
-      </ScrollView>
+      <View style={{ width: '100%' }}>
+        {userResult.length <= 0 &&
+          brandResult.length <= 0 &&
+          styleResult.length <= 0 &&
+          this.renderEmptySearch()}
+        <ScrollView style={{ width: '100%' }}>
+          {userResult.length > 0 && (<View>
+            <Viewer items={userResult} BaseItem={UserItem} />
+            <Text style={tst}> Users with phrase "{searchPhrase}" </Text>
+          </View>)}
+          {brandResult.length > 0 && (<View>
+            <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>)}
+            <Viewer items={brandResult} BaseItem={UserItem} />
+          </View>)}
+          {styleResult.length > 0 && (<View>
+            <Text style={tst}> Images with phrase "{searchPhrase}" </Text>)}
+            <Viewer items={styleResult} BaseItem={FeedItem} />
+          </View>)}
+        </ScrollView>
+      </View>
     )
   }
 
   renderFeeds() {
     const { feeds, fetchFeeds, fetchMoreFeeds } = this.props
+
+    if (!feeds.items || feeds.items < 1) {
+      return this.renderEmptyFeeds()
+    }
 
     return (<ScrollView
       style={{
@@ -122,31 +196,31 @@ class Feeds extends Component {
         style={{
           justifyContent: 'center',
           padding: 20,
+          marginTop: -20,
           width: '100%',
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
       >
-        <SearchBar
-          lightTheme
-          onChangeText={(t) => {
-            clearTimeout(this.searchPhraseChangeTimeout)
-            this.searchPhraseChangeTimeout =
-              setTimeout(() => setFeedsSearchPhrase(t), 600)
-          }}
-          round
-          onClear={() => clearFeedsSearchPhrase()}
-          value={searchPhrase}
-          inputStyle={{ backgroundColor: '#b9c5d4' }}
-          clearIcon={{ color: 'black' }}
-          containerStyle={{
-            backgroundColor: '#f5f5f5',
-            borderWidth: 0,
-            borderBottomColor: 'transparent',
-            borderTopColor: 'transparent',
-          }}
-          placeholder="Search for Style, Brand or People"
-        />
+        <Header searchBar rounded>
+          <Item>
+            <Icon name="ios-search" />
+            <Input
+              value={searchPhrase}
+              autoCorrect={false}
+              placeholder="Search for Style, Brand or People"
+              onChangeText={(t) => {
+                clearTimeout(this.searchPhraseChangeTimeout)
+                this.searchPhraseChangeTimeout =
+                  setTimeout(() => setFeedsSearchPhrase(t), 600)
+              }}
+            />
+          </Item>
+          {searchPhrase.trim().length > 0 &&
+            <BaseButton transparent onPress={() => clearFeedsSearchPhrase()}>
+              <Text>Cancel</Text>
+            </BaseButton>}
+        </Header>
         {searchPhrase.trim().length > 0 ? this.renderSearch() : this.renderFeeds()}
       </SafeAreaView>
     )

@@ -231,7 +231,7 @@ class ColorPallet extends Component {
         </Modal>
 
 
-        {this.props.showTitle && this.renderTitle()}
+        {bookmarked && this.renderTitle()}
 
         <View
           style={{

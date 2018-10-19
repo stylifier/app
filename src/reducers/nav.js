@@ -1,6 +1,6 @@
 import { RootNavigator } from '../navigation'
 
-const firstAction = RootNavigator.router.getActionForPathAndParams('Feeds')
+const firstAction = RootNavigator.router.getActionForPathAndParams('Profile')
 const initialNavState = RootNavigator.router.getStateForAction(firstAction)
 
 const nav = (state = { ...initialNavState }, action) => {

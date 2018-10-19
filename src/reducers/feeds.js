@@ -56,6 +56,16 @@ const feeds = (state = {
         noMore: action.payload.data.length === 0,
       }
 
+    case 'CLEAR_FEEDS':
+      return {
+        ...state,
+        items: [],
+        pagination: 0,
+        loadingBottom: false,
+        loadingTop: false,
+        noMore: false,
+      }
+
     default:
       break
   }

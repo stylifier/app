@@ -1,17 +1,10 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
 import PropTypes from 'prop-types'
-import { Col, Row, Grid } from 'react-native-easy-grid'
 
 class Viewer extends Component {
   render() {
     const { items, BaseItem, itemExtraProps } = this.props
-
-    // const itemsByCol = items
-    //   .map((e, i) => (i % colNum === 0 ? items.slice(i, i + colNum) : null))
-    //   .filter((e) => e)
-    //
-    // console.log(itemsByCol)
 
     return (
       <View
@@ -25,7 +18,7 @@ class Viewer extends Component {
         {items.map((t, i) => (
           <BaseItem
             base={t}
-            key={i}
+            key={t.id || i}
             {...itemExtraProps}
           />))}
       </View>
