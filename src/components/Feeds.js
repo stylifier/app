@@ -129,8 +129,8 @@ class Feeds extends Component {
           this.renderEmptySearch()}
         <ScrollView style={{ width: '100%' }}>
           {userResult.length > 0 && (<View>
-            <Viewer items={userResult} BaseItem={UserItem} />
             <Text style={tst}> Users with phrase "{searchPhrase}" </Text>
+            <Viewer items={userResult} BaseItem={UserItem} />
           </View>)}
           {brandResult.length > 0 && (<View>
             <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>)}
