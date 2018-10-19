@@ -32,7 +32,7 @@ const messages = (
         threads: [
           ...state.threads.map(t => (action.payload.data.filter(i => i.id === t.id).length > 0 ?
             action.payload.data.filter(i => i.id === t.id)[0] : t)),
-          ...action.payload.data.filter(m =>
+          ...action.payload.data.reverse().filter(m =>
             state.threads.filter(t => t.id === m.id).length === 0),
         ],
         pagination: action.payload.pagination,
@@ -42,7 +42,7 @@ const messages = (
       return {
         ...state,
         threads: [
-          ...action.payload.data.filter(m =>
+          ...action.payload.data.reverse().filter(m =>
             state.threads.filter(t => t.id === m.id).length === 0),
           ...state.threads.map(t => (action.payload.data.filter(i => i.id === t.id).length > 0 ?
             action.payload.data.filter(i => i.id === t.id)[0] : t)),
