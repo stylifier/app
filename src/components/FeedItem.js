@@ -48,7 +48,7 @@ class FeedItem extends Component {
           style={{ marginRight: 'auto', marginTop: 2 }}
           onPress={() => this.setState({ showProfile: true })}
         >
-          <Text>{isMe ? '' : base.userUsername}</Text>
+          <Text>{isMe ? '' : base.userUsername.replace('m_g_i_o_s_', '')}</Text>
           <RNModal
             animationType="slide"
             transparent={false}
