@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import {
   Text,
-  SafeAreaView,
   TouchableOpacity,
   View,
   ActivityIndicator,
@@ -11,6 +10,7 @@ import {
 import { NavigationActions } from 'react-navigation'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import actions from '../actions'
 import ThreadItem from './ThreadItem'
 import Messages from './Messages'
@@ -39,7 +39,7 @@ class Threads extends Component {
   }
 
   renderThreads() {
-    const { messages, refetchTopThreads } = this.props
+    const { messages, refetchTopThreads, user } = this.props
 
     return (
       <ScrollView
@@ -51,19 +51,32 @@ class Threads extends Component {
           />
         }
       >
-        {messages.threads.filter(t => t.id !== 'new').map((t, i) =>
-          <ThreadItem
-            key={i}
-            base={t}
-            currentUser={this.props.user}
-            isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
-            onPress={(trd) => {
-              this.props.setSelectedThreadId(trd.id)
-              this.props.fetchMessages(trd.id)
-              this.openMessaging(trd.id)
-            }}
-          />
-        )}
+        {messages.threads
+          .filter(t => t.id !== 'new')
+          .sort((a, b) => {
+            const aDate = a.from.username === user.username ?
+              moment(a.to_last_message_at || a.created_time).fromNow() :
+              moment(a.from_last_message_at || a.created_time).fromNow()
+
+            const bDate = b.from.username === user.username ?
+              moment(b.to_last_message_at || b.created_time).fromNow() :
+              moment(b.from_last_message_at || b.created_time).fromNow()
+
+            return aDate - bDate
+          })
+          .map((t, i) =>
+            <ThreadItem
+              key={i}
+              base={t}
+              currentUser={this.props.user}
+              isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
+              onPress={(trd) => {
+                this.props.setSelectedThreadId(trd.id)
+                this.props.fetchMessages(trd.id)
+                this.openMessaging(trd.id)
+              }}
+            />
+          )}
       </ScrollView>
     )
   }

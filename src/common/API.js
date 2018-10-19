@@ -24,6 +24,8 @@ class API {
     const paramsStr = params &&
       params.length > 0 ? `?${params.join('&')}` : ''
 
+    console.log('Bearer '+ this.token)
+
     const ret = fetch(this.baseAddress + path + paramsStr, {
         headers: Object.assign({
           accept: 'json',
