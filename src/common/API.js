@@ -4,7 +4,7 @@ import moment from 'moment'
 class API {
   constructor() {
     this.baseAddress = 'https://cloud.stylifier.com'
-    this.baseAddress = 'http://192.168.178.20:3000'
+    // this.baseAddress = 'http://192.168.178.20:3000'
     AsyncStorage.getItem('user_token')
     .then(t => { this.token = t })
 
