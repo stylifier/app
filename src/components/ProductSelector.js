@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, Modal, SafeAreaView, TouchableOpacity } from 'react-native'
-import { Text } from 'native-base'
+import { View, Modal, ScrollView } from 'react-native'
+import { Header, Left, Text, Icon, Button as NBButton,
+  Container, Body, Title, Right } from 'native-base'
 import { Button } from 'react-native-elements'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { connect } from 'react-redux'
@@ -32,6 +33,7 @@ class ProductSelector extends React.Component {
       <View
         style={{
           width: '100%',
+          height: '100%',
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
@@ -41,7 +43,6 @@ class ProductSelector extends React.Component {
           style={{
             fontSize: 70,
             color: '#3b4e68',
-            marginTop: -120,
           }}
         >
           {Icons.road}
@@ -55,15 +56,6 @@ class ProductSelector extends React.Component {
         <Text style={{ textAlign: 'center' }} >
           "+ Create Outfit" button.
         </Text>
-        <Button
-          rounded
-          onPress={() => {
-            this.setState({ show: false })
-            this.props.toBookmarks()
-          }}
-          buttonStyle={{ backgroundColor: '#5b7495', padding: 5, marginTop: 20 }}
-          title="To Bookmarks"
-        />
       </View>)
   }
 
@@ -79,34 +71,33 @@ class ProductSelector extends React.Component {
           visible={show}
           onRequestClose={() => {}}
         >
-          <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                alignSelf: 'flex-end',
-                padding: 10,
-              }}
-            >
-              <TouchableOpacity onPress={() => this.setState({ show: false })}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontSize: 16,
-                  }}
-                >Close</Text>
-              </TouchableOpacity>
-            </View>
-            <Viewer
-              items={productBookmarks.map(t => t.product)}
-              BaseItem={ProductItem}
-              itemExtraProps={{
-                hideBookmarkBotton: true,
-                onClick: (item) => this.onSelectItem(item),
-              }}
-            />
-            {(!productBookmarks || productBookmarks.length <= 0) && this.renderEmptyScreen()}
-          </SafeAreaView>
+          <Container>
+            <Header>
+              <Left>
+                <NBButton
+                  transparent
+                  onPress={() => this.setState({ show: false })}
+                >
+                  <Icon name="arrow-back" />
+                </NBButton>
+              </Left>
+              <Body>
+                <Title>Items</Title>
+              </Body>
+              <Right />
+            </Header>
+            <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}>
+              <Viewer
+                items={productBookmarks.map(t => t.product)}
+                BaseItem={ProductItem}
+                itemExtraProps={{
+                  hideBookmarkBotton: true,
+                  onClick: (item) => this.onSelectItem(item),
+                }}
+              />
+              {(!productBookmarks || productBookmarks.length <= 0) && this.renderEmptyScreen()}
+            </ScrollView>
+          </Container>
         </Modal>
         <Button
           onPress={() => this.setState({ show: true })}

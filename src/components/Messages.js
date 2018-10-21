@@ -6,14 +6,17 @@ import {
   View,
   Alert,
   Linking,
+  ScrollView,
   Modal,
 } from 'react-native'
 import { GiftedChat, Bubble } from 'react-native-gifted-chat'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
+import { Header, Left, Icon as NBIcon, Button as NBButton,
+  Container, Body, Title, Right } from 'native-base'
 import { NavigationActions } from 'react-navigation'
 import ImageCropPicker from 'react-native-image-crop-picker'
 import PropTypes from 'prop-types'
-import { Icon } from 'react-native-elements'
+import { Icon, Button } from 'react-native-elements'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import ProfilePage from './ProfilePage'
@@ -182,6 +185,45 @@ class Messages extends Component {
     </TouchableOpacity>)
   }
 
+  renderEmptyScreen() {
+    return (
+      <View
+        style={{
+          width: '100%',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <FontAwesome
+          style={{
+            fontSize: 70,
+            color: '#3b4e68',
+          }}
+        >
+          {Icons.road}
+        </FontAwesome>
+        <Text style={{ textAlign: 'center' }} >
+          You have no bookmarks.
+        </Text>
+        <Text style={{ textAlign: 'center' }} >
+          Try bookmarking items with
+        </Text>
+        <Text style={{ textAlign: 'center' }} >
+          "+ Create Outfit" button.
+        </Text>
+        <Button
+          rounded
+          onPress={() => {
+            this.setState({ show: false })
+            this.props.toBookmarks()
+          }}
+          buttonStyle={{ backgroundColor: '#5b7495', padding: 5, marginTop: 20 }}
+          title="To Bookmarks"
+        />
+      </View>)
+  }
+
   renderProductPickModal() {
     const { productBookmarks, createMessage, messages } = this.props
 
@@ -191,45 +233,36 @@ class Messages extends Component {
         transparent={false}
         visible={this.state.showProductPickerModal}
       >
-        <SafeAreaView
-          style={{
-            justifyContent: 'center',
-            padding: 20,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        >
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignSelf: 'flex-end',
-              padding: 10,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => this.setState({ showProductPickerModal: false })}
-            >
-              <Text
-                style={{
-                  color: 'black',
-                  fontSize: 16,
-                }}
-              >Close</Text>
-            </TouchableOpacity>
-          </View>
-          <Viewer
-            items={productBookmarks.map(t => t.product)}
-            BaseItem={ProductItem}
-            itemExtraProps={{
-              hideBookmarkBotton: true,
-              onClick: (item) => {
-                createMessage(messages.selectedThreadId, '', [], [item])
-                this.setState({ showProductPickerModal: false })
-              },
-            }}
-          />
-        </SafeAreaView>
+        <Container>
+          <Header>
+            <Left>
+              <NBButton
+                transparent
+                onPress={() => this.setState({ showProductPickerModal: false })}
+              >
+                <NBIcon name="arrow-back" />
+              </NBButton>
+            </Left>
+            <Body>
+              <Title>Items</Title>
+            </Body>
+            <Right />
+          </Header>
+          <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}>
+            <Viewer
+              items={productBookmarks.map(t => t.product)}
+              BaseItem={ProductItem}
+              itemExtraProps={{
+                hideBookmarkBotton: true,
+                onClick: (item) => {
+                  createMessage(messages.selectedThreadId, '', [], [item])
+                  this.setState({ showProductPickerModal: false })
+                },
+              }}
+            />
+            {(!productBookmarks || productBookmarks.length <= 0) && this.renderEmptyScreen()}
+          </ScrollView>
+        </Container>
       </Modal>
     )
   }
@@ -367,6 +400,7 @@ Messages.propTypes = {
   fetchButtomMessages: PropTypes.func,
   setSelectedThreadId: PropTypes.func,
   sendImageMessage: PropTypes.func,
+  toBookmarks: PropTypes.func,
   user: PropTypes.object,
   productBookmarks: PropTypes.array,
   messages: PropTypes.object,
@@ -383,6 +417,7 @@ const mapDispatchToProps = dispatch => ({
   navigateToLogin: () => dispatch(
     NavigationActions.navigate({ routeName: 'Profile' })
   ),
+  toBookmarks: () => dispatch(actions.moveToPage('Bookmarks')),
   createMessage: (threadId, text, media, products) => dispatch(
     actions.createMessage(threadId, text, media, products)
   ),
