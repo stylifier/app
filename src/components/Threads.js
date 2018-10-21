@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  SafeAreaView,
   ScrollView,
   RefreshControl,
 } from 'react-native'
@@ -39,18 +40,10 @@ class Threads extends Component {
   }
 
   renderThreads() {
-    const { messages, refetchTopThreads, user } = this.props
+    const { messages, user } = this.props
 
     return (
-      <ScrollView
-        style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
-        refreshControl={
-          <RefreshControl
-            refreshing={messages.loadingTop}
-            onRefresh={() => refetchTopThreads()}
-          />
-        }
-      >
+      <View>
         {messages.threads
           .filter(t => t.id !== 'new')
           .sort((a, b) => {
@@ -77,7 +70,7 @@ class Threads extends Component {
               }}
             />
           )}
-      </ScrollView>
+      </View>
     )
   }
 
@@ -119,18 +112,23 @@ class Threads extends Component {
   }
 
   render() {
-    const { user, messages } = this.props
-
-    if (!user.isLoggedInUser) {
-      return this.renderUserIsGuest()
-    }
+    const { user, messages, refetchTopThreads } = this.props
 
     return (
-      <View>
-        {this.renderThreads()}
-        {messages.threadLoading &&
+      <ScrollView
+        style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
+        refreshControl={
+          user.isLoggedInUser ? <RefreshControl
+            refreshing={messages.loadingTop}
+            onRefresh={() => refetchTopThreads()}
+          /> : undefined
+        }
+      >
+        {user.isLoggedInUser && this.renderThreads()}
+        {user.isLoggedInUser && messages.threadLoading &&
           <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" />}
-      </View>
+        {!user.isLoggedInUser && this.renderUserIsGuest()}
+      </ScrollView>
     )
   }
 }

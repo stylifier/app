@@ -51,6 +51,14 @@ const messages = (
         loadingTop: false,
       }
 
+    case 'CLEAR_THREADS':
+      return {
+        ...state,
+        threads: [],
+        pagination: 0,
+        loadingTop: false,
+      }
+
     case 'LOADING_THREAD_FETCH':
       return { ...state, threadLoading: true }
 

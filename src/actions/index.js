@@ -566,6 +566,7 @@ const actions = {
     dispatch({ type: 'ADD_USER_INFO', payload: info })
     dispatch({ type: 'CLEAR_FEEDS' })
     dispatch({ type: 'CLEAR_SEARCH_PHRASE' })
+    dispatch({ type: 'CLEAR_THREADS' })
     dispatch(actions.refreshBookmarks())
     dispatch(actions.refreshCategories())
     dispatch(actions.refreshColorCode())

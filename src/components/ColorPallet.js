@@ -14,10 +14,12 @@ import {
 import { NavigationActions } from 'react-navigation'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import PropTypes from 'prop-types'
+import { Text as NBText } from 'native-base'
 import { connect } from 'react-redux'
 import actions from '../actions'
 import CreateOutfit from './CreateOutfit'
 import ProductItem from './ProductItem.js'
+import ProfilePage from './ProfilePage'
 
 
 const makeid = () => {
@@ -38,6 +40,7 @@ class ColorPallet extends Component {
     this.state = {
       modalVisible: false,
       openedIndex: -1,
+      showProfile: false,
     }
   }
 
@@ -203,12 +206,14 @@ class ColorPallet extends Component {
   }
 
   render() {
+    const { base } = this.props
+
     const bookmarked =
-      this.props.bookmarks.filter(p => p.code === this.props.base.code).length > 0
+      this.props.bookmarks.filter(p => p.code === base.code).length > 0
 
     const productBookmarks =
       this.props.productBookmarks.filter(p =>
-        p.palletId === this.props.base.id) || []
+        p.palletId === base.id) || []
 
     return (
       <View
@@ -252,7 +257,7 @@ class ColorPallet extends Component {
               borderColor: '#3b4e68',
             }}
           >
-            {this.props.base.code.match(/.{1,6}/g).map((c, i) => (
+            {base.code.match(/.{1,6}/g).map((c, i) => (
               <Animated.View
                 style={{
                   width: '100%',
@@ -350,7 +355,7 @@ class ColorPallet extends Component {
                       {
                         text: 'Remove',
                         onPress: () => {
-                          this.props.deleteBookmarkedColorPallet(this.props.base.id)
+                          this.props.deleteBookmarkedColorPallet(base.id)
                         },
                       },
                     ],
@@ -358,7 +363,7 @@ class ColorPallet extends Component {
                   )
                   return
                 }
-                this.props.bookmarkColorPallet(this.props.base.id)
+                this.props.bookmarkColorPallet(base.id)
               }}
             >
               <FontAwesome
@@ -383,7 +388,7 @@ class ColorPallet extends Component {
               }}
             >
               <Text style={{ color: '#f5f5f5' }} >
-                Popularity: {Math.round(this.props.base.popularity * 10) / 10} / 5
+                Popularity: {Math.round(base.popularity * 10) / 10} / 5
               </Text>
             </View>
           </View>
@@ -405,6 +410,22 @@ class ColorPallet extends Component {
             </View>
           }
         </View>
+        {base.creator_username && <NBText
+          style={{ marginLeft: 'auto' }}
+          onPress={() => this.setState({ showProfile: true })}
+        >
+          Created By: @{base.creator_username}
+        </NBText>}
+        {base.creator_username && <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.showProfile}
+        >
+          <ProfilePage
+            onDismissPressed={() => this.setState({ showProfile: false })}
+            base={{ username: base.creator_username }}
+          />
+        </Modal>}
       </View>
     )
   }
