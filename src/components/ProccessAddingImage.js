@@ -18,6 +18,7 @@ class ProccessAddingImage extends Component {
       isSharingView: false,
       isSharing: false,
       query: '',
+      desableScroll: false,
     }
   }
 
@@ -25,9 +26,9 @@ class ProccessAddingImage extends Component {
     const { remoteImage } = this.props
 
     return (
-      <View>
-        <Text style={{ marginTop: 10, marginLeft: 10 }}>
-          Tap on the color you want to find the pallet for:
+      <View style={{ padding: 5 }}>
+        <Text style={{ marginLeft: 10 }}>
+          Or tap on one of color boxes
         </Text>
         <View
           style={{
@@ -39,7 +40,10 @@ class ProccessAddingImage extends Component {
           {
             remoteImage.colorCode.match(/.{1,6}/g).map((c, i) => (
               <ColorView
-                onPress={(t) => this.props.getColorPalletRecommendation(t)}
+                onPress={(t) => {
+                  this.props.getColorPalletRecommendation(t)
+                  this.scrollView.scrollToPosition(0, 350)
+                }}
                 key={i}
                 base={c}
               />
@@ -144,6 +148,8 @@ class ProccessAddingImage extends Component {
             width: '100%',
             paddingTop: 30,
           }}
+          scrollEnabled={!this.state.desableScroll}
+          ref={scrollView => { this.scrollView = scrollView }}
         >
           {
             remoteImage &&
@@ -151,6 +157,13 @@ class ProccessAddingImage extends Component {
               hideTopMenu
               hideBottomMenu={!this.state.isSharingView}
               base={remoteImage}
+              showColordeaggablePicker={!this.state.isSharingView}
+              onPickedColor={(t) => {
+                this.props.getColorPalletRecommendation(t.replace('#', ''))
+                this.scrollView.scrollToPosition(0, 350)
+              }}
+              onStartDrag={() => this.setState({ desableScroll: true })}
+              onFinishDrag={() => this.setState({ desableScroll: false })}
             />
           }
           {!this.state.isSharingView && this.renderColorPalletSection()}

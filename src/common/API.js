@@ -24,8 +24,6 @@ class API {
     const paramsStr = params &&
       params.length > 0 ? `?${params.join('&')}` : ''
 
-    console.log('Bearer '+ this.token)
-
     const ret = fetch(this.baseAddress + path + paramsStr, {
         headers: Object.assign({
           accept: 'json',
@@ -290,6 +288,15 @@ class API {
     return this.post(`/media/${mediaId}/style/${style}`, {})
   }
 
+  setColorCode(mediaId, colorCode) {
+    if(!mediaId || !colorCode) return Promise.resolve()
+    return this.post(`/media/${mediaId}/color_code/${colorCode}`, {})
+  }
+
+  createColorPallet(code) {
+    return this.post('/color_pallets', { code })
+  }
+
   bookmarkColorPallet(palletId, title) {
     return this.post(`/color_pallets/${palletId}${title ? '?title=' + title : ''}`, {})
   }
@@ -358,27 +365,8 @@ class API {
     return this.post('/products', {media, name, code, price, shopAddress})
   }
 
-  fetchSelfProducts(q, pagination) {
-    if(!q)
-      q = {}
-
+  fetchUserProducts(q = {}, pagination) {
     return this.get('/products',
-      [
-        ...(q.name ? ['name=' + q.name] : []),
-        ...(q.color ? ['color=' + q.color] : []),
-        ...(q.subColor ? ['sub_color=' + q.subColor] : []),
-        ...(q.category ? ['category=' + q.category] : []),
-        ...(q.hex ? ['hex=' + q.hex] : []),
-        ...(pagination ? ['pagination=' + pagination] : [])
-      ]
-    )
-  }
-
-  fetchUserProducts(username, q, pagination) {
-    if(!q)
-      q = {}
-
-    return this.get(`/users/${username}/products`,
       [
         ...(q.name ? ['name=' + q.name] : []),
         ...(q.color ? ['color=' + q.color] : []),

@@ -1,24 +1,62 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { View, Dimensions, Text, ActivityIndicator,
-  TouchableOpacity, Modal as RNModal, Alert } from 'react-native'
+  TouchableOpacity, Modal as RNModal, Alert, Image } from 'react-native'
 import { Badge, Divider, Button, Icon } from 'react-native-elements'
 import Modal from 'react-native-modal'
 import AutoHeightImage from 'react-native-auto-height-image'
+import { getPixelRGBA } from 'react-native-get-pixel'
 import { connect } from 'react-redux'
+import RNFS from 'react-native-fs'
 import StyleSelector from './StyleSelector'
+import Draggable from './Draggable'
 import actions from '../actions'
 import ProfilePage from './ProfilePage'
 import ProductSelector from './ProductSelector'
 import DescriptionChenger from './DescriptionChenger'
+import ColorPalletCreator from './ColorPalletCreator'
 import ProductItem from './ProductItem'
 import Viewer from './Viewer'
+
+function componentToHex(c) {
+  const hex = c.toString(16)
+  return (hex.length === 1 ? (`0${hex}`) : hex)
+}
+
+function rgbToHex(c) {
+  return `#${componentToHex(c[0])}${componentToHex(c[1])}${componentToHex(c[2])}`
+}
+
 
 class FeedItem extends Component {
   constructor(props) {
     super(props)
 
-    this.state = { imageLoading: false, showProfile: false, base: props.base, showMenuModal: false }
+    const u = props.base.images.standard_resolution.url
+    const dp = RNFS.DocumentDirectoryPath
+
+    this.state = {
+      imageLoading: false,
+      showProfile: false,
+      base: props.base,
+      showMenuModal: false,
+      imageWidth: 0,
+      imageHeight: 0,
+      draggableColor: 'lightgray',
+      imageName: `${dp}/${props.base.id}.${u.substr(u.lastIndexOf('.') + 1)}`,
+    }
+  }
+
+  componentDidMount() {
+    const { showColordeaggablePicker } = this.props
+
+    if (!showColordeaggablePicker) return
+
+    const imageUrl = this.props.base.images.standard_resolution.url
+    Image.getSize(imageUrl,
+      (width, height) => this.setState({ imageWidth: width, imageHeight: height }))
+    RNFS.downloadFile({ fromUrl: imageUrl, toFile: this.state.imageName })
+      .promise.then(() => {}).catch(() => {})
   }
 
   renderBottomMenu() {
@@ -175,6 +213,26 @@ class FeedItem extends Component {
       </View>)
   }
 
+  renderColorPalletCreator(full) {
+    const { base } = this.state
+    const { hideTopMenu } = this.props
+
+    return (
+      <View
+        style={{
+          width: full ? '100%' : Dimensions.get('window').width,
+          marginBottom: hideTopMenu ? 20 : 0,
+        }}
+      >
+        <ColorPalletCreator
+          base={base}
+          full={full}
+          defaultValue={base.description}
+          onDone={() => {}}
+        />
+      </View>)
+  }
+
   renderProductSelectButton(full) {
     const { base } = this.state
     const { addProductToMedia, hideTopMenu } = this.props
@@ -274,6 +332,9 @@ class FeedItem extends Component {
               <Divider /> {this.renderStyleSelectorButtton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
+              <Divider /> {this.renderColorPalletCreator(true)}
+            </View>
+            <View style={{ alignSelf: 'flex-end', width: '100%' }}>
               <Divider /> {this.renderDescriptionChangeButton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
@@ -305,8 +366,38 @@ class FeedItem extends Component {
     )
   }
 
+  renderDraggable(colorKey) {
+    const { onStartDrag, onFinishDrag, onPickedColor } = this.props
+    return (
+      <Draggable
+        reverse={false}
+        renderColor={this.state[colorKey]}
+        renderText=""
+        pressInDrag={() => onStartDrag && onStartDrag()}
+        pressOutDrag={() => {
+          if (onFinishDrag) onFinishDrag()
+        }}
+        pressDragRelease={() => {
+          if (onPickedColor) onPickedColor(this.state[colorKey], colorKey)
+        }}
+        onMove={((x, y) => {
+          this.autoHeightImageView.measure((fx, fy, w, h, px, py) => {
+            clearTimeout(this.getPixelTimeout)
+            this.getPixelTimeout = setTimeout(() => {
+              const ix = ((x - px) / w) * this.state.imageWidth
+              const iy = ((y - py) / h) * this.state.imageHeight
+              getPixelRGBA(this.state.imageName, ix, iy)
+                .then(c => this.setState({ [colorKey]: rgbToHex(c) }))
+                .catch(() => {})
+            }, 10)
+          })
+        })}
+      />
+    )
+  }
+
   render() {
-    const { hideBottomMenu, hideTopMenu, user } = this.props
+    const { hideBottomMenu, hideTopMenu, user, showColordeaggablePicker } = this.props
     const { base, imageLoading } = this.state
 
     const isMe = base.userUsername === user.username
@@ -332,14 +423,24 @@ class FeedItem extends Component {
             style={{ marginBottom: '-50%', marginTop: '30%' }}
             size="large"
           />}}
-        <AutoHeightImage
-          width={Dimensions.get('window').width - 22}
-          style={{ borderRadius: 9 }}
-          onLoadStart={() => this.setState({ imageLoading: true })}
-          onLoadEnd={() => this.setState({ imageLoading: false })}
-          source={{ uri: base.images.standard_resolution.url }}
-        />
-
+        <View ref={t => { this.autoHeightImageView = t }}>
+          <AutoHeightImage
+            z={2}
+            width={Dimensions.get('window').width - 22}
+            style={{ borderRadius: 9 }}
+            onLoadStart={() => this.setState({ imageLoading: true })}
+            onLoadEnd={() => this.setState({ imageLoading: false })}
+            source={{ uri: base.images.standard_resolution.url }}
+          />
+        </View>
+        {showColordeaggablePicker && (
+          <View style={{ width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
+            <Text style={{ marginBottom: 10 }}>
+              Drag the box below to the color you want to find the pallet for
+            </Text>
+            {this.renderDraggable('draggableColor')}
+          </View>
+        )}
         {isMe && !imageLoading && !hideTopMenu &&
           <View
             style={{ flexDirection: 'row', padding: 5, position: 'absolute', right: 0, top: 0 }}
@@ -358,7 +459,8 @@ class FeedItem extends Component {
 
         {!hideBottomMenu && this.renderBottomMenu()}
 
-        <Divider style={{ width: '200%' }} />
+        {!showColordeaggablePicker &&
+          <Divider style={{ width: '200%' }} />}
       </View>
     )
   }
@@ -374,6 +476,10 @@ FeedItem.propTypes = {
   setProfilePicture: PropTypes.func,
   addProductToMedia: PropTypes.func,
   unshareMedia: PropTypes.func,
+  onPickedColor: PropTypes.func,
+  onStartDrag: PropTypes.func,
+  onFinishDrag: PropTypes.func,
+  showColordeaggablePicker: PropTypes.bool,
   hideBottomMenu: PropTypes.bool,
   hideTopMenu: PropTypes.bool,
 }

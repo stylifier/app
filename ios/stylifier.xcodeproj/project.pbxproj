@@ -35,6 +35,8 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* stylifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* stylifierTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
+		41015109217B4A8700EECE06 /* libRNPixelColor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41015108217B4A6600EECE06 /* libRNPixelColor.a */; };
+		41015113217B4D9600EECE06 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41015110217B4CA100EECE06 /* libRNFS.a */; };
 		410B01ED2163C0D200E65227 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 410B01EC2163C0D200E65227 /* NotificationService.m */; };
 		410B01F12163C0D200E65227 /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 410B01E92163C0D200E65227 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		410B01F72163C19500E65227 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 410B01F62163C19500E65227 /* UIKit.framework */; };
@@ -307,6 +309,27 @@
 			remoteGlobalIDString = 3D3CD9181DE5FBD800167DC4;
 			remoteInfo = "jschelpers-tvOS";
 		};
+		41015107217B4A6600EECE06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41015103217B4A6500EECE06 /* RNGetPixel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5D72D2E81C16249000E22EC1;
+			remoteInfo = RNPixelColor;
+		};
+		4101510F217B4CA100EECE06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4101510A217B4CA100EECE06 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
+			remoteInfo = RNFS;
+		};
+		41015111217B4CA100EECE06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4101510A217B4CA100EECE06 /* RNFS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6456441F1EB8DA9100672408;
+			remoteInfo = "RNFS-tvOS";
+		};
 		410B01EF2163C0D200E65227 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -444,6 +467,8 @@
 		2D02E47B1E0B4A5D006451C7 /* stylifier-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "stylifier-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* stylifier-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "stylifier-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		41015103217B4A6500EECE06 /* RNGetPixel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNGetPixel.xcodeproj; path = "../node_modules/react-native-get-pixel/ios/RNGetPixel.xcodeproj"; sourceTree = "<group>"; };
+		4101510A217B4CA100EECE06 /* RNFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		410B01E92163C0D200E65227 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		410B01EB2163C0D200E65227 /* NotificationService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationService.h; sourceTree = "<group>"; };
 		410B01EC2163C0D200E65227 /* NotificationService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationService.m; sourceTree = "<group>"; };
@@ -492,9 +517,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41015109217B4A8700EECE06 /* libRNPixelColor.a in Frameworks */,
 				5E6C81D320F78BCE00B44A1F /* libRNDeviceInfo.a in Frameworks */,
 				5EF6CF7220F760F30009A5D8 /* libRCTImageResizer.a in Frameworks */,
 				5EF6CF6B20F760670009A5D8 /* libRNFS.a in Frameworks */,
+				41015113217B4D9600EECE06 /* libRNFS.a in Frameworks */,
 				5EF6CF2E20F75EBB0009A5D8 /* libRNImagePicker.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -690,6 +717,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		41015104217B4A6500EECE06 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41015108217B4A6600EECE06 /* libRNPixelColor.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4101510B217B4CA100EECE06 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				41015110217B4CA100EECE06 /* libRNFS.a */,
+				41015112217B4CA100EECE06 /* libRNFS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		410B01EA2163C0D200E65227 /* OneSignalNotificationServiceExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -771,6 +815,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				4101510A217B4CA100EECE06 /* RNFS.xcodeproj */,
+				41015103217B4A6500EECE06 /* RNGetPixel.xcodeproj */,
 				410B02142163C9A800E65227 /* RCTOneSignal.xcodeproj */,
 				5E6C81CA20F78A6000B44A1F /* RNDeviceInfo.xcodeproj */,
 				5EF6CF6C20F760E50009A5D8 /* RCTImageResizer.xcodeproj */,
@@ -1073,8 +1119,16 @@
 					ProjectRef = 5E6C81CA20F78A6000B44A1F /* RNDeviceInfo.xcodeproj */;
 				},
 				{
+					ProductGroup = 4101510B217B4CA100EECE06 /* Products */;
+					ProjectRef = 4101510A217B4CA100EECE06 /* RNFS.xcodeproj */;
+				},
+				{
 					ProductGroup = 5EF6CF3D20F7601F0009A5D8 /* Products */;
 					ProjectRef = 5EF6CF3C20F7601F0009A5D8 /* RNFS.xcodeproj */;
+				},
+				{
+					ProductGroup = 41015104217B4A6500EECE06 /* Products */;
+					ProjectRef = 41015103217B4A6500EECE06 /* RNGetPixel.xcodeproj */;
 				},
 				{
 					ProductGroup = 5EF6CF0420F75E720009A5D8 /* Products */;
@@ -1315,6 +1369,27 @@
 			fileType = archive.ar;
 			path = libjschelpers.a;
 			remoteRef = 3DAD3EAE1DF850E9000B6D8A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		41015108217B4A6600EECE06 /* libRNPixelColor.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNPixelColor.a;
+			remoteRef = 41015107217B4A6600EECE06 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		41015110217B4CA100EECE06 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 4101510F217B4CA100EECE06 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		41015112217B4CA100EECE06 /* libRNFS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFS.a;
+			remoteRef = 41015111217B4CA100EECE06 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		410B01FF2163C25B00E65227 /* libRCTOneSignal.a */ = {

@@ -441,6 +441,24 @@ const actions = {
       .then(() => dispatch(actions.refreshBookmarks()))
   },
 
+  createColorPallet: (mediaId, code) => (dispatch) => {
+    api.createColorPallet(code)
+      .then((r) => api.bookmarkColorPallet(r.id))
+      .then(() => api.setColorCode(code))
+      .then(() => dispatch(actions.refreshBookmarks()))
+      .then(() => Alert.alert(
+        'Color Pallet Created',
+        'And added to your bookmarks',
+        [
+          { text: 'Dismiss', onPress: () => {} },
+        ],
+        { cancelable: false }
+      ))
+      .catch(() => {
+        Alert.alert('Ops... Something went wrong, please try again later.')
+      })
+  },
+
   deleteBookmarkedProduct: (productId, palletId) => (dispatch) => {
     api.deleteBookmarkedProduct(productId, palletId)
       .then(() => dispatch(actions.refreshBookmarks()))
@@ -455,7 +473,7 @@ const actions = {
     dispatch({ type: 'CLEAR_PRODUCT_SUGGESTION' })
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zzz', q)
+    api.fetchUserProducts(q)
       .then(products => {
         dispatch({
           type: 'RENEW_PRODUCT_SUGGESTION',
@@ -477,7 +495,7 @@ const actions = {
 
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
 
-    api.fetchUserProducts('zzz', productSuggestion.queries, productSuggestion.pagination)
+    api.fetchUserProducts(productSuggestion.queries, productSuggestion.pagination)
       .then(products => {
         dispatch({
           type: 'ADD_TO_PRODUCT_SUGGESTION',
@@ -522,6 +540,7 @@ const actions = {
 
   userInitiated: (info) => (dispatch) => {
     dispatch({ type: 'USER_INITIATED', payload: info })
+    dispatch({ type: 'ADD_USER_INFO', payload: info })
     dispatch({ type: 'CLEAR_FEEDS' })
     dispatch({ type: 'CLEAR_SEARCH_PHRASE' })
     dispatch(actions.refreshBookmarks())

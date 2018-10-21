@@ -6,7 +6,6 @@ import {
 import { connect } from 'react-redux'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import FadeView from 'react-native-fade-view'
-// import Accordion from 'react-native-collapsible/Accordion'
 import SlideView from './slideView.js'
 import ProductItem from './ProductItem.js'
 import actions from '../actions'
@@ -20,15 +19,11 @@ class CreateOutfit extends Component {
 
     this.state = {
       country: '',
-      // color: '#000000',
-      // gender: 'men',
-      // category: 'men>clothing>t-shirts',
     }
 
     AsyncStorage.getItem('guest_submitted')
-    .then(t => t && this.setState({ isSubmited: true }))
+      .then(t => t && this.setState({ isSubmited: true }))
 
-    // this.Animation = new Animated.Value(1)
     this.Animation = new Animated.Value(0)
   }
 

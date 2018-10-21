@@ -171,7 +171,10 @@ class Feeds extends Component {
         />
       }
     >
-      <Viewer items={feeds.items} BaseItem={FeedItem} />
+      <Viewer
+        items={feeds.items}
+        BaseItem={FeedItem}
+      />
       {feeds.loadingBottom && <ActivityIndicator size="small" color="#3b4e68" />}
     </ScrollView>)
   }
