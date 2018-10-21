@@ -367,7 +367,7 @@ const actions = {
       .catch(() => {})
   },
 
-  refreshBookmarks: () => (dispatch) => {
+  refreshBookmarks: (addToRecoms) => (dispatch) => {
     AsyncStorage.getItem('color_bookmarks')
       .then((bms) => bms && dispatch({
         type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
@@ -381,7 +381,7 @@ const actions = {
           type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
           payload: [...pallets.data],
         })
-        if (pallets.data.length > 0) {
+        if (addToRecoms && pallets.data.length > 0) {
           dispatch({
             type: 'ADD_TOP_COLOR_PALLET_SUGGESTION',
             payload: pallets.data[0],
@@ -463,15 +463,15 @@ const actions = {
     api.createColorPallet(code)
       .then((r) => api.bookmarkColorPallet(r.id))
       .then(() => api.setColorCode(code))
-      .then(() => dispatch(actions.refreshBookmarks()))
-      .then(() => Alert.alert(
+      .then(() => dispatch(actions.refreshBookmarks(true)))
+      .then(() => setTimeout(() => Alert.alert(
         'Color Pallet Created',
         'And added to your bookmarks',
         [
           { text: 'Dismiss', onPress: () => {} },
         ],
         { cancelable: false }
-      ))
+      ), 1000))
       .catch(() => {
         Alert.alert('Ops... Something went wrong, please try again later.')
       })
