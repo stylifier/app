@@ -8,6 +8,7 @@ import actions from '../actions'
 import ColorView from './ColorView'
 import ColorPallet from './ColorPallet'
 import FeedItem from './FeedItem'
+import ColorPalletCreator from './ColorPalletCreator'
 
 
 class ProccessAddingImage extends Component {
@@ -68,6 +69,12 @@ class ProccessAddingImage extends Component {
     return (<View>
       { remoteImage && remoteImage.colorCode && this.renderColorPick() }
       {!remoteImage && <ActivityIndicator size="small" color="#3b4e68" />}
+      {remoteImage && <View style={{ padding: 20, margin: 'auto' }}>
+        <ColorPalletCreator
+          base={remoteImage}
+          onDone={() => {}}
+        />
+      </View>}
       {colorPalletRecommendation && colorPalletRecommendation.map((cp, i) => (
         <ColorPallet
           key={i}

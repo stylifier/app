@@ -235,6 +235,7 @@ const actions = {
         dispatch(actions.createMessage(threadId, '', [imageMetaDate]))
         dispatch({ type: 'MESSAGING_FINISHED_UPLOADING_IMAGE' })
       })
+      .catch(() => {})
   },
 
   createMessage: (threadId, text, media, products) => (dispatch, getState) => {
@@ -363,6 +364,7 @@ const actions = {
         type: 'UPDATE_COLOR_PALLET_SUGGESTION',
         payload: [...recoms],
       }))
+      .catch(() => {})
   },
 
   refreshBookmarks: () => (dispatch) => {
@@ -371,6 +373,7 @@ const actions = {
         type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
         payload: [...JSON.parse(bms)],
       }))
+      .catch(() => {})
 
     api.getColorPalletBookmarks()
       .then(pallets => {
@@ -378,14 +381,22 @@ const actions = {
           type: 'UPDATE_COLOR_PALLET_BOOKMARKS',
           payload: [...pallets.data],
         })
+        if (pallets.data.length > 0) {
+          dispatch({
+            type: 'ADD_TOP_COLOR_PALLET_SUGGESTION',
+            payload: pallets.data[0],
+          })
+        }
         AsyncStorage.setItem('color_bookmarks', JSON.stringify(pallets.data))
       })
+      .catch(() => {})
 
     AsyncStorage.getItem('product_bookmarks')
       .then((bms) => bms && dispatch({
         type: 'UPDATE_PRODUCT_BOOKMARKS',
         payload: [...JSON.parse(bms)],
       }))
+      .catch(() => {})
 
     api.getProductBookmarks()
       .then(p => {
@@ -395,6 +406,7 @@ const actions = {
         })
         AsyncStorage.setItem('product_bookmarks', JSON.stringify(p.data))
       })
+      .catch(() => {})
   },
 
   refreshColorCode: () => (dispatch) => {
@@ -403,6 +415,7 @@ const actions = {
         type: 'UPDATE_COLOR_CODE',
         payload: [...JSON.parse(data)],
       }))
+      .catch(() => {})
 
     api.fetchColorCodes()
       .then(data => {
@@ -412,6 +425,7 @@ const actions = {
         })
         AsyncStorage.setItem('color_code', JSON.stringify(data))
       })
+      .catch(() => {})
   },
 
   refreshCategories: () => (dispatch) => {
@@ -420,6 +434,7 @@ const actions = {
         type: 'UPDATE_CATEGORIES',
         payload: [...JSON.parse(data)],
       }))
+      .catch(() => {})
 
     api.fetchCategories()
       .then(data => {
@@ -429,16 +444,19 @@ const actions = {
         })
         AsyncStorage.setItem('categories', JSON.stringify(data))
       })
+      .catch(() => {})
   },
 
   deleteBookmarkedColorPallet: (palletId) => (dispatch) => {
     api.deleteBookmarkedColorPallet(palletId)
       .then(() => dispatch(actions.refreshBookmarks()))
+      .catch(() => {})
   },
 
   bookmarkColorPallet: (palletId, title) => (dispatch) => {
     api.bookmarkColorPallet(palletId, title)
       .then(() => dispatch(actions.refreshBookmarks()))
+      .catch(() => {})
   },
 
   createColorPallet: (mediaId, code) => (dispatch) => {
@@ -462,11 +480,13 @@ const actions = {
   deleteBookmarkedProduct: (productId, palletId) => (dispatch) => {
     api.deleteBookmarkedProduct(productId, palletId)
       .then(() => dispatch(actions.refreshBookmarks()))
+      .catch(() => {})
   },
 
   bookmarkProduct: (productId, palletId, title) => (dispatch) => {
     api.bookmarkProduct(productId, palletId, title)
       .then(() => dispatch(actions.refreshBookmarks()))
+      .catch(() => {})
   },
 
   fetchProducts: (q) => (dispatch) => {
@@ -484,6 +504,7 @@ const actions = {
           },
         })
       })
+      .catch(() => {})
   },
 
   fetchMoreProducts: () => (dispatch, getState) => {
@@ -505,6 +526,7 @@ const actions = {
           },
         })
       })
+      .catch(() => {})
   },
 
   askForApproval: (metadata) => () => {
@@ -536,6 +558,7 @@ const actions = {
           payload: imageMetaDate,
         })
       )
+      .catch(() => {})
   },
 
   userInitiated: (info) => (dispatch) => {
@@ -552,6 +575,7 @@ const actions = {
 
     AsyncStorage.getItem('subscription_id')
       .then((sid) => sid && dispatch(actions.addSubsctiption(sid)))
+      .catch(() => {})
   },
 
   loginUser: (username, password) => (dispatch) => {
@@ -592,6 +616,7 @@ const actions = {
       .then(() =>
         AsyncStorage.removeItem('guest_submitted'))
       .then(() => dispatch(actions.initiateUser()))
+      .catch(() => {})
   },
 
   initiateUser: () => (dispatch) => {
@@ -625,6 +650,7 @@ const actions = {
               .catch(err => dispatch({ type: 'USER_INITIATION_FAILED', payload: err }))
           })
       })
+      .catch(() => {})
   },
 }
 

@@ -227,7 +227,6 @@ class FeedItem extends Component {
         <ColorPalletCreator
           base={base}
           full={full}
-          defaultValue={base.description}
           onDone={() => {}}
         />
       </View>)
@@ -382,14 +381,11 @@ class FeedItem extends Component {
         }}
         onMove={((x, y) => {
           this.autoHeightImageView.measure((fx, fy, w, h, px, py) => {
-            clearTimeout(this.getPixelTimeout)
-            this.getPixelTimeout = setTimeout(() => {
-              const ix = ((x - px) / w) * this.state.imageWidth
-              const iy = ((y - py) / h) * this.state.imageHeight
-              getPixelRGBA(this.state.imageName, ix, iy)
-                .then(c => this.setState({ [colorKey]: rgbToHex(c) }))
-                .catch(() => {})
-            }, 10)
+            const ix = ((x - px) / w) * this.state.imageWidth
+            const iy = ((y - py) / h) * this.state.imageHeight
+            getPixelRGBA(this.state.imageName, ix, iy)
+              .then(c => this.setState({ [colorKey]: rgbToHex(c) }))
+              .catch(() => {})
           })
         })}
       />

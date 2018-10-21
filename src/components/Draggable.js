@@ -33,7 +33,12 @@ class Draggable extends Component {
         dy: this.state.pan.y,
       }], { listener: () => {
         this.draggable.measure((a, b, d, f, px, py) => {
-          if (onMove) onMove(px + this.state._value.x + this.props.renderSize, py + this.state._value.y + this.props.renderSize)
+          if (onMove) {
+            onMove(
+              px + this.state._value.x + this.props.renderSize,
+              py + this.state._value.y + this.props.renderSize
+            )
+          }
         })
       } }),
       onPanResponderRelease: (e, gestureState) => {

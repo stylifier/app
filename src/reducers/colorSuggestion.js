@@ -20,6 +20,18 @@ const colorSuggestion = (state = {}, action) => {
       }
       break
 
+    case 'ADD_TOP_COLOR_PALLET_SUGGESTION':
+      newState = {
+        ...newState,
+        ...{
+          colorPalletRecommendation: [
+            action.payload,
+            ...state.colorPalletRecommendation,
+          ],
+        },
+      }
+      break
+
     default:
       break
   }

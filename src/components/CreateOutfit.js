@@ -47,8 +47,6 @@ class CreateOutfit extends Component {
         this.startLightingBackgroundColorAnimation()
 
         this.props.fetchProducts({
-          subColor: this.props.colorCodes.sort((a, b) =>
-            chroma.deltaE(color, a.code) - chroma.deltaE(color, b.code))[0].name,
           hex: color,
           category: this.state.category,
         })
