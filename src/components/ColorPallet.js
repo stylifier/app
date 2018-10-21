@@ -341,9 +341,24 @@ class ColorPallet extends Component {
               }}
               onPress={() => {
                 if (bookmarked) {
-                  return this.props.deleteBookmarkedColorPallet(this.props.base.id)
+                  Alert.alert(
+                    'Remove Bookmarked Colorpallet',
+                    'Removeing bookmarked Colorpallet woule cause your created outfit ' +
+                      'to be removed as well. Are you sure you want to continue?',
+                    [
+                      { text: 'Cancel' },
+                      {
+                        text: 'Remove',
+                        onPress: () => {
+                          this.props.deleteBookmarkedColorPallet(this.props.base.id)
+                        },
+                      },
+                    ],
+                    { cancelable: false }
+                  )
+                  return
                 }
-                return this.props.bookmarkColorPallet(this.props.base.id)
+                this.props.bookmarkColorPallet(this.props.base.id)
               }}
             >
               <FontAwesome
