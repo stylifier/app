@@ -8,6 +8,7 @@ import {
   ScrollView,
   RefreshControl,
 } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { NavigationActions } from 'react-navigation'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -48,14 +49,14 @@ class Threads extends Component {
           .filter(t => t.id !== 'new')
           .sort((a, b) => {
             const aDate = a.from.username === user.username ?
-              moment(a.to_last_message_at || a.created_time).fromNow() :
-              moment(a.from_last_message_at || a.created_time).fromNow()
+              moment(a.to_last_message_at || a.created_time) :
+              moment(a.from_last_message_at || a.created_time)
 
             const bDate = b.from.username === user.username ?
-              moment(b.to_last_message_at || b.created_time).fromNow() :
-              moment(b.from_last_message_at || b.created_time).fromNow()
+              moment(b.to_last_message_at || b.created_time) :
+              moment(b.from_last_message_at || b.created_time)
 
-            return aDate - bDate
+            return bDate - aDate
           })
           .map((t, i) =>
             <ThreadItem
@@ -115,20 +116,22 @@ class Threads extends Component {
     const { user, messages, refetchTopThreads } = this.props
 
     return (
-      <ScrollView
-        style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
-        refreshControl={
-          user.isLoggedInUser ? <RefreshControl
-            refreshing={messages.loadingTop}
-            onRefresh={() => refetchTopThreads()}
-          /> : undefined
-        }
-      >
-        {user.isLoggedInUser && this.renderThreads()}
-        {user.isLoggedInUser && messages.threadLoading &&
-          <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" />}
-        {!user.isLoggedInUser && this.renderUserIsGuest()}
-      </ScrollView>
+      <SafeAreaView>
+        <KeyboardAwareScrollView
+          style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
+          refreshControl={
+            user.isLoggedInUser ? <RefreshControl
+              refreshing={messages.loadingTop}
+              onRefresh={() => refetchTopThreads()}
+            /> : undefined
+          }
+        >
+          {user.isLoggedInUser && this.renderThreads()}
+          {user.isLoggedInUser && messages.threadLoading &&
+            <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" />}
+          {!user.isLoggedInUser && this.renderUserIsGuest()}
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
     )
   }
 }

@@ -56,6 +56,7 @@ class MainView extends React.Component {
         }
         if (messages.selectedThreadId !== param[1]) {
           addUnreadThread(param[1])
+          refetchTopThreads(messages.selectedThreadId)
         }
 
         if (messages.threads.filter(t => t.id === param[1]).length <= 0) {
@@ -63,7 +64,7 @@ class MainView extends React.Component {
         }
       }
     } catch (e) {
-      console.error('onReceived error:', e)
+      // ignore
     }
   }
 
@@ -81,7 +82,7 @@ class MainView extends React.Component {
         this.props.moveToPage('Messages')
       }
     } catch (e) {
-      console.log('onReceived error:', e)
+      // ignore
     }
   }
 

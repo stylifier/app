@@ -90,11 +90,13 @@ class Profile extends Component {
                 Username: {
                   error: 'Your username must contain only ' +
                   'lowercase letters, numbers and underscores',
+                  autoCapitalize: 'none',
                 },
                 Password: {
                   password: true,
                   secureTextEntry: true,
                   error: 'Your password should atleast contain 8 letters',
+                  autoCapitalize: 'none',
                 },
               },
             }}
@@ -135,18 +137,22 @@ class Profile extends Component {
               fields: {
                 Fullname: {
                   error: 'Please enter your name',
+                  autoCapitalize: 'words',
                 },
                 Username: {
                   error: 'Your username must contain only ' +
                   'lowercase letters, numbers and underscores',
+                  autoCapitalize: 'none',
                 },
                 'Email Address': {
                   error: 'Please enter valid Email',
+                  autoCapitalize: 'none',
                 },
                 Password: {
                   password: true,
                   secureTextEntry: true,
                   error: 'Your password should atleast contain 8 letters',
+                  autoCapitalize: 'none',
                 },
               },
             }}

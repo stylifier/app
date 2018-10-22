@@ -44,8 +44,10 @@ const messages = (
         threads: [
           ...action.payload.data.filter(m =>
             state.threads.filter(t => t.id === m.id).length === 0),
-          ...state.threads.map(t => (action.payload.data.filter(i => i.id === t.id).length > 0 ?
-            action.payload.data.filter(i => i.id === t.id)[0] : t)),
+          ...state.threads.map(t => (
+            action.payload.data.filter(i => i.id === t.id).length > 0 ?
+              action.payload.data.filter(i => i.id === t.id)[0] : t)
+          ),
         ],
         pagination: action.payload.pagination,
         loadingTop: false,
