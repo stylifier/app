@@ -323,6 +323,11 @@ class Messages extends Component {
           renderBubble={(props) => (
             <Bubble
               {...props}
+              wrapperStyle={{
+                right: {
+                  backgroundColor: '#5b7495',
+                },
+              }}
               renderCustomView={() => (
                 <View
                   style={{
