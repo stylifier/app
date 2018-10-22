@@ -414,7 +414,7 @@ class ColorPallet extends Component {
           style={{ marginLeft: 'auto' }}
           onPress={() => this.setState({ showProfile: true })}
         >
-          Created By: @{base.creator_username}
+          Created By: @{base.creator_username.replace('m_g_i_o_s_', '')}
         </NBText>}
         {base.creator_username && <Modal
           animationType="slide"
