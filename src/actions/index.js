@@ -245,7 +245,7 @@ const actions = {
       api.createThread(thread.to.username)
         .then(tr => api.createMessage(tr.id, text, media, products).then(() => tr))
         .then(tr => {
-          setTimeout(() => dispatch(actions.setSelectedThreadId(tr.id)), 1000)
+          setTimeout(() => dispatch(actions.setSelectedThreadId(tr.id, true)), 500)
         })
         .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
       return
@@ -291,7 +291,16 @@ const actions = {
       .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
   },
 
-  setSelectedThreadId: (threadId) => (dispatch) => {
+  clearSelectedThreadId: () => (dispatch) => {
+    dispatch({ type: 'CLEAR_MESSAGES' })
+    dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: false })
+  },
+
+  setSelectedThreadId: (threadId, isRefetchThreadsFirst) => (dispatch) => {
+    if (!isRefetchThreadsFirst) {
+      dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
+    }
+
     dispatch({ type: 'LOADING_THREAD_FETCH' })
     return api.fetchThreads(undefined, 0)
       .then((tds) => {

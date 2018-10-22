@@ -78,7 +78,7 @@ class MainView extends React.Component {
         additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
 
       if (param[0] === 'messages') {
-        this.props.setSelectedThreadId(param[1])
+        this.props.setSelectedThreadId(param[1], true)
         this.props.moveToPage('Messages')
       }
     } catch (e) {

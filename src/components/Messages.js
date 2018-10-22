@@ -35,21 +35,30 @@ class Messages extends Component {
       selectedProfile: '',
     }
   }
+  componentWillUnmount() {
+    const { clearSelectedThreadId } = this.props
+    clearSelectedThreadId()
+  }
+
   onSend(items = []) {
-    const { navigator, messages } = this.props
+    const { navigator, messages, clearSelectedThreadId } = this.props
     const { selectedThreadId } = messages
 
-    if (selectedThreadId === 'new') navigator.pop()
+    if (selectedThreadId === 'new') {
+      clearSelectedThreadId()
+      navigator.pop()
+    }
 
     items.forEach(m =>
       this.props.createMessage(selectedThreadId, m.text))
   }
 
   componentDidUpdate(prevProps) {
-    const { messages } = this.props
+    const { messages, clearSelectedThreadId } = this.props
 
     if (prevProps.messages.selectedThreadId !== messages.selectedThreadId &&
       !messages.selectedThreadId) {
+      clearSelectedThreadId()
       this.props.navigator.pop()
     }
   }
@@ -403,8 +412,8 @@ Messages.propTypes = {
   navigateToLogin: PropTypes.func,
   createMessage: PropTypes.func,
   fetchButtomMessages: PropTypes.func,
-  setSelectedThreadId: PropTypes.func,
   sendImageMessage: PropTypes.func,
+  clearSelectedThreadId: PropTypes.func,
   toBookmarks: PropTypes.func,
   user: PropTypes.object,
   productBookmarks: PropTypes.array,
@@ -423,14 +432,12 @@ const mapDispatchToProps = dispatch => ({
     NavigationActions.navigate({ routeName: 'Profile' })
   ),
   toBookmarks: () => dispatch(actions.moveToPage('Bookmarks')),
+  clearSelectedThreadId: () => dispatch(actions.clearSelectedThreadId()),
   createMessage: (threadId, text, media, products) => dispatch(
     actions.createMessage(threadId, text, media, products)
   ),
   fetchButtomMessages: (threadId) => dispatch(
     actions.fetchButtomMessages(threadId)
-  ),
-  setSelectedThreadId: (threadId, refetchThreads) => dispatch(
-    actions.setSelectedThreadId(threadId, refetchThreads)
   ),
   sendImageMessage: (threadId, localPath) => dispatch(
     actions.sendImageMessage(threadId, localPath)

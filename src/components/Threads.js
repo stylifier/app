@@ -5,7 +5,6 @@ import {
   View,
   ActivityIndicator,
   SafeAreaView,
-  ScrollView,
   RefreshControl,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -66,8 +65,6 @@ class Threads extends Component {
               isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
               onPress={(trd) => {
                 this.props.setSelectedThreadId(trd.id)
-                this.props.fetchMessages(trd.id)
-                this.openMessaging(trd.id)
               }}
             />
           )}
@@ -150,6 +147,7 @@ Threads.propTypes = {
   messages: PropTypes.object,
   index: PropTypes.number,
   navigator: PropTypes.object,
+  clearSelectedThreadId: PropTypes.func,
 }
 
 const mapStateToProps = state => ({
@@ -183,6 +181,7 @@ const mapDispatchToProps = dispatch => ({
   refetchTopThreads: () => dispatch(
     actions.refetchTopThreads()
   ),
+  clearSelectedThreadId: () => dispatch(actions.clearSelectedThreadId()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Threads)

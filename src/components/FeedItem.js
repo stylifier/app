@@ -60,7 +60,7 @@ class FeedItem extends Component {
   }
 
   renderBottomMenu() {
-    const { setFeedsSearchPhrase, user, searchs, hideTopMenu } = this.props
+    const { setFeedsSearchPhrase, user, searchs, hideTopMenu, isStyleClickEnabled } = this.props
     const { base, showProfile } = this.state
     const { usersMetadata } = searchs
 
@@ -86,7 +86,7 @@ class FeedItem extends Component {
           style={{ marginRight: 'auto', marginTop: 2 }}
           onPress={() => this.setState({ showProfile: true })}
         >
-          <Text>{isMe ? '' : base.userUsername.replace('m_g_i_o_s_', '')}</Text>
+          <Text>{isMe || !base.userUsername ? '' : base.userUsername.replace('m_g_i_o_s_', '')}</Text>
           <RNModal
             animationType="slide"
             transparent={false}
@@ -101,7 +101,7 @@ class FeedItem extends Component {
         {base.style &&
           <Badge
             containerStyle={{ backgroundColor: '#5b7495' }}
-            onPress={() => setFeedsSearchPhrase(base.style)}
+            onPress={() => isStyleClickEnabled && setFeedsSearchPhrase(base.style)}
           >
             <Text style={{ color: '#f5f5f5' }}>{base.style}</Text>
           </Badge>
@@ -398,7 +398,7 @@ class FeedItem extends Component {
 
     const isMe = base.userUsername === user.username
 
-    if (!base) {
+    if (!base || !base.userUsername) {
       return (<View />)
     }
 
@@ -469,6 +469,7 @@ FeedItem.propTypes = {
   setFeedsSearchPhrase: PropTypes.func,
   setStyle: PropTypes.func,
   setDescription: PropTypes.func,
+  isStyleClickEnabled: PropTypes.bool,
   setProfilePicture: PropTypes.func,
   addProductToMedia: PropTypes.func,
   unshareMedia: PropTypes.func,

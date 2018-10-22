@@ -138,7 +138,11 @@ class Feeds extends Component {
           </View>)}
           {styleResult.length > 0 && (<View>
             <Text style={tst}> Images with phrase "{searchPhrase}" </Text>)}
-            <Viewer items={styleResult} BaseItem={FeedItem} />
+            <Viewer
+              items={styleResult}
+              BaseItem={FeedItem}
+              itemExtraProps={{ isStyleClickEnabled: true }}
+            />
           </View>)}
         </ScrollView>
       </View>
@@ -174,6 +178,7 @@ class Feeds extends Component {
       <Viewer
         items={feeds.items}
         BaseItem={FeedItem}
+        itemExtraProps={{ isStyleClickEnabled: true }}
       />
       {feeds.loadingBottom && <ActivityIndicator size="small" color="#3b4e68" />}
     </ScrollView>)
