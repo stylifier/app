@@ -245,8 +245,7 @@ const actions = {
       api.createThread(thread.to.username)
         .then(tr => api.createMessage(tr.id, text, media, products).then(() => tr))
         .then(tr => {
-          dispatch(actions.setSelectedThreadId(tr.id))
-          dispatch(actions.fetchTopMessages(tr.id))
+          setTimeout(() => dispatch(actions.setSelectedThreadId(tr.id)), 1000)
         })
         .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
       return
