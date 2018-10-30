@@ -59,35 +59,20 @@ class Draggable extends Component {
     clearInterval(this.measureInterval)
   }
 
-  _positionCss() {
-    return {
-      zIndex: 999,
-      position: this.state.hasMoved ? 'absolute' : 'relative',
-      top: this.state.py,
-      left: this.state.px - (this.state.hasMoved ? this.props.renderSize : 0),
-    }
-  }
-
-  _dragItemCss() {
-    const { renderSize, renderColor } = this.props
-    return {
-      backgroundColor: renderColor,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: renderSize * 2,
-      height: renderSize * 2,
-      borderRadius: 15,
-      borderWidth: 1,
-      borderColor: 'lightblue',
-    }
-  }
-
   render() {
-    const { pressInDrag, pressOutDrag, renderText } = this.props
+    const { pressInDrag, pressOutDrag, renderText, renderSize, renderColor } = this.props
 
     return (
       <View>
-        <View style={this._positionCss()} ref={view => { this.draggable = view }}>
+        <View
+          style={{
+            zIndex: 999,
+            position: this.state.hasMoved ? 'absolute' : 'relative',
+            top: this.state.py,
+            left: this.state.px - (this.state.hasMoved ? this.props.renderSize : 0),
+          }}
+          ref={view => { this.draggable = view }}
+        >
           <Animated.View
             {...this.panResponder.panHandlers}
             style={[this.state.pan.getLayout()]}
@@ -97,7 +82,18 @@ class Draggable extends Component {
               onPressIn={pressInDrag}
               onPressOut={pressOutDrag}
             >
-              <View style={this._dragItemCss()} >
+              <View
+                style={{
+                  backgroundColor: renderColor,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: renderSize * 2,
+                  height: renderSize * 2,
+                  borderRadius: 15,
+                  borderWidth: 1,
+                  borderColor: 'lightblue',
+                }}
+              >
                 {renderText &&
                   <Badge
                     containerStyle={{ backgroundColor: '#5b7495' }}
@@ -127,9 +123,6 @@ Draggable.propTypes = {
   pressDragRelease: PropTypes.func,
   pressInDrag: PropTypes.func,
   pressOutDrag: PropTypes.func,
-  z: PropTypes.number,
-  x: PropTypes.number,
-  y: PropTypes.number,
 }
 
 Draggable.defaultProps = {
