@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Image, Text, TouchableOpacity, Modal } from 'react-native'
-import ProfilePage from './ProfilePage'
+import ProfilePage from './Profile'
 
 class UserItem extends Component {
   constructor(props) {

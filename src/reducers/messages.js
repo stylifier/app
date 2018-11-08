@@ -9,10 +9,6 @@ const messages = (
     unreadThreadIds: [],
     pagination: 0 },
   action) => {
-  if (action.type.startsWith('Navigation') && !action.routeName.startsWith('Messages')) {
-    return { ...state, selectedThreadId: false }
-  }
-
   switch (action.type) {
     case 'LOADING_REFETCH_TOP_THREADS':
       return {

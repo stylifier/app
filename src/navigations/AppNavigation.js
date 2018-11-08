@@ -6,13 +6,13 @@ import {
   reduxifyNavigator,
   createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers'
-import Bookmarks from '../components/Bookmarks'
-import MessagingPage from '../components/MessagingPage'
-import Profile from '../components/Profile'
-import Feeds from '../components/Feeds'
 import AddButton from '../components/AddButton'
-import ProccessAddingImage from '../components/ProccessAddingImage'
 import MessagingButton from '../components/MessagingButton'
+import Bookmarks from '../pages/Bookmarks'
+import MessagingPage from '../pages/Messaging'
+import Profile from '../pages/Profile'
+import Feeds from '../pages/Feeds'
+import ProccessAddingImage from '../pages/ProccessAddingImage'
 import actions from '../actions'
 
 
@@ -100,13 +100,13 @@ const RootNavigator = createBottomTabNavigator({
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',
-  state => state.nav
+  state => state.appNav
 )
 
 const AppWithNavigationState = reduxifyNavigator(RootNavigator, 'root')
 
 const mapStateToProps = state => ({
-  state: state.nav,
+  state: state.appNav,
 })
 
 const AppNavigator = connect(mapStateToProps)(AppWithNavigationState)

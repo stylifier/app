@@ -12,33 +12,10 @@ import { NavigationActions } from 'react-navigation'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import actions from '../actions'
-import ThreadItem from './ThreadItem'
-import Messages from './Messages'
-
+import actions from '../../actions'
+import ThreadItem from '../../components/ThreadItem'
 
 class Threads extends Component {
-  componentDidUpdate(prevProps) {
-    const { messages } = this.props
-
-    if (prevProps.messages.selectedThreadId !== messages.selectedThreadId &&
-      messages.selectedThreadId) {
-      this.openMessaging(messages.selectedThreadId)
-    }
-  }
-
-  openMessaging(threadId) {
-    const { messages, user, index, navigator } = this.props
-    const thread = messages.threads.filter(t => t.id === threadId)[0]
-
-    const nextIndex = index + 1
-    navigator.push({
-      component: Messages,
-      title: user.username === thread.from.username ? thread.to.full_name : thread.from.full_name,
-      passProps: { index: nextIndex },
-    })
-  }
-
   renderThreads() {
     const { messages, user, setSelectedThreadId } = this.props
 
@@ -140,8 +117,6 @@ Threads.propTypes = {
   refetchTopThreads: PropTypes.func,
   user: PropTypes.object,
   messages: PropTypes.object,
-  index: PropTypes.number,
-  navigator: PropTypes.object,
 }
 
 const mapStateToProps = state => ({
@@ -175,7 +150,6 @@ const mapDispatchToProps = dispatch => ({
   refetchTopThreads: () => dispatch(
     actions.refetchTopThreads()
   ),
-  clearSelectedThreadId: () => dispatch(actions.clearSelectedThreadId()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Threads)

@@ -5,10 +5,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Header, Button } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import actions from '../actions'
-import ColorView from './ColorView'
-import ColorPallet from './ColorPallet'
-import FeedItem from './FeedItem'
-import ColorPalletCreator from './ColorPalletCreator'
+import ColorView from '../components/ColorView'
+import ColorPallet from '../components/ColorPallet'
+import FeedItem from '../components/FeedItem'
+import ColorPalletCreator from '../components/ColorPalletCreator'
 
 
 class ProccessAddingImage extends Component {

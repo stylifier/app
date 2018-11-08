@@ -12,29 +12,28 @@ import { Badge } from 'react-native-elements'
 class Draggable extends Component {
   constructor(props, defaultProps) {
     super(props, defaultProps)
-    const { pressDragRelease, onMove, renderSize } = props
+    const { pressDragRelease, onMove } = props
+    const p = new Animated.ValueXY()
     this.state = {
-      pan: new Animated.ValueXY(),
+      pan: p,
       _value: { x: 0, y: 0 },
       px: 0,
       py: 0,
       hasMoved: false,
     }
 
-    const { pan, _value } = this.state
-
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderGrant: () => {
+        const { pan, _value } = this.state
         pan.setOffset({ x: _value.x, y: _value.y })
         pan.setValue({ x: 0, y: 0 })
       },
-      onPanResponderMove: Animated.event([null, {
-        dx: pan.x,
-        dy: pan.y,
-      }], { listener: () => {
+      onPanResponderMove: Animated.event([null, { dx: p.x, dy: p.y, }], { listener: () => {
         this.draggable.measure((a, b, d, f, px, py) => {
+          const { _value } = this.state
+          const { renderSize } = this.props
           if (onMove) {
             onMove(
               px + _value.x + renderSize,
@@ -44,6 +43,7 @@ class Draggable extends Component {
         })
       } }),
       onPanResponderRelease: (e, gestureState) => {
+        const { pan } = this.state
         if (pressDragRelease) {
           pressDragRelease(e, gestureState)
         }

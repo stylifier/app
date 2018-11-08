@@ -89,7 +89,7 @@ const actions = {
     })
     dispatch({ type: 'CLEAR_MESSAGES' })
     dispatch(actions.moveToPage('Messages'))
-    setTimeout(() => dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: 'new' }), 1000)
+    dispatch(actions.setSelectedThreadId('new'))
   },
 
   reportCreateOutfitIssues: (payload) => () => {
@@ -241,9 +241,7 @@ const actions = {
       const thread = messages.threads.filter(t => t.id === threadId)[0]
       api.createThread(thread.to.username)
         .then(tr => api.createMessage(tr.id, text, media, products).then(() => tr))
-        .then(tr => {
-          setTimeout(() => dispatch(actions.setSelectedThreadId(tr.id, true)), 500)
-        })
+        .then(tr => dispatch(actions.setSelectedThreadId(tr.id, true)))
         .catch(() => Alert.alert('Ops... Something went wrong, please try again later.'))
       return
     }
@@ -293,19 +291,30 @@ const actions = {
     dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: false })
   },
 
-  setSelectedThreadId: (threadId, isRefetchThreadsFirst) => (dispatch) => {
-    if (!isRefetchThreadsFirst) {
-      dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
-    }
+  openConversation: (threadId) => (dispatch, getState) => {
+    const { messages, user } = getState()
+    
+    const selectedThread = messages.threads.filter(t => t.id === threadId)[0]
+    const isFromMe = selectedThread.from.username === user.username
 
+    const title = isFromMe ? selectedThread.to.full_name : selectedThread.from.full_name
+
+    dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
+    dispatch(NavigationActions.navigate({ routeName: 'Conversation', params: { title } }))
+  },
+
+  setSelectedThreadId: (threadId, isRefetchThreadsFirst) => (dispatch) => {
+    dispatch(actions.clearSelectedThreadId())
+
+    if (!isRefetchThreadsFirst) dispatch(actions.openConversation(threadId))
     dispatch({ type: 'LOADING_THREAD_FETCH' })
     return api.fetchThreads(undefined, 0)
       .then((tds) => {
         dispatch(actions.fetchTopMessages(threadId))
         dispatch({ type: 'GET_MORE_THREADS', payload: tds })
         dispatch({ type: 'FINISHED_THREAD_FETCH' })
-        dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: threadId })
         dispatch(actions.updateUnreadThreads(tds.data))
+        if (isRefetchThreadsFirst) dispatch(actions.openConversation(threadId))
       })
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },

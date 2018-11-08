@@ -19,14 +19,14 @@ import PropTypes from 'prop-types'
 import { Icon, Button } from 'react-native-elements'
 import moment from 'moment'
 import { connect } from 'react-redux'
-import ProfilePage from './ProfilePage'
-import actions from '../actions'
-import ProductItem from './ProductItem'
-import Viewer from './Viewer'
-import ImageItem from './ImageItem'
+import ProfilePage from '../Profile'
+import actions from '../../actions'
+import ProductItem from '../../components/ProductItem'
+import Viewer from '../../components/Viewer'
+import ImageItem from '../../components/ImageItem'
 
 
-class Messages extends Component {
+class Conversation extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -36,32 +36,12 @@ class Messages extends Component {
     }
   }
 
-  componentWillUnmount() {
-    const { clearSelectedThreadId } = this.props
-    clearSelectedThreadId()
-  }
-
   onSend(items = []) {
-    const { navigator, messages, clearSelectedThreadId, createMessage } = this.props
+    const { messages, createMessage } = this.props
     const { selectedThreadId } = messages
-
-    if (selectedThreadId === 'new') {
-      clearSelectedThreadId()
-      navigator.pop()
-    }
 
     items.forEach(m =>
       createMessage(selectedThreadId, m.text))
-  }
-
-  componentDidUpdate(prevProps) {
-    const { navigator, messages, clearSelectedThreadId } = this.props
-
-    if (prevProps.messages.selectedThreadId !== messages.selectedThreadId &&
-      !messages.selectedThreadId) {
-      clearSelectedThreadId()
-      navigator.pop()
-    }
   }
 
   renderProductPick() {
@@ -411,12 +391,11 @@ class Messages extends Component {
   }
 }
 
-Messages.propTypes = {
+Conversation.propTypes = {
   navigateToLogin: PropTypes.func,
   createMessage: PropTypes.func,
   fetchButtomMessages: PropTypes.func,
   sendImageMessage: PropTypes.func,
-  clearSelectedThreadId: PropTypes.func,
   toBookmarks: PropTypes.func,
   user: PropTypes.object,
   productBookmarks: PropTypes.array,
@@ -435,7 +414,6 @@ const mapDispatchToProps = dispatch => ({
     NavigationActions.navigate({ routeName: 'Profile' })
   ),
   toBookmarks: () => dispatch(actions.moveToPage('Bookmarks')),
-  clearSelectedThreadId: () => dispatch(actions.clearSelectedThreadId()),
   createMessage: (threadId, text, media, products) => dispatch(
     actions.createMessage(threadId, text, media, products)
   ),
@@ -447,4 +425,4 @@ const mapDispatchToProps = dispatch => ({
   ),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Messages)
+export default connect(mapStateToProps, mapDispatchToProps)(Conversation)

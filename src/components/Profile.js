@@ -1,260 +1,173 @@
 import React, { Component } from 'react'
-import { Text, SafeAreaView, View, Button, ActivityIndicator, Linking, Switch } from 'react-native'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import tcomb from 'tcomb-form-native'
+import { connect } from 'react-redux'
+import { View, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
+import { Button, Avatar, Text } from 'react-native-elements'
 import actions from '../actions'
-import ProfilePage from './ProfilePage'
+import FeedItem from './FeedItem'
+import Viewer from './Viewer'
 
-const { Form } = tcomb.form
 
 class Profile extends Component {
-  constructor(props) {
-    super(props)
+  componentDidMount() {
+    const { base,
+      fetchUserMedia,
+      fetchUserInfo,
+      fetchUserFollowers,
+    } = this.props
 
-    this.state = {
-      loginFormValue: null,
-      termAgreed: false,
-      termErrorShow: false,
-      registerFormValue: null,
-    }
-  }
-
-  onLogin() {
-    const { loginUser } = this.props
-    const value = this.loginForm.getValue()
-    if (value) {
-      loginUser(value.Username.toLowerCase(), value.Password)
-    }
-  }
-
-  onRegister() {
-    const { termAgreed } = this.state
-    const { registerUser } = this.props
-    const value = this.registerForm.getValue()
-    if (value) {
-      if (!termAgreed) {
-        this.setState({ termErrorShow: true })
-        return
-      }
-      this.setState({ termErrorShow: false })
-
-      registerUser(
-        value.Username,
-        value.Password,
-        value['Email Address'],
-        value.Fullname
-      )
-    }
-  }
-
-  renderLoginRegisterView() {
-    const { user } = this.props
-    const { registerFormValue, loginFormValue, termAgreed, termErrorShow } = this.state
-
-    return (
-      <View
-        style={{
-          justifyContent: 'center',
-          marginTop: 50,
-          padding: 20,
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        <KeyboardAwareScrollView
-          style={{
-            height: '100%',
-            width: '100%',
-          }}
-        >
-          <Text
-            style={{
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-          >
-            Login to share your bookmarks between your devices:
-          </Text>
-          <Form
-            value={loginFormValue}
-            onChange={(value) => this.setState({ loginFormValue: value })}
-            style={{
-              width: '90%',
-            }}
-            ref={c => { this.loginForm = c }}
-            type={tcomb.struct({
-              Username: tcomb.subtype(tcomb.String, (t) => /^.{3,25}$/.test(t)),
-              Password: tcomb.subtype(tcomb.String, (t) => /^.{8,400}$/.test(t)),
-            })}
-            options={{
-              auto: 'placeholders',
-              fields: {
-                Username: {
-                  error: 'Your username must contain only ' +
-                  'lowercase letters, numbers and underscores',
-                  autoCapitalize: 'none',
-                },
-                Password: {
-                  password: true,
-                  secureTextEntry: true,
-                  error: 'Your password should atleast contain 8 letters',
-                  autoCapitalize: 'none',
-                },
-              },
-            }}
-          />
-          {user.loginError && user.loginError.message === '401' &&
-            <Text style={{ color: 'red' }}>
-              Please check your username and password and try again.
-            </Text>}
-          <Button
-            title="Login"
-            onPress={() => this.onLogin()}
-          />
-          <Text
-            style={{
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-          >
-            Don't have an account yet:
-          </Text>
-
-          <Form
-            value={registerFormValue}
-            onChange={(value) => this.setState({ registerFormValue: value })}
-            style={{
-              width: '90%',
-            }}
-            ref={c => { this.registerForm = c }}
-            type={tcomb.struct({
-              Fullname: tcomb.String,
-              Username: tcomb.subtype(tcomb.String, (t) => /^[a-z0-9_]{3,25}$/.test(t)),
-              'Email Address':
-                tcomb.subtype(tcomb.String, (t) => /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(t)),
-              Password: tcomb.subtype(tcomb.String, (t) => /^.{8,400}$/.test(t)),
-            })}
-            options={{
-              auto: 'placeholders',
-              fields: {
-                Fullname: {
-                  error: 'Please enter your name',
-                  autoCapitalize: 'words',
-                },
-                Username: {
-                  error: 'Your username must contain only ' +
-                  'lowercase letters, numbers and underscores',
-                  autoCapitalize: 'none',
-                },
-                'Email Address': {
-                  error: 'Please enter valid Email',
-                  autoCapitalize: 'none',
-                },
-                Password: {
-                  password: true,
-                  secureTextEntry: true,
-                  error: 'Your password should atleast contain 8 letters',
-                  autoCapitalize: 'none',
-                },
-              },
-            }}
-          />
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{ marginTop: 5 }}> I agree to </Text>
-            <Text
-              style={{ marginTop: 5, color: 'blue' }}
-              onPress={() => Linking.openURL('https://www.stylifier.com/policy')}
-            >
-              Terms and Conditions
-            </Text>
-            <Switch
-              style={{ marginLeft: 'auto' }}
-              value={termAgreed}
-              onChange={() => this.setState({
-                termAgreed: !termAgreed,
-                termErrorShow: termAgreed,
-              })}
-            />
-          </View>
-          {user.registeringError && user.registeringError.message === '403' &&
-            <Text style={{ color: 'red' }}>
-              Your username is taken, please try another username.
-            </Text>}
-          {termErrorShow &&
-            <Text style={{ color: 'red' }}>
-              Please agree to terms and condictions in order to register
-            </Text>}
-          <View
-            style={{ height: 20 }}
-          />
-          <Button
-            title="Register"
-            onPress={() => this.onRegister()}
-          />
-          <View
-            style={{ height: 50 }}
-          />
-        </KeyboardAwareScrollView>
-      </View>
-    )
+    fetchUserMedia(base.username)
+    fetchUserInfo(base.username)
+    fetchUserFollowers(base.username)
   }
 
   render() {
-    const { user } = this.props
+    const {
+      attemptToCreateNewThread,
+      base,
+      searchs,
+      user,
+      followers,
+      followUser,
+      onDismissPressed,
+      logoutUser,
+    } = this.props
+    const { usersMetadata } = searchs
 
-    if (user.loggingIn || user.registering) {
-      return (
-        <SafeAreaView
-          style={{
-            justifyContent: 'center',
-            marginTop: 50,
-            padding: 20,
-            width: '90%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        >
-          <ActivityIndicator size="small" color="#3b4e68" />
-        </SafeAreaView>)
-    }
-
-    if (!user.isLoggedInUser) {
-      return this.renderLoginRegisterView()
-    }
+    const metadata = usersMetadata[base.username] || {}
+    const isMe = base.username === user.username
+    const isFollowing =
+      followers.followers ?
+        followers.followers.map(t => t.username).indexOf(base.username) !== -1 : false
 
     return (
-      <SafeAreaView
-        style={{
-          justifyContent: 'center',
-          marginTop: 50,
-          padding: 20,
-          width: '100%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        <ProfilePage base={user} style={{ width: '100%' }} />
+      <SafeAreaView>
+        {onDismissPressed &&
+          <View
+            style={{
+              width: '100%',
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                marginRight: 'auto',
+                flexDirection: 'row',
+                paddingTop: 10,
+                position: 'absolute',
+                right: 10,
+              }}
+              onPress={() => onDismissPressed()}
+            >
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 16,
+                }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>}
+        <ScrollView style={{ width: '100%', marginTop: onDismissPressed ? 40 : 0 }}>
+          <View
+            style={{
+              width: '100%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+            }}
+          >
+            <Avatar
+              xlarge
+              rounded
+              source={{
+                uri: (metadata.info && metadata.info.profile_picture) || base.profile_picture,
+              }}
+            />
+
+            {!isMe && (
+              <Button
+                style={{ margin: 10, marginTop: 20 }}
+                rounded
+                raised
+                onPress={() => followUser(base.username)}
+                disabled={isFollowing}
+                loading={followers.loading}
+                backgroundColor="#ea5e85"
+                title={isFollowing ? 'Following' : 'Follow'}
+              />
+            )}
+
+            {!isMe && (
+              <Button
+                style={{ margin: 10, marginTop: 10 }}
+                rounded
+                raised
+                onPress={() => {
+                  attemptToCreateNewThread(base)
+                  onDismissPressed()
+                }}
+                backgroundColor="#5b7495"
+                title="Send a Message"
+              />
+            )}
+
+            {isMe && (
+              <Button
+                style={{ margin: 10 }}
+                rounded
+                raised
+                onPress={() => logoutUser()}
+                loading={user.loggingIn}
+                backgroundColor="#5b7495"
+                title="Logout"
+              />
+            )}
+
+            <Text h4>
+              {base.username.replace('m_g_i_o_s_', '')}
+            </Text>
+
+            <Text style={{ marginTop: 15, marginBottom: 50 }}>
+              {metadata.info && metadata.info.bio}
+            </Text>
+            <Viewer items={metadata.media || []} BaseItem={FeedItem} />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     )
   }
 }
 
 Profile.propTypes = {
-  loginUser: PropTypes.func,
-  registerUser: PropTypes.func,
+  base: PropTypes.object,
   user: PropTypes.object,
+  searchs: PropTypes.object,
+  followers: PropTypes.object,
+  onDismissPressed: PropTypes.func,
+  fetchUserMedia: PropTypes.func,
+  fetchUserInfo: PropTypes.func,
+  fetchUserFollowers: PropTypes.func,
+  followUser: PropTypes.func,
+  logoutUser: PropTypes.func,
+  attemptToCreateNewThread: PropTypes.func,
 }
 
-const mapStateToProps = state => ({ user: state.user })
-
-const mapDispatchToProps = dispatch => ({
-  loginUser: (username, password) => dispatch(actions.loginUser(username, password)),
-  registerUser: (username, password, email, fullname) =>
-    dispatch(actions.registerUser(username, password, email, fullname)),
+const mapStateToProps = state => ({
+  searchs: state.searchs,
+  user: state.user,
+  followers: state.followers,
 })
 
+const mapDispatchToProps = dispatch => ({
+  fetchUserMedia: (username) => dispatch(actions.fetchUserMedia(username)),
+  fetchUserInfo: (username) => dispatch(actions.fetchUserInfo(username)),
+  fetchUserFollowers: (username) => dispatch(actions.fetchUserFollowers(username)),
+  followUser: (username) => dispatch(actions.followUser(username)),
+  logoutUser: () => dispatch(actions.logoutUser()),
+  attemptToCreateNewThread: (to) => dispatch(actions.attemptToCreateNewThread(to)),
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)

@@ -1,4 +1,5 @@
-import { RootNavigator } from '../navigation'
+import { NavigationActions } from 'react-navigation'
+import { RootNavigator } from '../navigations/AppNavigation'
 
 const firstAction = RootNavigator.router.getActionForPathAndParams('Feeds')
 const initialNavState = RootNavigator.router.getStateForAction(firstAction)

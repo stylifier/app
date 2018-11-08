@@ -12,9 +12,9 @@ import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import actions from '../actions'
-import Viewer from './Viewer'
-import UserItem from './UserItem'
-import FeedItem from './FeedItem'
+import Viewer from '../components/Viewer'
+import UserItem from '../components/UserItem'
+import FeedItem from '../components/FeedItem'
 
 function renderEmptyFeeds() {
   return (

@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import actions from '../actions'
-import ColorPallet from './ColorPallet'
+import ColorPallet from '../components/ColorPallet'
 
 class Bookmarks extends Component {
   render() {

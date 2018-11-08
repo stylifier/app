@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import actions from '../actions'
 import CreateOutfit from './CreateOutfit'
 import ProductItem from './ProductItem'
-import ProfilePage from './ProfilePage'
+import ProfilePage from './Profile'
 
 
 const makeid = () => {
