@@ -28,11 +28,11 @@ class Threads extends Component {
   }
 
   openMessaging(threadId) {
-    const { messages, user } = this.props
+    const { messages, user, index, navigator } = this.props
     const thread = messages.threads.filter(t => t.id === threadId)[0]
 
-    const nextIndex = ++this.props.index
-    this.props.navigator.push({
+    const nextIndex = index + 1
+    navigator.push({
       component: Messages,
       title: user.username === thread.from.username ? thread.to.full_name : thread.from.full_name,
       passProps: { index: nextIndex },
@@ -40,7 +40,7 @@ class Threads extends Component {
   }
 
   renderThreads() {
-    const { messages, user } = this.props
+    const { messages, user, setSelectedThreadId } = this.props
 
     return (
       <View>
@@ -61,10 +61,10 @@ class Threads extends Component {
             <ThreadItem
               key={i}
               base={t}
-              currentUser={this.props.user}
+              currentUser={user}
               isUnread={messages.unreadThreadIds.indexOf(t.id) !== -1}
               onPress={(trd) => {
-                this.props.setSelectedThreadId(trd.id)
+                setSelectedThreadId(trd.id)
               }}
             />
           )}
@@ -73,6 +73,7 @@ class Threads extends Component {
   }
 
   renderUserIsGuest() {
+    const { navigateToLogin } = this.props
     return (
       <View
         style={{
@@ -99,7 +100,7 @@ class Threads extends Component {
           <Text style={{ marginBottom: 40 }}>
             In order to use this feature you need to login or create an account.
           </Text>
-          <TouchableOpacity onPress={() => this.props.navigateToLogin()}>
+          <TouchableOpacity onPress={() => navigateToLogin()}>
             <Text style={{ color: 'black', fontSize: 16 }}>
               Login / Register
             </Text>
@@ -135,19 +136,12 @@ class Threads extends Component {
 
 Threads.propTypes = {
   navigateToLogin: PropTypes.func,
-  fetchMessages: PropTypes.func,
-  createMessage: PropTypes.func,
-  fetchTopMessages: PropTypes.func,
-  fetchButtomMessages: PropTypes.func,
   setSelectedThreadId: PropTypes.func,
-  sendImageMessage: PropTypes.func,
   refetchTopThreads: PropTypes.func,
   user: PropTypes.object,
-  productBookmarks: PropTypes.array,
   messages: PropTypes.object,
   index: PropTypes.number,
   navigator: PropTypes.object,
-  clearSelectedThreadId: PropTypes.func,
 }
 
 const mapStateToProps = state => ({

@@ -7,7 +7,7 @@ import tcomb from 'tcomb-form-native'
 import actions from '../actions'
 import ProfilePage from './ProfilePage'
 
-const Form = tcomb.form.Form
+const { Form } = tcomb.form
 
 class Profile extends Component {
   constructor(props) {
@@ -20,23 +20,27 @@ class Profile extends Component {
       registerFormValue: null,
     }
   }
+
   onLogin() {
+    const { loginUser } = this.props
     const value = this.loginForm.getValue()
     if (value) {
-      this.props.loginUser(value.Username.toLowerCase(), value.Password)
+      loginUser(value.Username.toLowerCase(), value.Password)
     }
   }
 
   onRegister() {
+    const { termAgreed } = this.state
+    const { registerUser } = this.props
     const value = this.registerForm.getValue()
     if (value) {
-      if (!this.state.termAgreed) {
+      if (!termAgreed) {
         this.setState({ termErrorShow: true })
         return
       }
       this.setState({ termErrorShow: false })
 
-      this.props.registerUser(
+      registerUser(
         value.Username,
         value.Password,
         value['Email Address'],
@@ -47,6 +51,7 @@ class Profile extends Component {
 
   renderLoginRegisterView() {
     const { user } = this.props
+    const { registerFormValue, loginFormValue, termAgreed, termErrorShow } = this.state
 
     return (
       <View
@@ -74,7 +79,7 @@ class Profile extends Component {
             Login to share your bookmarks between your devices:
           </Text>
           <Form
-            value={this.state.loginFormValue}
+            value={loginFormValue}
             onChange={(value) => this.setState({ loginFormValue: value })}
             style={{
               width: '90%',
@@ -102,7 +107,7 @@ class Profile extends Component {
             }}
           />
           {user.loginError && user.loginError.message === '401' &&
-            <Text style={{ color: 'red' }} >
+            <Text style={{ color: 'red' }}>
               Please check your username and password and try again.
             </Text>}
           <Button
@@ -119,7 +124,7 @@ class Profile extends Component {
           </Text>
 
           <Form
-            value={this.state.registerFormValue}
+            value={registerFormValue}
             onChange={(value) => this.setState({ registerFormValue: value })}
             style={{
               width: '90%',
@@ -167,19 +172,19 @@ class Profile extends Component {
             </Text>
             <Switch
               style={{ marginLeft: 'auto' }}
-              value={this.state.termAgreed}
+              value={termAgreed}
               onChange={() => this.setState({
-                termAgreed: !this.state.termAgreed,
-                termErrorShow: this.state.termAgreed,
+                termAgreed: !termAgreed,
+                termErrorShow: termAgreed,
               })}
             />
           </View>
           {user.registeringError && user.registeringError.message === '403' &&
-            <Text style={{ color: 'red' }} >
+            <Text style={{ color: 'red' }}>
               Your username is taken, please try another username.
             </Text>}
-          {this.state.termErrorShow &&
-            <Text style={{ color: 'red' }} >
+          {termErrorShow &&
+            <Text style={{ color: 'red' }}>
               Please agree to terms and condictions in order to register
             </Text>}
           <View
@@ -238,7 +243,6 @@ class Profile extends Component {
 }
 
 Profile.propTypes = {
-  logoutUser: PropTypes.func,
   loginUser: PropTypes.func,
   registerUser: PropTypes.func,
   user: PropTypes.object,
@@ -250,7 +254,6 @@ const mapDispatchToProps = dispatch => ({
   loginUser: (username, password) => dispatch(actions.loginUser(username, password)),
   registerUser: (username, password, email, fullname) =>
     dispatch(actions.registerUser(username, password, email, fullname)),
-  logoutUser: () => dispatch(actions.logoutUser()),
 })
 
 

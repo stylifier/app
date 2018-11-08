@@ -6,9 +6,40 @@ import { Header, Left, Text, Icon, Button as NBButton,
 import { Button } from 'react-native-elements'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { connect } from 'react-redux'
-import ProductItem from './ProductItem.js'
+import ProductItem from './ProductItem'
 import Viewer from './Viewer'
 import actions from '../actions'
+
+function renderEmptyScreen() {
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: '100%',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <FontAwesome
+        style={{
+          fontSize: 70,
+          color: '#3b4e68',
+        }}
+      >
+        {Icons.road}
+      </FontAwesome>
+      <Text style={{ textAlign: 'center' }}>
+        You have no bookmarks.
+      </Text>
+      <Text style={{ textAlign: 'center' }}>
+        Try bookmarking items with
+      </Text>
+      <Text style={{ textAlign: 'center' }}>
+        "+ Create Outfit" button.
+      </Text>
+    </View>)
+}
 
 class ProductSelector extends React.Component {
   constructor(props) {
@@ -19,44 +50,9 @@ class ProductSelector extends React.Component {
   }
 
   onSelectItem(item) {
+    const { onSelect } = this.props
     this.setState({ show: false })
-    if (this.props.onSelect) this.props.onSelect(item)
-  }
-
-  searchBinding(item, search) {
-    const checkIfFound = item
-    return checkIfFound.toLowerCase().includes(search.toLowerCase())
-  }
-
-  renderEmptyScreen() {
-    return (
-      <View
-        style={{
-          width: '100%',
-          height: '100%',
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <FontAwesome
-          style={{
-            fontSize: 70,
-            color: '#3b4e68',
-          }}
-        >
-          {Icons.road}
-        </FontAwesome>
-        <Text style={{ textAlign: 'center' }} >
-          You have no bookmarks.
-        </Text>
-        <Text style={{ textAlign: 'center' }} >
-          Try bookmarking items with
-        </Text>
-        <Text style={{ textAlign: 'center' }} >
-          "+ Create Outfit" button.
-        </Text>
-      </View>)
+    if (onSelect) onSelect(item)
   }
 
   render() {
@@ -64,7 +60,7 @@ class ProductSelector extends React.Component {
     const { productBookmarks, full } = this.props
 
     return (
-      <View style={{ width: '100%', justifyContent: 'center' }} >
+      <View style={{ width: '100%', justifyContent: 'center' }}>
         <Modal
           animationType="slide"
           transparent={false}
@@ -95,7 +91,7 @@ class ProductSelector extends React.Component {
                   onClick: (item) => this.onSelectItem(item),
                 }}
               />
-              {(!productBookmarks || productBookmarks.length <= 0) && this.renderEmptyScreen()}
+              {(!productBookmarks || productBookmarks.length <= 0) && renderEmptyScreen()}
             </ScrollView>
           </Container>
         </Modal>
@@ -125,7 +121,6 @@ class ProductSelector extends React.Component {
 
 ProductSelector.propTypes = {
   onSelect: PropTypes.func,
-  toBookmarks: PropTypes.func,
   productBookmarks: PropTypes.array,
   full: PropTypes.bool,
 }

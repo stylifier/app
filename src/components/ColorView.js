@@ -4,6 +4,7 @@ import { View, TouchableOpacity } from 'react-native'
 
 class ColorView extends Component {
   render() {
+    const { onPress, base } = this.props
     return (
       <TouchableOpacity
         style={{
@@ -12,13 +13,13 @@ class ColorView extends Component {
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
-        onPress={() => this.props.onPress && this.props.onPress(this.props.base)}
+        onPress={() => onPress && onPress(base)}
       >
         <View
           style={{
             width: 50,
             height: 50,
-            backgroundColor: `#${this.props.base}`,
+            backgroundColor: `#${base}`,
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',

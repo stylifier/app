@@ -48,14 +48,15 @@ class FeedItem extends Component {
   }
 
   componentDidMount() {
-    const { showColordeaggablePicker } = this.props
+    const { showColordeaggablePicker, base } = this.props
+    const { imageName } = this.state
 
     if (!showColordeaggablePicker) return
 
-    const imageUrl = this.props.base.images.standard_resolution.url
+    const imageUrl = base.images.standard_resolution.url
     Image.getSize(imageUrl,
       (width, height) => this.setState({ imageWidth: width, imageHeight: height }))
-    RNFS.downloadFile({ fromUrl: imageUrl, toFile: this.state.imageName })
+    RNFS.downloadFile({ fromUrl: imageUrl, toFile: imageName })
       .promise.then(() => {}).catch(() => {})
   }
 
@@ -72,64 +73,65 @@ class FeedItem extends Component {
         usersMetadata[user.username].info.profile_picture === base.images.standard_resolution.url
     }
 
-    return (<View>
-      <View
-        style={{
-          width: Dimensions.get('window').width - 22,
-          padding: 5,
-          flexDirection: 'row',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        <TouchableOpacity
-          style={{ marginRight: 'auto', marginTop: 2 }}
-          onPress={() => this.setState({ showProfile: true })}
+    return (
+      <View>
+        <View
+          style={{
+            width: Dimensions.get('window').width - 22,
+            padding: 5,
+            flexDirection: 'row',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
         >
-          <Text>{isMe || !base.userUsername ? '' : base.userUsername.replace('m_g_i_o_s_', '')}</Text>
-          <RNModal
-            animationType="slide"
-            transparent={false}
-            visible={showProfile}
+          <TouchableOpacity
+            style={{ marginRight: 'auto', marginTop: 2 }}
+            onPress={() => this.setState({ showProfile: true })}
           >
-            <ProfilePage
-              onDismissPressed={() => this.setState({ showProfile: false })}
-              base={base.user}
+            <Text>{isMe || !base.userUsername ? '' : base.userUsername.replace('m_g_i_o_s_', '')}</Text>
+            <RNModal
+              animationType="slide"
+              transparent={false}
+              visible={showProfile}
+            >
+              <ProfilePage
+                onDismissPressed={() => this.setState({ showProfile: false })}
+                base={base.user}
+              />
+            </RNModal>
+          </TouchableOpacity>
+          {base.style &&
+            <Badge
+              containerStyle={{ backgroundColor: '#5b7495' }}
+              onPress={() => isStyleClickEnabled && setFeedsSearchPhrase(base.style)}
+            >
+              <Text style={{ color: '#f5f5f5' }}>{base.style}</Text>
+            </Badge>
+          }
+        </View>
+
+        {hideTopMenu && isMe && !isProfilePicture && this.renderSetProfilePictureButton()}
+        {hideTopMenu && isMe && this.renderStyleSelectorButtton()}
+        {base.description &&
+          <Text style={{ width: Dimensions.get('window').width, padding: 20 }}>
+            {base.description}
+          </Text>}
+
+        {hideTopMenu && isMe && this.renderDescriptionChangeButton()}
+        {base.products && base.products.length > 0 && (
+          <View style={{ padding: 3, width: Dimensions.get('window').width }}>
+            <Viewer
+              items={base.products}
+              BaseItem={ProductItem}
+              itemExtraProps={{
+                hideBookmarkBotton: true,
+                darkBackground: true,
+                rounded: true,
+              }}
             />
-          </RNModal>
-        </TouchableOpacity>
-        {base.style &&
-          <Badge
-            containerStyle={{ backgroundColor: '#5b7495' }}
-            onPress={() => isStyleClickEnabled && setFeedsSearchPhrase(base.style)}
-          >
-            <Text style={{ color: '#f5f5f5' }}>{base.style}</Text>
-          </Badge>
-        }
-      </View>
-
-      {hideTopMenu && isMe && !isProfilePicture && this.renderSetProfilePictureButton()}
-      {hideTopMenu && isMe && this.renderStyleSelectorButtton()}
-      {base.description &&
-        <Text style={{ width: Dimensions.get('window').width, padding: 20 }} >
-          {base.description}
-        </Text>}
-
-      {hideTopMenu && isMe && this.renderDescriptionChangeButton()}
-      {base.products && base.products.length > 0 && (
-        <View style={{ padding: 3, width: Dimensions.get('window').width }}>
-          <Viewer
-            items={base.products}
-            BaseItem={ProductItem}
-            itemExtraProps={{
-              hideBookmarkBotton: true,
-              darkBackground: true,
-              rounded: true,
-            }}
-          />
-        </View>)}
-      {hideTopMenu && isMe && this.renderProductSelectButton()}
-    </View>)
+          </View>)}
+        {hideTopMenu && isMe && this.renderProductSelectButton()}
+      </View>)
   }
 
   renderSetProfilePictureButton(full) {
@@ -322,25 +324,31 @@ class FeedItem extends Component {
         swipeDirection="down"
         onSwipe={() => this.setState({ showMenuModal: false })}
       >
-        <View style={{ justifyContent: 'flex-end', height: '100%' }} >
-          <View style={{ borderRadius: 15, width: '100%', overflow: 'hidden' }} >
+        <View style={{ justifyContent: 'flex-end', height: '100%' }}>
+          <View style={{ borderRadius: 15, width: '100%', overflow: 'hidden' }}>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {!isProfilePicture && this.renderSetProfilePictureButton(true)}
+              <Divider />
+              {!isProfilePicture && this.renderSetProfilePictureButton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {this.renderStyleSelectorButtton(true)}
+              <Divider />
+              {this.renderStyleSelectorButtton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {this.renderColorPalletCreator(true)}
+              <Divider />
+              {this.renderColorPalletCreator(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {this.renderDescriptionChangeButton(true)}
+              <Divider />
+              {this.renderDescriptionChangeButton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {this.renderProductSelectButton(true)}
+              <Divider />
+              {this.renderProductSelectButton(true)}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
-              <Divider /> {this.renderRemoveButton(true)}
+              <Divider />
+              {this.renderRemoveButton(true)}
             </View>
           </View>
 
@@ -367,6 +375,7 @@ class FeedItem extends Component {
 
   renderDraggable(colorKey) {
     const { onStartDrag, onFinishDrag, onPickedColor } = this.props
+    const { imageWidth, imageHeight, imageName } = this.state
     return (
       <Draggable
         reverse={false}
@@ -381,9 +390,9 @@ class FeedItem extends Component {
         }}
         onMove={((x, y) => {
           this.autoHeightImageView.measure((fx, fy, w, h, px, py) => {
-            const ix = ((x - px) / w) * this.state.imageWidth
-            const iy = ((y - py) / h) * this.state.imageHeight
-            getPixelRGBA(this.state.imageName, ix, iy)
+            const ix = ((x - px) / w) * imageWidth
+            const iy = ((y - py) / h) * imageHeight
+            getPixelRGBA(imageName, ix, iy)
               .then(c => this.setState({ [colorKey]: rgbToHex(c) }))
               .catch(() => {})
           })
@@ -418,7 +427,8 @@ class FeedItem extends Component {
           <ActivityIndicator
             style={{ marginBottom: '-50%', marginTop: '30%' }}
             size="large"
-          />}}
+          />}
+        }
         <View ref={t => { this.autoHeightImageView = t }}>
           <AutoHeightImage
             z={2}

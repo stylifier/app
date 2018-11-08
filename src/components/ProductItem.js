@@ -7,10 +7,11 @@ import actions from '../actions'
 
 class ProductItem extends Component {
   render() {
-    const { base, colorPalletId, title, onClick, rounded } = this.props
+    const { base, colorPalletId, title, hideBookmarkBotton, deleteBookmarkedProduct,
+      bookmarkProduct, onClick, rounded, bookmarks } = this.props
     const bookmarked =
-      this.props.bookmarks.filter(p =>
-        p.productId === this.props.base.id && p.palletId === colorPalletId).length > 0
+      bookmarks.filter(p =>
+        p.productId === base.id && p.palletId === colorPalletId).length > 0
 
     return (
       <View
@@ -46,7 +47,7 @@ class ProductItem extends Component {
             }
           }}
         >
-          <Text style={{ fontWeight: 'bold' }} >
+          <Text style={{ fontWeight: 'bold' }}>
             {base.brand}
           </Text>
           <Text style={{ fontSize: 12 }}>
@@ -59,32 +60,33 @@ class ProductItem extends Component {
             {base.price.original}
           </Text>
         </TouchableOpacity>
-        {!this.props.hideBookmarkBotton && <TouchableOpacity
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 35,
-            height: 35,
-            backgroundColor: 'rgba(59, 78, 104, 0.5)',
-            borderRadius: 3,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => (bookmarked ?
-            this.props.deleteBookmarkedProduct(base.id, colorPalletId) :
-            this.props.bookmarkProduct(base.id, colorPalletId, title))
-          }
-        >
-          <FontAwesome
+        {!hideBookmarkBotton &&
+          <TouchableOpacity
             style={{
-              fontSize: 24,
-              color: bookmarked ? '#66bfc7' : '#f5f5f5',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: 35,
+              height: 35,
+              backgroundColor: 'rgba(59, 78, 104, 0.5)',
+              borderRadius: 3,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
+            onPress={() => (bookmarked ?
+              deleteBookmarkedProduct(base.id, colorPalletId) :
+              bookmarkProduct(base.id, colorPalletId, title))
+            }
           >
-            {Icons.bookmark}
-          </FontAwesome>
-        </TouchableOpacity>}
+            <FontAwesome
+              style={{
+                fontSize: 24,
+                color: bookmarked ? '#66bfc7' : '#f5f5f5',
+              }}
+            >
+              {Icons.bookmark}
+            </FontAwesome>
+          </TouchableOpacity>}
       </View>
     )
   }

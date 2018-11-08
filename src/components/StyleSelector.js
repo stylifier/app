@@ -15,9 +15,10 @@ class StyleSelector extends React.Component {
     }
   }
 
-  onSelectItem(item, displayText) {
-    this.setState({ show: false, displayText })
-    this.props.onSelect(item)
+  onSelectItem(item) {
+    const { onSelect } = this.props
+    this.setState({ show: false })
+    onSelect(item)
   }
 
   renderItem(item, index) {
@@ -38,17 +39,12 @@ class StyleSelector extends React.Component {
     )
   }
 
-  searchBinding(item, search) {
-    const checkIfFound = item
-    return checkIfFound.toLowerCase().includes(search.toLowerCase())
-  }
-
   render() {
     const { show, phrase } = this.state
-    const { styles, base, full } = this.props
+    const { styles, base, full, updateStyles } = this.props
 
     return (
-      <View style={{ width: '100%', justifyContent: 'center' }} >
+      <View style={{ width: '100%', justifyContent: 'center' }}>
         <Modal
           animationType="slide"
           transparent={false}
@@ -61,10 +57,10 @@ class StyleSelector extends React.Component {
                 <Icon name="ios-search" />
                 <Input
                   autoCorrect={false}
-                  placeholder={'Search for Style...'}
+                  placeholder="Search for Style..."
                   onChangeText={t => {
                     this.setState({ phrase: t })
-                    this.props.updateStyles(t)
+                    updateStyles(t)
                   }}
                 />
               </Item>
@@ -84,7 +80,7 @@ class StyleSelector extends React.Component {
         <Button
           onPress={() => {
             this.setState({ show: true, phrase: base.style })
-            this.props.updateStyles()
+            updateStyles()
           }}
           raised={!full}
           buttonStyle={{

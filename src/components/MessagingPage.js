@@ -3,7 +3,7 @@ import {
   NavigatorIOS,
   SafeAreaView,
 } from 'react-native'
-import Threads from './Threads.js'
+import Threads from './Threads'
 
 
 export default class MessagingPage extends Component {

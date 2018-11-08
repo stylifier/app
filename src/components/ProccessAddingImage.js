@@ -18,13 +18,12 @@ class ProccessAddingImage extends Component {
     this.state = {
       isSharingView: false,
       isSharing: false,
-      query: '',
       desableScroll: false,
     }
   }
 
   renderColorPick() {
-    const { remoteImage } = this.props
+    const { remoteImage, getColorPalletRecommendation } = this.props
 
     return (
       <View style={{ padding: 5 }}>
@@ -42,7 +41,7 @@ class ProccessAddingImage extends Component {
             remoteImage.colorCode.match(/.{1,6}/g).map((c, i) => (
               <ColorView
                 onPress={(t) => {
-                  this.props.getColorPalletRecommendation(t)
+                  getColorPalletRecommendation(t)
                   this.scrollView.scrollToPosition(0, 350)
                 }}
                 key={i}
@@ -66,26 +65,30 @@ class ProccessAddingImage extends Component {
   renderColorPalletSection() {
     const { remoteImage, colorPalletRecommendation } = this.props
 
-    return (<View>
-      { remoteImage && remoteImage.colorCode && this.renderColorPick() }
-      {!remoteImage && <ActivityIndicator size="small" color="#3b4e68" />}
-      {remoteImage && <View style={{ padding: 20, margin: 'auto' }}>
-        <ColorPalletCreator
-          base={remoteImage}
-          onDone={() => {}}
-        />
-      </View>}
-      {colorPalletRecommendation && colorPalletRecommendation.map((cp, i) => (
-        <ColorPallet
-          key={i}
-          base={cp}
-        />)
-      )}
-    </View>)
+    return (
+      <View>
+        { remoteImage && remoteImage.colorCode && this.renderColorPick() }
+        {!remoteImage && <ActivityIndicator size="small" color="#3b4e68" />}
+        {remoteImage &&
+          <View style={{ padding: 20, margin: 'auto' }}>
+            <ColorPalletCreator
+              base={remoteImage}
+              onDone={() => {}}
+            />
+          </View>}
+        {colorPalletRecommendation && colorPalletRecommendation.map((cp, i) => (
+          <ColorPallet
+            key={i}
+            base={cp}
+          />)
+        )}
+      </View>)
   }
 
   render() {
-    const { shareMedia, remoteImage } = this.props
+    const { shareMedia, remoteImage, user,
+      getColorPalletRecommendation, navigateToLogin } = this.props
+    const { isSharing, isSharingView, desableScroll } = this.state
 
     return (
       <SafeAreaView
@@ -99,28 +102,28 @@ class ProccessAddingImage extends Component {
           outerContainerStyles={{ width: '100%', padding: 0, margin: 0, marginTop: -35 }}
           backgroundColor="#f5f5f5"
           rightComponent={
-            (this.state.isSharing ?
+            (isSharing ?
               <ActivityIndicator size="small" color="#3b4e68" style={{ marginRight: 30 }} /> :
               <Button
                 color="black"
                 backgroundColor="#f5f5f5"
-                title={this.state.isSharingView ? 'Share' : 'To Share'}
+                title={isSharingView ? 'Share' : 'To Share'}
                 buttonStyle={{ padding: 0, margin: 0 }}
                 onPress={() => {
-                  if (!this.props.user.isLoggedInUser) {
+                  if (!user.isLoggedInUser) {
                     Alert.alert(
                       'You are not logged in',
                       'In order share a media you need to login or create a user.',
                       [
                         { text: 'Dismiss' },
-                        { text: 'Login', onPress: () => this.props.navigateToLogin() },
+                        { text: 'Login', onPress: () => navigateToLogin() },
                       ],
                       { cancelable: false }
                     )
                     return
                   }
 
-                  if (this.state.isSharingView) {
+                  if (isSharingView) {
                     shareMedia(remoteImage)
                     this.setState({ isSharing: true })
                     return
@@ -129,16 +132,16 @@ class ProccessAddingImage extends Component {
                 }}
                 rightIcon={{
                   color: 'black',
-                  name: this.state.isSharingView ? 'share' : 'chevron-right',
+                  name: isSharingView ? 'share' : 'chevron-right',
                   type: 'font-awesome',
                 }}
               />)
           }
           leftComponent={
-            this.state.isSharingView ? <Button
-              color={'black'}
+            isSharingView ? <Button
+              color="black"
               backgroundColor="#f5f5f5"
-              title={'Back'}
+              title="Back"
               buttonStyle={{ padding: 0, margin: 0 }}
               onPress={() => this.setState({ isSharingView: false, isSharing: false })}
               leftIcon={{
@@ -155,25 +158,25 @@ class ProccessAddingImage extends Component {
             width: '100%',
             paddingTop: 30,
           }}
-          scrollEnabled={!this.state.desableScroll}
+          scrollEnabled={!desableScroll}
           ref={scrollView => { this.scrollView = scrollView }}
         >
           {
             remoteImage &&
             <FeedItem
               hideTopMenu
-              hideBottomMenu={!this.state.isSharingView}
+              hideBottomMenu={!isSharingView}
               base={remoteImage}
-              showColordeaggablePicker={!this.state.isSharingView}
+              showColordeaggablePicker={!isSharingView}
               onPickedColor={(t) => {
-                this.props.getColorPalletRecommendation(t.replace('#', ''))
+                getColorPalletRecommendation(t.replace('#', ''))
                 this.scrollView.scrollToPosition(0, 350)
               }}
               onStartDrag={() => this.setState({ desableScroll: true })}
               onFinishDrag={() => this.setState({ desableScroll: false })}
             />
           }
-          {!this.state.isSharingView && this.renderColorPalletSection()}
+          {!isSharingView && this.renderColorPalletSection()}
 
         </KeyboardAwareScrollView>
       </SafeAreaView>

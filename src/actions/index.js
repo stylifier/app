@@ -1,9 +1,9 @@
 import { NavigationActions } from 'react-navigation'
 import { AsyncStorage, Alert } from 'react-native'
 import moment from 'moment'
-import API from '../common/API.js'
+import API from '../common/API'
 
-const btoa = require('Base64').btoa
+const { btoa } = require('Base64')
 const DeviceInfo = require('react-native-device-info')
 
 const api = new API()
@@ -13,15 +13,13 @@ const setTokenAndUserInfo = (token) => {
   return api.fetchUserInfo()
     .then((info) =>
       AsyncStorage.setItem('user_info', JSON.stringify(info))
-        .then(() => info)
-    )
+        .then(() => info))
 }
 
-const deviceNameSafe = `m_g_i_o_s_${btoa(
-  unescape(
-    encodeURIComponent(DeviceInfo.getUniqueID())))
-  .replace(/=/g, '')
-  .toLowerCase()}`
+const deviceNameSafe = `m_g_i_o_s_${
+  btoa(unescape(encodeURIComponent(DeviceInfo.getUniqueID())))
+    .replace(/=/g, '')
+    .toLowerCase()}`
 
 const actions = {
   updateStyles: (q) => (dispatch) => {
@@ -223,8 +221,7 @@ const actions = {
             type: 'REFERESH_USER_INFO',
             payload: { ...info },
           }))
-          .catch(() => {})
-      )
+          .catch(() => {}))
       .catch(() => {})
   },
 

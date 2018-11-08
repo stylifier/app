@@ -12,7 +12,7 @@ import { Badge } from 'react-native-elements'
 class Draggable extends Component {
   constructor(props, defaultProps) {
     super(props, defaultProps)
-    const { pressDragRelease, onMove } = props
+    const { pressDragRelease, onMove, renderSize } = props
     this.state = {
       pan: new Animated.ValueXY(),
       _value: { x: 0, y: 0 },
@@ -21,22 +21,24 @@ class Draggable extends Component {
       hasMoved: false,
     }
 
+    const { pan, _value } = this.state
+
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderGrant: () => {
-        this.state.pan.setOffset({ x: this.state._value.x, y: this.state._value.y })
-        this.state.pan.setValue({ x: 0, y: 0 })
+        pan.setOffset({ x: _value.x, y: _value.y })
+        pan.setValue({ x: 0, y: 0 })
       },
       onPanResponderMove: Animated.event([null, {
-        dx: this.state.pan.x,
-        dy: this.state.pan.y,
+        dx: pan.x,
+        dy: pan.y,
       }], { listener: () => {
         this.draggable.measure((a, b, d, f, px, py) => {
           if (onMove) {
             onMove(
-              px + this.state._value.x + this.props.renderSize,
-              py + this.state._value.y + this.props.renderSize
+              px + _value.x + renderSize,
+              py + _value.y + renderSize
             )
           }
         })
@@ -45,37 +47,40 @@ class Draggable extends Component {
         if (pressDragRelease) {
           pressDragRelease(e, gestureState)
         }
-        this.state.pan.flattenOffset()
+        pan.flattenOffset()
       },
     })
   }
 
   componentWillMount() {
-    this.state.pan.addListener((c) => { this.state._value = c })
+    const { pan } = this.state
+    pan.addListener((c) => { this.state._value = c })
   }
 
   componentWillUnmount() {
-    this.state.pan.removeAllListeners()
+    const { pan } = this.state
+    pan.removeAllListeners()
     clearInterval(this.measureInterval)
   }
 
   render() {
     const { pressInDrag, pressOutDrag, renderText, renderSize, renderColor } = this.props
+    const { hasMoved, py, px, pan } = this.state
 
     return (
       <View>
         <View
           style={{
             zIndex: 999,
-            position: this.state.hasMoved ? 'absolute' : 'relative',
-            top: this.state.py,
-            left: this.state.px - (this.state.hasMoved ? this.props.renderSize : 0),
+            position: hasMoved ? 'absolute' : 'relative',
+            top: py,
+            left: px - (hasMoved ? renderSize : 0),
           }}
           ref={view => { this.draggable = view }}
         >
           <Animated.View
             {...this.panResponder.panHandlers}
-            style={[this.state.pan.getLayout()]}
+            style={[pan.getLayout()]}
           >
             <TouchableWithoutFeedback
               onPress={() => this.setState({ hasMoved: true }) && pressInDrag && pressInDrag()}
@@ -106,7 +111,7 @@ class Draggable extends Component {
         </View>
         <View
           style={{
-            marginTop: !this.state.hasMoved ? 0 : 72,
+            marginTop: !hasMoved ? 0 : 72,
           }}
         />
       </View>

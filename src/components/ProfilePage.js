@@ -42,29 +42,32 @@ class ProfilePage extends Component {
 
     return (
       <SafeAreaView>
-        {onDismissPressed && <View
-          style={{
-            width: '100%',
-          }}
-        >
-          <TouchableOpacity
+        {onDismissPressed &&
+          <View
             style={{
-              marginRight: 'auto',
-              flexDirection: 'row',
-              paddingTop: 10,
-              position: 'absolute',
-              right: 10,
+              width: '100%',
             }}
-            onPress={() => this.props.onDismissPressed()}
           >
-            <Text
+            <TouchableOpacity
               style={{
-                color: 'black',
-                fontSize: 16,
+                marginRight: 'auto',
+                flexDirection: 'row',
+                paddingTop: 10,
+                position: 'absolute',
+                right: 10,
               }}
-            >Close</Text>
-          </TouchableOpacity>
-        </View>}
+              onPress={() => onDismissPressed()}
+            >
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 16,
+                }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>}
         <ScrollView style={{ width: '100%', marginTop: onDismissPressed ? 40 : 0 }}>
           <View
             style={{
@@ -92,7 +95,7 @@ class ProfilePage extends Component {
                 onPress={() => followUser(base.username)}
                 disabled={isFollowing}
                 loading={followers.loading}
-                backgroundColor={'#ea5e85'}
+                backgroundColor="#ea5e85"
                 title={isFollowing ? 'Following' : 'Follow'}
               />
             )}
@@ -104,9 +107,9 @@ class ProfilePage extends Component {
                 raised
                 onPress={() => {
                   attemptToCreateNewThread(base)
-                  this.props.onDismissPressed()
+                  onDismissPressed()
                 }}
-                backgroundColor={'#5b7495'}
+                backgroundColor="#5b7495"
                 title="Send a Message"
               />
             )}
@@ -118,7 +121,7 @@ class ProfilePage extends Component {
                 raised
                 onPress={() => logoutUser()}
                 loading={user.loggingIn}
-                backgroundColor={'#5b7495'}
+                backgroundColor="#5b7495"
                 title="Logout"
               />
             )}

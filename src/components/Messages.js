@@ -21,9 +21,9 @@ import moment from 'moment'
 import { connect } from 'react-redux'
 import ProfilePage from './ProfilePage'
 import actions from '../actions'
-import ProductItem from './ProductItem.js'
+import ProductItem from './ProductItem'
 import Viewer from './Viewer'
-import ImageItem from './ImageItem.js'
+import ImageItem from './ImageItem'
 
 
 class Messages extends Component {
@@ -35,13 +35,14 @@ class Messages extends Component {
       selectedProfile: '',
     }
   }
+
   componentWillUnmount() {
     const { clearSelectedThreadId } = this.props
     clearSelectedThreadId()
   }
 
   onSend(items = []) {
-    const { navigator, messages, clearSelectedThreadId } = this.props
+    const { navigator, messages, clearSelectedThreadId, createMessage } = this.props
     const { selectedThreadId } = messages
 
     if (selectedThreadId === 'new') {
@@ -50,16 +51,16 @@ class Messages extends Component {
     }
 
     items.forEach(m =>
-      this.props.createMessage(selectedThreadId, m.text))
+      createMessage(selectedThreadId, m.text))
   }
 
   componentDidUpdate(prevProps) {
-    const { messages, clearSelectedThreadId } = this.props
+    const { navigator, messages, clearSelectedThreadId } = this.props
 
     if (prevProps.messages.selectedThreadId !== messages.selectedThreadId &&
       !messages.selectedThreadId) {
       clearSelectedThreadId()
-      this.props.navigator.pop()
+      navigator.pop()
     }
   }
 
@@ -141,60 +142,62 @@ class Messages extends Component {
 
   renderImagePick() {
     const { messages, sendImageMessage } = this.props
-    return (<TouchableOpacity
-      onPress={() => {
-        ImageCropPicker.openPicker({
-          width: 500,
-          height: 500,
-          cropping: true,
-        })
-          .then(image => sendImageMessage(messages.selectedThreadId, image.path))
-          .catch((e) => {
-            if (/cancelled/g.test(e.message)) {
-              return
-            }
-
-            if (/Cannot access images/g.test(e.message)) {
-              Alert.alert(
-                'Cannot Access Images',
-                e.message.replace('Cannot access images.', ''),
-                [
-                  { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
-                  { text: 'OK', onPress: () => {} },
-                ],
-                { cancelable: false }
-              )
-              return
-            }
-
-            Alert.alert(
-              'Failed to Get Images',
-              'Please try again',
-              [{ text: 'OK', onPress: () => {} }]
-            )
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          ImageCropPicker.openPicker({
+            width: 500,
+            height: 500,
+            cropping: true,
           })
-      }}
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#66bfc7',
-      }}
-    >
-      <FontAwesome
+            .then(image => sendImageMessage(messages.selectedThreadId, image.path))
+            .catch((e) => {
+              if (/cancelled/g.test(e.message)) {
+                return
+              }
+
+              if (/Cannot access images/g.test(e.message)) {
+                Alert.alert(
+                  'Cannot Access Images',
+                  e.message.replace('Cannot access images.', ''),
+                  [
+                    { text: 'Open App Settings', onPress: () => Linking.openURL('app-settings:') },
+                    { text: 'OK', onPress: () => {} },
+                  ],
+                  { cancelable: false }
+                )
+                return
+              }
+
+              Alert.alert(
+                'Failed to Get Images',
+                'Please try again',
+                [{ text: 'OK', onPress: () => {} }]
+              )
+            })
+        }}
         style={{
-          fontSize: 24,
-          color: '#F5F5F5',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          backgroundColor: '#66bfc7',
         }}
       >
-        {Icons.image}
-      </FontAwesome>
-    </TouchableOpacity>)
+        <FontAwesome
+          style={{
+            fontSize: 24,
+            color: '#F5F5F5',
+          }}
+        >
+          {Icons.image}
+        </FontAwesome>
+      </TouchableOpacity>)
   }
 
   renderEmptyScreen() {
+    const { toBookmarks } = this.props
     return (
       <View
         style={{
@@ -212,20 +215,19 @@ class Messages extends Component {
         >
           {Icons.road}
         </FontAwesome>
-        <Text style={{ textAlign: 'center' }} >
+        <Text style={{ textAlign: 'center' }}>
           You have no bookmarks.
         </Text>
-        <Text style={{ textAlign: 'center' }} >
+        <Text style={{ textAlign: 'center' }}>
           Try bookmarking items with
         </Text>
-        <Text style={{ textAlign: 'center' }} >
+        <Text style={{ textAlign: 'center' }}>
           "+ Create Outfit" button.
         </Text>
         <Button
           rounded
           onPress={() => {
-            this.setState({ show: false })
-            this.props.toBookmarks()
+            toBookmarks()
           }}
           buttonStyle={{ backgroundColor: '#5b7495', padding: 5, marginTop: 20 }}
           title="To Bookmarks"
@@ -235,12 +237,13 @@ class Messages extends Component {
 
   renderProductPickModal() {
     const { productBookmarks, createMessage, messages } = this.props
+    const { showProductPickerModal } = this.state
 
     return (
       <Modal
         animationType="slide"
         transparent={false}
-        visible={this.state.showProductPickerModal}
+        visible={showProductPickerModal}
       >
         <Container>
           <Header>
@@ -277,8 +280,8 @@ class Messages extends Component {
   }
 
   renderMessaging() {
-    const { messages, user } = this.props
-    const { selectedProfile } = this.state
+    const { messages, user, fetchButtomMessages } = this.props
+    const { selectedProfile, showProfile } = this.state
     const selectedThread =
       messages.threads.filter(t => t.id === messages.selectedThreadId)[0]
 
@@ -294,7 +297,7 @@ class Messages extends Component {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.showProfile}
+          visible={showProfile}
         >
           <ProfilePage
             onDismissPressed={() => this.setState({ showProfile: false })}
@@ -319,7 +322,7 @@ class Messages extends Component {
               _id: selectedThread.to.id,
             })
           }
-          onLoadEarlier={() => this.props.fetchButtomMessages(this.props.messages.selectedThreadId)}
+          onLoadEarlier={() => fetchButtomMessages(messages.selectedThreadId)}
           loadEarlier
           onPressAvatar={u => this.setState({ showProfile: true, selectedProfile: u.name })}
           renderChatFooter={() => (

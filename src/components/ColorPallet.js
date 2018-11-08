@@ -18,14 +18,14 @@ import { Text as NBText } from 'native-base'
 import { connect } from 'react-redux'
 import actions from '../actions'
 import CreateOutfit from './CreateOutfit'
-import ProductItem from './ProductItem.js'
+import ProductItem from './ProductItem'
 import ProfilePage from './ProfilePage'
 
 
 const makeid = () => {
   let text = ''
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5; i += 1) {
     text += possible.charAt(Math.floor(Math.random() * possible.length))
   }
   return text
@@ -45,60 +45,67 @@ class ColorPallet extends Component {
   }
 
   renderCreateOutfitButton(outfitId) {
-    return (<TouchableOpacity
-      style={{
-        flexDirection: 'row',
-        backgroundColor: '#ea5e85',
-        borderRadius: 10,
-        marginLeft: 7,
-        marginTop: 7,
-        marginBottom: 7,
-        padding: 4,
-        paddingRight: 7,
-        paddingLeft: 7,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      onPress={() => {
-        this.props.refereshUserInfo()
-        this.props.refreshCategories()
-        this.props.refreshColorCode()
+    const { refereshUserInfo, refreshCategories,
+      user, refreshColorCode, navigateToLogin } = this.props
+    const { modalVisible } = this.state
 
-        if (!this.props.user.isLoggedInUser) {
-          Alert.alert(
-            'You are not logged in',
-            'In order to use "Creating Outfit" feature you need to login or create a user.',
-            [
-              { text: 'Dismiss' },
-              { text: 'Login', onPress: () => this.props.navigateToLogin() },
-            ],
-            { cancelable: false }
-          )
-          return
-        }
-        this.setState({ outfitTitle: outfitId || makeid() })
-        this.setModalVisible(!this.state.modalVisible)
-      }}
-    >
-      <FontAwesome
+    return (
+      <TouchableOpacity
         style={{
-          marginRight: 7,
-          color: '#F5F5F5',
+          flexDirection: 'row',
+          backgroundColor: '#ea5e85',
+          borderRadius: 10,
+          marginLeft: 7,
+          marginTop: 7,
+          marginBottom: 7,
+          padding: 4,
+          paddingRight: 7,
+          paddingLeft: 7,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        onPress={() => {
+          refereshUserInfo()
+          refreshCategories()
+          refreshColorCode()
+
+          if (!user.isLoggedInUser) {
+            Alert.alert(
+              'You are not logged in',
+              'In order to use "Creating Outfit" feature you need to login or create a user.',
+              [
+                { text: 'Dismiss' },
+                { text: 'Login', onPress: () => navigateToLogin() },
+              ],
+              { cancelable: false }
+            )
+            return
+          }
+          this.setState({ outfitTitle: outfitId || makeid() })
+          this.setModalVisible(!modalVisible)
         }}
       >
-        {Icons.plus}
-      </FontAwesome>
-      <Text
-        style={{
-          color: '#f5f5f5',
-        }}
-      >
-        {outfitId ? 'Add More Item' : 'Create Outfit'}
-      </Text>
-    </TouchableOpacity>)
+        <FontAwesome
+          style={{
+            marginRight: 7,
+            color: '#F5F5F5',
+          }}
+        >
+          {Icons.plus}
+        </FontAwesome>
+        <Text
+          style={{
+            color: '#f5f5f5',
+          }}
+        >
+          {outfitId ? 'Add More Item' : 'Create Outfit'}
+        </Text>
+      </TouchableOpacity>)
   }
 
   renderTitle() {
+    const { base, bookmarkColorPallet } = this.props
+
     return (
       <View
         style={{
@@ -113,13 +120,12 @@ class ColorPallet extends Component {
             maxWidth: '50%',
           }}
           placeholder="Your custom title message"
-          value={this.props.base.title}
+          value={base.title}
           returnKeyType="done"
           onChangeText={(text) => {
             clearTimeout(this.editTimer)
             this.editTimer = setTimeout(() =>
-              this.props.bookmarkColorPallet(this.props.base.id, text)
-            , 2000)
+              bookmarkColorPallet(base.id, text), 2000)
           }}
         />
         {this.renderCreateOutfitButton()}
@@ -135,11 +141,13 @@ class ColorPallet extends Component {
   }
 
   renderCreateOutfitModal() {
+    const { base } = this.props
+    const { outfitTitle } = this.state
     return (<CreateOutfit
       onDismissPressed={() => this.setModalVisible(false)}
-      colorPallet={this.props.base.code}
-      colorPalletId={this.props.base.id}
-      title={this.state.outfitTitle}
+      colorPallet={base.code}
+      colorPalletId={base.id}
+      title={outfitTitle}
     />)
   }
 
@@ -170,11 +178,12 @@ class ColorPallet extends Component {
   }
 
   renderOutfits() {
-    const productBookmarks =
-      this.props.productBookmarks.filter(p =>
-        p.palletId === this.props.base.id) || []
+    const { productBookmarks, base } = this.props
+    const pbs =
+      productBookmarks.filter(p =>
+        p.palletId === base.id) || []
 
-    const titles = productBookmarks
+    const titles = pbs
       .map(tt => tt.title)
       .filter((item, ii, ar) => ar.indexOf(item) === ii)
 
@@ -188,13 +197,13 @@ class ColorPallet extends Component {
           padding: 10,
         }}
       >
-        {productBookmarks
+        {pbs
           .filter(pt => pt.title === title)
           .map((t, ind) => (
             <ProductItem
               key={ind}
               base={t.product}
-              colorPalletId={this.props.base.id}
+              colorPalletId={base.id}
             />
           ))}
         <View style={{ width: '100%' }}>
@@ -206,13 +215,15 @@ class ColorPallet extends Component {
   }
 
   render() {
-    const { base } = this.props
+    const { base, bookmarks, deleteBookmarkedColorPallet,
+      bookmarkColorPallet, productBookmarks } = this.props
+    const { modalVisible, openedIndex, showCopied, showProfile } = this.state
 
     const bookmarked =
-      this.props.bookmarks.filter(p => p.code === base.code).length > 0
+      bookmarks.filter(p => p.code === base.code).length > 0
 
-    const productBookmarks =
-      this.props.productBookmarks.filter(p =>
+    const pbs =
+      productBookmarks.filter(p =>
         p.palletId === base.id) || []
 
     return (
@@ -230,7 +241,7 @@ class ColorPallet extends Component {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.modalVisible}
+          visible={modalVisible}
         >
           {this.renderCreateOutfitModal()}
         </Modal>
@@ -273,62 +284,64 @@ class ColorPallet extends Component {
                   }}
                   underlayColor={`#${c}`}
                   onPress={() => {
-                    if (this.state.openedIndex === i) {
+                    if (openedIndex === i) {
                       this.collapsedAll()
                       return
                     }
                     this.expandOne(i)
                   }}
                 >
-                  {(this.state.openedIndex === i) && (<View
-                    style={{
-                      position: 'absolute',
-                      bottom: 7,
-                      right: 7,
-                      padding: 5,
-                      backgroundColor: 'rgba(59, 78, 104, 0.5)',
-                      borderRadius: 3,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {!this.state.showCopied ?
-                      <TouchableOpacity
-                        style={{ flexDirection: 'row' }}
-                        onPress={() => {
-                          Clipboard.setString(`#${c}`)
-                          this.setState({ showCopied: true })
+                  {(openedIndex === i) && (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        bottom: 7,
+                        right: 7,
+                        padding: 5,
+                        backgroundColor: 'rgba(59, 78, 104, 0.5)',
+                        borderRadius: 3,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {!showCopied ?
+                        <TouchableOpacity
+                          style={{ flexDirection: 'row' }}
+                          onPress={() => {
+                            Clipboard.setString(`#${c}`)
+                            this.setState({ showCopied: true })
 
-                          setTimeout(() => {
-                            this.setState({ showCopied: false })
-                          }, 1000)
-                        }}
-                      >
-                        <FontAwesome
-                          style={{
-                            marginRight: 7,
-                            color: '#F5F5F5',
+                            setTimeout(() => {
+                              this.setState({ showCopied: false })
+                            }, 1000)
                           }}
                         >
-                          {Icons.copy}
-                        </FontAwesome>
+                          <FontAwesome
+                            style={{
+                              marginRight: 7,
+                              color: '#F5F5F5',
+                            }}
+                          >
+                            {Icons.copy}
+                          </FontAwesome>
+                          <Text
+                            style={{
+                              color: '#f5f5f5',
+                            }}
+                          >
+                            #
+                            {c}
+                          </Text>
+                        </TouchableOpacity> :
                         <Text
                           style={{
                             color: '#f5f5f5',
                           }}
                         >
-                          #{c}
+                            Copied!
                         </Text>
-                      </TouchableOpacity> :
-                      <Text
-                        style={{
-                          color: '#f5f5f5',
-                        }}
-                      >
-                          Copied!
-                      </Text>
-                    }
-                  </View>)}
+                      }
+                    </View>)}
                 </TouchableOpacity>
               </Animated.View>)
             )}
@@ -355,7 +368,7 @@ class ColorPallet extends Component {
                       {
                         text: 'Remove',
                         onPress: () => {
-                          this.props.deleteBookmarkedColorPallet(base.id)
+                          deleteBookmarkedColorPallet(base.id)
                         },
                       },
                     ],
@@ -363,7 +376,7 @@ class ColorPallet extends Component {
                   )
                   return
                 }
-                this.props.bookmarkColorPallet(base.id)
+                bookmarkColorPallet(base.id)
               }}
             >
               <FontAwesome
@@ -387,13 +400,15 @@ class ColorPallet extends Component {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: '#f5f5f5' }} >
-                Popularity: {Math.round(base.popularity * 10) / 10} / 5
+              <Text style={{ color: '#f5f5f5' }}>
+                Popularity:
+                {Math.round(base.popularity * 10) / 10}
+                / 5
               </Text>
             </View>
           </View>
 
-          {productBookmarks.length > 0 &&
+          {pbs.length > 0 &&
             <View
               style={{
                 width: '100%',
@@ -410,22 +425,25 @@ class ColorPallet extends Component {
             </View>
           }
         </View>
-        {base.creator_username && <NBText
-          style={{ marginLeft: 'auto' }}
-          onPress={() => this.setState({ showProfile: true })}
-        >
-          Created By: @{base.creator_username.replace('m_g_i_o_s_', '')}
-        </NBText>}
-        {base.creator_username && <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.showProfile}
-        >
-          <ProfilePage
-            onDismissPressed={() => this.setState({ showProfile: false })}
-            base={{ username: base.creator_username }}
-          />
-        </Modal>}
+        {base.creator_username &&
+          <NBText
+            style={{ marginLeft: 'auto' }}
+            onPress={() => this.setState({ showProfile: true })}
+          >
+            Created By: @
+            {base.creator_username.replace('m_g_i_o_s_', '')}
+          </NBText>}
+        {base.creator_username &&
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={showProfile}
+          >
+            <ProfilePage
+              onDismissPressed={() => this.setState({ showProfile: false })}
+              base={{ username: base.creator_username }}
+            />
+          </Modal>}
       </View>
     )
   }
@@ -440,7 +458,6 @@ ColorPallet.propTypes = {
   base: PropTypes.object,
   bookmarks: PropTypes.array,
   productBookmarks: PropTypes.array,
-  showTitle: PropTypes.bool,
   user: PropTypes.object,
   navigateToLogin: PropTypes.func,
 }

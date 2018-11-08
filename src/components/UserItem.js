@@ -14,6 +14,7 @@ class UserItem extends Component {
 
   render() {
     const { base } = this.props
+    const { showProfile } = this.state
 
     return (
       <TouchableOpacity
@@ -37,7 +38,7 @@ class UserItem extends Component {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.showProfile}
+          visible={showProfile}
         >
           <ProfilePage
             onDismissPressed={() => this.setState({ showProfile: false })}

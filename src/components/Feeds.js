@@ -16,9 +16,39 @@ import Viewer from './Viewer'
 import UserItem from './UserItem'
 import FeedItem from './FeedItem'
 
+function renderEmptyFeeds() {
+  return (
+    <View
+      style={{
+        width: '100%',
+        alignItems: 'center',
+      }}
+    >
+      <FontAwesome
+        style={{
+          marginTop: '40%',
+          marginBottom: 10,
+          fontSize: 70,
+          color: '#3b4e68',
+        }}
+      >
+        {Icons.road}
+      </FontAwesome>
+      <Text style={{ textAlign: 'center' }}>
+        It's lonely here!
+      </Text>
+      <Text style={{ textAlign: 'center' }}>
+        You can search and follow
+      </Text>
+      <Text style={{ textAlign: 'center' }}>
+        your favorite users...
+      </Text>
+    </View>)
+}
 
 class Feeds extends Component {
   renderUserIsGuest() {
+    const { navigateToLogin } = this.props
     return (
       <View
         style={{
@@ -45,7 +75,7 @@ class Feeds extends Component {
           <Text style={{ marginBottom: 40 }}>
             In order to use this feature you need to login or create an account.
           </Text>
-          <TouchableOpacity onPress={() => this.props.navigateToLogin()}>
+          <TouchableOpacity onPress={() => navigateToLogin()}>
             <Text style={{ color: 'black', fontSize: 16 }}>
               Login / Register
             </Text>
@@ -53,36 +83,6 @@ class Feeds extends Component {
         </View>
       </View>
     )
-  }
-
-  renderEmptyFeeds() {
-    return (
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
-        <FontAwesome
-          style={{
-            marginTop: '40%',
-            marginBottom: 10,
-            fontSize: 70,
-            color: '#3b4e68',
-          }}
-        >
-          {Icons.road}
-        </FontAwesome>
-        <Text style={{ textAlign: 'center' }} >
-          It's lonely here!
-        </Text>
-        <Text style={{ textAlign: 'center' }} >
-          You can search and follow
-        </Text>
-        <Text style={{ textAlign: 'center' }} >
-          your favorite users...
-        </Text>
-      </View>)
   }
 
   renderEmptySearch() {
@@ -108,17 +108,20 @@ class Feeds extends Component {
         >
           {Icons.search}
         </FontAwesome>
-        <Text style={{ textAlign: 'center' }} >
-          No result with phrase "{searchPhrase}"
+        <Text style={{ textAlign: 'center' }}>
+          No result with phrase "
+          {searchPhrase}
+          "
         </Text>
-        <Text style={{ textAlign: 'center' }} >
+        <Text style={{ textAlign: 'center' }}>
           was found.
         </Text>
       </View>)
   }
 
   renderSearch() {
-    const { userResult, brandResult, styleResult, searchPhrase } = this.props.searchs
+    const { searchs } = this.props
+    const { userResult, brandResult, styleResult, searchPhrase } = searchs
     const tst = { marginLeft: 'auto', marginRight: 'auto' }
 
     return (
@@ -128,22 +131,39 @@ class Feeds extends Component {
           styleResult.length <= 0 &&
           this.renderEmptySearch()}
         <ScrollView style={{ width: '100%' }}>
-          {userResult.length > 0 && (<View>
-            <Text style={tst}> Users with phrase "{searchPhrase}" </Text>
-            <Viewer items={userResult} BaseItem={UserItem} />
-          </View>)}
-          {brandResult.length > 0 && (<View>
-            <Text style={tst}> Brands with phrase "{searchPhrase}" </Text>)}
-            <Viewer items={brandResult} BaseItem={UserItem} />
-          </View>)}
-          {styleResult.length > 0 && (<View>
-            <Text style={tst}> Images with phrase "{searchPhrase}" </Text>)}
-            <Viewer
-              items={styleResult}
-              BaseItem={FeedItem}
-              itemExtraProps={{ isStyleClickEnabled: true }}
-            />
-          </View>)}
+          {userResult.length > 0 && (
+            <View>
+              <Text style={tst}>
+              Users with phrase "
+                {searchPhrase}
+              "
+              </Text>
+              <Viewer items={userResult} BaseItem={UserItem} />
+            </View>)}
+          {brandResult.length > 0 && (
+            <View>
+              <Text style={tst}>
+                Brands with phrase "
+                {searchPhrase}
+                "
+              </Text>
+            )}
+              <Viewer items={brandResult} BaseItem={UserItem} />
+            </View>)}
+          {styleResult.length > 0 && (
+            <View>
+              <Text style={tst}>
+              Images with phrase "
+                {searchPhrase}
+              "
+              </Text>
+            )}
+              <Viewer
+                items={styleResult}
+                BaseItem={FeedItem}
+                itemExtraProps={{ isStyleClickEnabled: true }}
+              />
+            </View>)}
         </ScrollView>
       </View>
     )
@@ -153,35 +173,36 @@ class Feeds extends Component {
     const { feeds, fetchFeeds, fetchMoreFeeds } = this.props
 
     if (!feeds.items || feeds.items < 1) {
-      return this.renderEmptyFeeds()
+      return renderEmptyFeeds()
     }
 
-    return (<ScrollView
-      style={{
-        width: '100%',
-      }}
-      onScroll={(e) => {
-        let paddingToBottom = 10
-        paddingToBottom += e.nativeEvent.layoutMeasurement.height
-        if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
-          fetchMoreFeeds()
+    return (
+      <ScrollView
+        style={{
+          width: '100%',
+        }}
+        onScroll={(e) => {
+          let paddingToBottom = 10
+          paddingToBottom += e.nativeEvent.layoutMeasurement.height
+          if (e.nativeEvent.contentOffset.y >= e.nativeEvent.contentSize.height - paddingToBottom) {
+            fetchMoreFeeds()
+          }
+        }}
+        scrollEventThrottle={400}
+        refreshControl={
+          <RefreshControl
+            refreshing={feeds.loadingTop}
+            onRefresh={() => fetchFeeds()}
+          />
         }
-      }}
-      scrollEventThrottle={400}
-      refreshControl={
-        <RefreshControl
-          refreshing={feeds.loadingTop}
-          onRefresh={() => fetchFeeds()}
+      >
+        <Viewer
+          items={feeds.items}
+          BaseItem={FeedItem}
+          itemExtraProps={{ isStyleClickEnabled: true }}
         />
-      }
-    >
-      <Viewer
-        items={feeds.items}
-        BaseItem={FeedItem}
-        itemExtraProps={{ isStyleClickEnabled: true }}
-      />
-      {feeds.loadingBottom && <ActivityIndicator size="small" color="#3b4e68" />}
-    </ScrollView>)
+        {feeds.loadingBottom && <ActivityIndicator size="small" color="#3b4e68" />}
+      </ScrollView>)
   }
 
   render() {

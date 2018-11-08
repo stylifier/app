@@ -9,7 +9,8 @@ import actions from './actions'
 class MainView extends React.Component {
   constructor(props) {
     super(props)
-    this.props.initiateUser()
+    const { initiateUser } = this.props
+    initiateUser()
 
     this.onReceivedListener = this.onReceived.bind(this)
     this.onOpenedListener = this.onOpened.bind(this)
@@ -69,6 +70,7 @@ class MainView extends React.Component {
   }
 
   onOpened(openResult) {
+    const { setSelectedThreadId, moveToPage } = this.props
     try {
       const { additionalData } = openResult.notification.payload
 
@@ -78,8 +80,8 @@ class MainView extends React.Component {
         additionalData.url.replace(/(https|http):\/\/[a-z.1-9]*\//g, '').split('/')
 
       if (param[0] === 'messages') {
-        this.props.setSelectedThreadId(param[1], true)
-        this.props.moveToPage('Messages')
+        setSelectedThreadId(param[1], true)
+        moveToPage('Messages')
       }
     } catch (e) {
       // ignore
@@ -87,7 +89,8 @@ class MainView extends React.Component {
   }
 
   onIds(device) {
-    this.props.addSubsctiption(device.userId)
+    const { addSubsctiption } = this.props
+    addSubsctiption(device.userId)
   }
 }
 

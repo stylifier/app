@@ -1,4 +1,4 @@
-const btoa = require('Base64').btoa
+const { btoa } = require('Base64')
 const DeviceInfo = require('react-native-device-info')
 
 const deviceNameSafe = btoa(

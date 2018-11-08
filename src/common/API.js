@@ -6,12 +6,12 @@ class API {
     this.baseAddress = 'https://cloud.stylifier.com'
     // this.baseAddress = 'http://192.168.178.20:3000'
     AsyncStorage.getItem('user_token')
-    .then(t => { this.token = t })
+      .then(t => { this.token = t })
 
     this.userInfo = {}
 
     AsyncStorage.getItem('user_info')
-    .then(t => { this.userInfo = t ? JSON.parse(t) : {} })
+      .then(t => { this.userInfo = t ? JSON.parse(t) : {} })
   }
 
   setToken(token) {

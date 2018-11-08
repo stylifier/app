@@ -19,6 +19,11 @@
     "comma-dangle": 0,
     "import/no-extraneous-dependencies": 0,
     "import/no-unresolved": [2, { "ignore": ["^react-native-maps"] }],
-    "object-curly-newline": 0
+    "object-curly-newline": 0,
+    "function-paren-newline": 0,
+    "react/no-unescaped-entities": 0,
+    "react/no-array-index-key": 0,
+    "react/jsx-wrap-multilines": 0,
+    "operator-linebreak": 0
   }
 }

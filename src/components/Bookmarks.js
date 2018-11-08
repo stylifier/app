@@ -78,7 +78,6 @@ class Bookmarks extends Component {
 }
 
 Bookmarks.propTypes = {
-  bookmarkColorPallet: PropTypes.func,
   bookmarks: PropTypes.array,
 }
 

@@ -15,18 +15,18 @@ class DescriptionChenger extends React.Component {
   }
 
   render() {
-    const { show } = this.state
+    const { show, text } = this.state
     const { onDone, full } = this.props
 
     return (
-      <View style={{ width: '100%', justifyContent: 'center' }} >
+      <View style={{ width: '100%', justifyContent: 'center' }}>
         <Modal
           isVisible={show}
           avoidKeyboard
           swipeDirection="down"
           onSwipe={() => this.setState({ show: false })}
         >
-          <View style={{ justifyContent: 'flex-end', height: '100%', width: '100%' }} >
+          <View style={{ justifyContent: 'flex-end', height: '100%', width: '100%' }}>
             <View
               style={{
                 borderTopLeftRadius: 15,
@@ -40,8 +40,8 @@ class DescriptionChenger extends React.Component {
             >
               <TextInput
                 multiline
-                onChangeText={(text) => this.setState({ text })}
-                value={this.state.text}
+                onChangeText={(t) => this.setState({ text: t })}
+                value={text}
                 style={{ width: '100%', height: '100%' }}
                 placeholder="Image Description..."
               />
@@ -50,7 +50,7 @@ class DescriptionChenger extends React.Component {
               <Divider />
               <Button
                 onPress={() => {
-                  onDone(this.state.text || '')
+                  onDone(text || '')
                   this.setState({ show: false })
                 }}
                 buttonStyle={{

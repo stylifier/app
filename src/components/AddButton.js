@@ -30,7 +30,8 @@ class AddButton extends Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (nextProps.nav.index !== this.props.nav.index) {
+    const { nav } = this.props
+    if (nextProps.nav.index !== nav.index) {
       Animated.timing(
         this.addButtonSizeAnimation,
         {
@@ -79,6 +80,7 @@ class AddButton extends Component {
 
   renderCameraPick() {
     const { addButtonSize, secondaryButtonsSize } = this.state
+    const { toggleAddMenu, imagePicked, imageResized } = this.props
     const x = this.icon3.interpolate({
       inputRange: [0, 1],
       outputRange: [
@@ -108,9 +110,9 @@ class AddButton extends Component {
               height: 500,
               cropping: true,
             }).then(image => {
-              this.props.toggleAddMenu()
-              this.props.imagePicked()
-              this.props.imageResized(image.path)
+              toggleAddMenu()
+              imagePicked()
+              imageResized(image.path)
             })
               .catch((e) => {
                 if (/cancelled/g.test(e.message)) {
@@ -162,6 +164,7 @@ class AddButton extends Component {
 
   renderImagePick() {
     const { addButtonSize, secondaryButtonsSize } = this.state
+    const { toggleAddMenu, imagePicked, imageResized } = this.props
     const x = this.icon1.interpolate({
       inputRange: [0, 1],
       outputRange: [
@@ -188,9 +191,9 @@ class AddButton extends Component {
               height: 500,
               cropping: true,
             }).then(image => {
-              this.props.toggleAddMenu()
-              this.props.imagePicked()
-              this.props.imageResized(image.path)
+              toggleAddMenu()
+              imagePicked()
+              imageResized(image.path)
             })
               .catch((e) => {
                 if (/cancelled/g.test(e.message)) {
@@ -303,7 +306,6 @@ AddButton.propTypes = {
   toggleAddMenu: PropTypes.func,
   imageResized: PropTypes.func,
   imagePicked: PropTypes.func,
-  bookmarks: PropTypes.array,
   user: PropTypes.object,
   nav: PropTypes.object,
 }

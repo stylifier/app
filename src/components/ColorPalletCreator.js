@@ -41,10 +41,12 @@ class ColorPalletCreator extends React.Component {
   }
 
   componentDidMount() {
-    const imageUrl = this.props.base.images.standard_resolution.url
+    const { base } = this.props
+    const { imageName } = this.state
+    const imageUrl = base.images.standard_resolution.url
     Image.getSize(imageUrl,
       (width, height) => this.setState({ imageWidth: width, imageHeight: height }))
-    RNFS.downloadFile({ fromUrl: imageUrl, toFile: this.state.imageName })
+    RNFS.downloadFile({ fromUrl: imageUrl, toFile: imageName })
       .promise.then(() => {}).catch(() => {})
 
     setTimeout(() =>
@@ -53,6 +55,7 @@ class ColorPalletCreator extends React.Component {
   }
 
   renderDraggable(colorKey) {
+    const { imageWidth, imageHeight, imageName } = this.state
     return (
       <Draggable
         style={{ padding: 5 }}
@@ -66,9 +69,9 @@ class ColorPalletCreator extends React.Component {
           this.autoHeightImageView.measure((fx, fy, w, h, px, py) => {
             clearTimeout(this.getPixelTimeout)
             this.getPixelTimeout = setTimeout(() => {
-              const ix = ((x - px) / w) * this.state.imageWidth
-              const iy = ((y - py) / h) * this.state.imageHeight
-              getPixelRGBA(this.state.imageName, ix, iy)
+              const ix = ((x - px) / w) * imageWidth
+              const iy = ((y - py) / h) * imageHeight
+              getPixelRGBA(imageName, ix, iy)
                 .then(c => this.setState({ [colorKey]: rgbToHex(c) }))
                 .catch(() => {})
             }, 10)
@@ -79,7 +82,7 @@ class ColorPalletCreator extends React.Component {
   }
 
   render() {
-    const { show, color1, color2, color3, color4 } = this.state
+    const { show, color1, color2, color3, color4, containerWidth, text } = this.state
     const { onDone, full, base, createColorPallet } = this.props
 
     return (
@@ -107,7 +110,7 @@ class ColorPalletCreator extends React.Component {
               <View ref={t => { this.autoHeightImageView = t }}>
                 <AutoHeightImage
                   z={2}
-                  width={this.state.containerWidth - 20}
+                  width={containerWidth - 20}
                   style={{ borderRadius: 9, marginLeft: 'auto', marginRight: 'auto' }}
                   onLoadStart={() => this.setState({ imageLoading: true })}
                   onLoadEnd={() => this.setState({ imageLoading: false })}
@@ -141,7 +144,7 @@ class ColorPalletCreator extends React.Component {
                     color3.replace('#', '') +
                     color4.replace('#', '')
                   )
-                  onDone(this.state.text || '')
+                  onDone(text || '')
                   this.setState({ show: false })
                 }}
                 buttonStyle={{
@@ -199,7 +202,6 @@ class ColorPalletCreator extends React.Component {
 ColorPalletCreator.propTypes = {
   onDone: PropTypes.func,
   createColorPallet: PropTypes.func,
-  defaultValue: PropTypes.string,
   full: PropTypes.bool,
   base: PropTypes.object,
 }
