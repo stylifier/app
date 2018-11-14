@@ -3,7 +3,6 @@ import user from './user'
 import appNav from './appNav'
 import colorSuggestion from './colorSuggestion'
 import bookmarks from './bookmarks'
-import messagingNav from './messagingNav'
 import productSuggestion from './productSuggestion'
 import productBookmarks from './productBookmarks'
 import messages from './messages'
@@ -20,7 +19,6 @@ const todoApp = combineReducers({
   productBookmarks,
   metadata,
   messages,
-  messagingNav,
   feeds,
   searchs,
   followers,

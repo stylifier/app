@@ -10,6 +10,7 @@ import AddButton from '../components/AddButton'
 import MessagingButton from '../components/MessagingButton'
 import Bookmarks from '../pages/Bookmarks'
 import { MessagingNavigation } from './MessagingNavigation'
+import { BookmarksNavigation } from './BookmarksNavigation'
 import Profile from '../pages/Profile'
 import Feeds from '../pages/Feeds'
 import ProccessAddingImage from '../pages/ProccessAddingImage'
@@ -36,7 +37,7 @@ const RootNavigator = createBottomTabNavigator({
   },
   ...{
     Bookmarks: {
-      screen: Bookmarks,
+      screen: BookmarksNavigation,
       navigationOptions: () => ({
         tabBarIcon: ({ tintColor }) => (
           <FontAwesome

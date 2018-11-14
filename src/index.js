@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import OneSignal from 'react-native-onesignal'
-import { AppNavigator } from './navigations/AppNavigation'
+import { AppNavigator } from './navigation'
 import actions from './actions'
 
 class MainView extends React.Component {
