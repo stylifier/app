@@ -1,13 +1,9 @@
 import { createStackNavigator } from 'react-navigation'
-import { connect } from 'react-redux'
-import {
-  reduxifyNavigator,
-  createReactNavigationReduxMiddleware,
-} from 'react-navigation-redux-helpers'
+import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers'
 import Threads from '../pages/Messaging/Threads'
 import Conversation from '../pages/Messaging/Conversation'
 
-const RootNavigator = createStackNavigator({
+const MessagingNavigation = createStackNavigator({
   Threads: {
     screen: Threads,
     path: 'messaging/threads',
@@ -18,8 +14,9 @@ const RootNavigator = createStackNavigator({
   Conversation: {
     screen: Conversation,
     path: 'messaging/conversation',
-    navigationOptions: ({ navigation }) =>
-      ({ title: navigation.state.params && navigation.state.params.title }),
+    navigationOptions: ({ navigation }) => ({
+      title: navigation.state.params && navigation.state.params.title
+    }),
   }
 })
 
@@ -28,12 +25,8 @@ const middleware = createReactNavigationReduxMiddleware(
   state => state.messagingNav
 )
 
-const AppWithNavigationState = reduxifyNavigator(RootNavigator, 'root')
-
-const mapStateToProps = state => ({
-  state: state.messagingNav,
+MessagingNavigation.navigationOptions = ({ navigation }) => ({
+  tabBarVisible: navigation.state.index === 0
 })
 
-const AppNavigator = connect(mapStateToProps)(AppWithNavigationState)
-
-export { AppNavigator, RootNavigator, middleware }
+export { MessagingNavigation, middleware }

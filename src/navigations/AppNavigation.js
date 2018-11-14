@@ -9,7 +9,7 @@ import {
 import AddButton from '../components/AddButton'
 import MessagingButton from '../components/MessagingButton'
 import Bookmarks from '../pages/Bookmarks'
-import MessagingPage from '../pages/Messaging'
+import { MessagingNavigation } from './MessagingNavigation'
 import Profile from '../pages/Profile'
 import Feeds from '../pages/Feeds'
 import ProccessAddingImage from '../pages/ProccessAddingImage'
@@ -61,11 +61,11 @@ const RootNavigator = createBottomTabNavigator({
     },
     ...{
       Messages: {
-        screen: MessagingPage,
+        screen: MessagingNavigation,
         navigationOptions: () => ({
           tabBarIcon: ({ tintColor }) => (
             <MessagingButton tintColor={tintColor} />
-          ),
+          )
         }),
       },
     },

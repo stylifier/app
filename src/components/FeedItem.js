@@ -45,9 +45,7 @@ class FeedItem extends Component {
       draggableColor: 'lightgray',
       imageName: `${dp}/${props.base.id}.${u.substr(u.lastIndexOf('.') + 1)}`,
     }
-  }
 
-  componentDidMount() {
     const { showColordeaggablePicker, base } = this.props
     const { imageName } = this.state
 

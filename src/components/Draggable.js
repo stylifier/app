@@ -12,7 +12,6 @@ import { Badge } from 'react-native-elements'
 class Draggable extends Component {
   constructor(props, defaultProps) {
     super(props, defaultProps)
-    const { pressDragRelease, onMove } = props
     const p = new Animated.ValueXY()
     this.state = {
       pan: p,
@@ -33,7 +32,7 @@ class Draggable extends Component {
       onPanResponderMove: Animated.event([null, { dx: p.x, dy: p.y, }], { listener: () => {
         this.draggable.measure((a, b, d, f, px, py) => {
           const { _value } = this.state
-          const { renderSize } = this.props
+          const { renderSize, onMove } = this.props
           if (onMove) {
             onMove(
               px + _value.x + renderSize,
@@ -44,6 +43,7 @@ class Draggable extends Component {
       } }),
       onPanResponderRelease: (e, gestureState) => {
         const { pan } = this.state
+        const { pressDragRelease } = props
         if (pressDragRelease) {
           pressDragRelease(e, gestureState)
         }

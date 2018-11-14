@@ -1,27 +1,27 @@
 import { NavigationActions } from 'react-navigation'
-import { RootNavigator } from '../navigations/MessagingNavigation'
+import { MessagingNavigation } from '../navigations/MessagingNavigation'
 
-const firstAction = RootNavigator.router.getActionForPathAndParams('messaging/threads')
-const initialNavState = RootNavigator.router.getStateForAction(firstAction)
+const firstAction = MessagingNavigation.router.getActionForPathAndParams('messaging/threads')
+const initialNavState = MessagingNavigation.router.getStateForAction(firstAction)
 
 const nav = (state = { ...initialNavState }, action) => {
   let nextState
 
   switch (action.type) {
     case 'Threads':
-      nextState = RootNavigator.router.getStateForAction(
+      nextState = MessagingNavigation.router.getStateForAction(
         NavigationActions.navigate({ routeName: 'Threads' }),
         state
       )
       break
     case 'Conversation':
-      nextState = RootNavigator.router.getStateForAction(
+      nextState = MessagingNavigation.router.getStateForAction(
         NavigationActions.navigate({ routeName: 'Conversation' }),
         state
       )
       break
     default:
-      nextState = RootNavigator.router.getStateForAction(action, state)
+      nextState = MessagingNavigation.router.getStateForAction(action, state)
       break
   }
 

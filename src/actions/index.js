@@ -293,7 +293,7 @@ const actions = {
 
   openConversation: (threadId) => (dispatch, getState) => {
     const { messages, user } = getState()
-    
+
     const selectedThread = messages.threads.filter(t => t.id === threadId)[0]
     const isFromMe = selectedThread.from.username === user.username
 

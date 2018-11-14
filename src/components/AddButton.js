@@ -29,26 +29,6 @@ class AddButton extends Component {
     this.addButtonSizeAnimation = new Animated.Value(0)
   }
 
-  componentWillUpdate(nextProps) {
-    const { appNav } = this.props
-    if (nextProps.appNav.index !== appNav.index) {
-      Animated.timing(
-        this.addButtonSizeAnimation,
-        {
-          toValue: nextProps.appNav.index === 3 ? 1 : 0,
-          duration: 500,
-          easing: Easing.bounce
-        }
-      ).start()
-
-      if (nextProps.appNav.index === 3) {
-        this.setState({ addButtonSize: 50 })
-      } else {
-        setTimeout(() => this.setState({ addButtonSize: 80 }), 200)
-      }
-    }
-  }
-
   toggleView() {
     const { user } = this.props
 
@@ -306,8 +286,7 @@ AddButton.propTypes = {
   toggleAddMenu: PropTypes.func,
   imageResized: PropTypes.func,
   imagePicked: PropTypes.func,
-  user: PropTypes.object,
-  appNav: PropTypes.object,
+  user: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
