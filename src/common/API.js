@@ -36,6 +36,9 @@ class API {
         if (response.status >= 200 && response.status < 300)
           return Promise.resolve(response)
 
+        response.text()
+        .then((t) => console.log(path, params, 'ERROR:' + t))
+
         var error = new Error(response.statusText || response.status)
         error.response = response
         return Promise.reject(error)
@@ -365,7 +368,7 @@ class API {
     return this.post('/products', {media, name, code, price, shopAddress})
   }
 
-  fetchUserProducts(q = {}, pagination) {
+  fetchProducts(q = {}, pagination) {
     return this.get('/products',
       [
         ...(q.name ? ['name=' + q.name] : []),

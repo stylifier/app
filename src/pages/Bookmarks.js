@@ -16,6 +16,7 @@ class Bookmarks extends Component {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: '#f5f5f5',
         }}
       >
         {(!bookmarks || bookmarks.length <= 0) &&

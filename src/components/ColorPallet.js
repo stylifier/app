@@ -11,26 +11,13 @@ import {
   Alert,
   StatusBar,
 } from 'react-native'
-import { NavigationActions } from 'react-navigation'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import PropTypes from 'prop-types'
 import { Text as NBText } from 'native-base'
 import { connect } from 'react-redux'
 import actions from '../actions'
-import CreateOutfit from './CreateOutfit'
 import ProductItem from './ProductItem'
 import ProfilePage from './Profile'
-
-
-const makeid = () => {
-  let text = ''
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  for (let i = 0; i < 5; i += 1) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
-  }
-  return text
-}
-
 
 class ColorPallet extends Component {
   constructor(props) {
@@ -38,16 +25,14 @@ class ColorPallet extends Component {
 
     this.animationDict = []
     this.state = {
-      modalVisible: false,
       openedIndex: -1,
       showProfile: false,
     }
   }
 
   renderCreateOutfitButton(outfitId) {
-    const { refereshUserInfo, refreshCategories,
-      user, refreshColorCode, navigateToLogin } = this.props
-    const { modalVisible } = this.state
+    const { refereshUserInfo, refreshCategories, navigateToCreateOutfit,
+      user, refreshColorCode, navigateToLogin, base } = this.props
 
     return (
       <TouchableOpacity
@@ -81,8 +66,7 @@ class ColorPallet extends Component {
             )
             return
           }
-          this.setState({ outfitTitle: outfitId || makeid() })
-          this.setModalVisible(!modalVisible)
+          navigateToCreateOutfit(base.code, base.id, base.title)
         }}
       >
         <FontAwesome
@@ -140,17 +124,6 @@ class ColorPallet extends Component {
     this.animationDict[3] = new Animated.Value(60)
   }
 
-  renderCreateOutfitModal() {
-    const { base } = this.props
-    const { outfitTitle } = this.state
-    return (<CreateOutfit
-      onDismissPressed={() => this.setModalVisible(false)}
-      colorPallet={base.code}
-      colorPalletId={base.id}
-      title={outfitTitle}
-    />)
-  }
-
   expandOne(k) {
     this.animationDict.forEach((a, i) => {
       Animated.timing(this.animationDict[i], {
@@ -171,10 +144,6 @@ class ColorPallet extends Component {
       }).start()
     })
     this.setState({ openedIndex: -1 })
-  }
-
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible })
   }
 
   renderOutfits() {
@@ -217,7 +186,7 @@ class ColorPallet extends Component {
   render() {
     const { base, bookmarks, deleteBookmarkedColorPallet,
       bookmarkColorPallet, productBookmarks } = this.props
-    const { modalVisible, openedIndex, showCopied, showProfile } = this.state
+    const { openedIndex, showCopied, showProfile } = this.state
 
     const bookmarked =
       bookmarks.filter(p => p.code === base.code).length > 0
@@ -238,14 +207,6 @@ class ColorPallet extends Component {
         }}
       >
         <StatusBar barStyle="dark-content" />
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={modalVisible}
-        >
-          {this.renderCreateOutfitModal()}
-        </Modal>
-
 
         {bookmarked && this.renderTitle()}
 
@@ -455,6 +416,7 @@ ColorPallet.propTypes = {
   refereshUserInfo: PropTypes.func,
   refreshCategories: PropTypes.func,
   refreshColorCode: PropTypes.func,
+  navigateToCreateOutfit: PropTypes.func,
   base: PropTypes.object,
   bookmarks: PropTypes.array,
   productBookmarks: PropTypes.array,
@@ -480,7 +442,10 @@ const mapDispatchToProps = dispatch => ({
   refreshColorCode: () =>
     dispatch(actions.refreshColorCode()),
   navigateToLogin: () => dispatch(
-    NavigationActions.navigate({ routeName: 'Profile' })
+    actions.moveToPage('Profile')
+  ),
+  navigateToCreateOutfit: (colorPallet, colorPalletId, title) => dispatch(
+    actions.moveToPage('CreateOutfit', { colorPallet, colorPalletId, title })
   ),
 })
 

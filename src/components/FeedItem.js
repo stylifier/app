@@ -290,8 +290,6 @@ class FeedItem extends Component {
         buttonStyle={{
           backgroundColor: '#d9534f',
           borderRadius: full ? 0 : 15,
-          paddingTop: 10,
-          paddingBottom: 10,
           marginLeft: 0,
         }}
         containerViewStyle={{ marginLeft: 'auto', marginRight: 'auto', width: full && '100%' }}
@@ -356,8 +354,6 @@ class FeedItem extends Component {
               buttonStyle={{
                 backgroundColor: '#f0f0f0',
                 borderRadius: 15,
-                paddingTop: 10,
-                paddingBottom: 10,
                 marginLeft: 0,
               }}
               containerViewStyle={{ width: '100%', marginLeft: 0 }}

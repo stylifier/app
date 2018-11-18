@@ -185,8 +185,6 @@ class ColorPalletCreator extends React.Component {
           buttonStyle={{
             backgroundColor: '#f0f0f0',
             borderRadius: full ? 0 : 15,
-            paddingTop: 10,
-            paddingBottom: 10,
             marginLeft: 0,
           }}
           containerViewStyle={{ marginLeft: 'auto', marginRight: 'auto', width: full && '100%' }}

@@ -93,7 +93,7 @@ class Threads extends Component {
     return (
       <SafeAreaView>
         <KeyboardAwareScrollView
-          style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
+          style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5', paddingTop: 10 }}
           refreshControl={
             user.isLoggedInUser ? <RefreshControl
               refreshing={messages.loadingTop}

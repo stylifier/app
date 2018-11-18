@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Image, View, Text, Dimensions, TouchableOpacity, Linking } from 'react-native'
+import { Image, View, Text, TouchableOpacity, Linking } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
+import Lightbox from 'react-native-lightbox'
 import { connect } from 'react-redux'
 import actions from '../actions'
 
@@ -16,29 +17,41 @@ class ProductItem extends Component {
     return (
       <View
         style={{
-          width: (Dimensions.get('window').width / 2) - 30,
-          height: (Dimensions.get('window').height / 2) - 50,
           alignItems: 'center',
           marginRight: 'auto',
           backgroundColor: '#f5f5f5',
           borderRadius: 10,
         }}
       >
+        {onClick &&
+          <TouchableOpacity
+            style={{ width: 130, height: 130 }}
+            onPress={() => onClick(base)}
+          >
+            <Image
+              style={{ width: 130, height: 140, borderRadius: rounded ? 10 : 0 }}
+              source={{ uri: base.media[0].standard_resolution.url }}
+            />
+          </TouchableOpacity>
+        }
+        {!onClick &&
+          <Lightbox
+            activeProps={{
+              style: {
+                flex: 1,
+                resizeMode: 'contain',
+              }
+            }}
+            supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
+          >
+            <Image
+              style={{ width: 130, height: 140, borderRadius: rounded ? 10 : 0 }}
+              source={{ uri: base.media[0].standard_resolution.url }}
+            />
+          </Lightbox>
+        }
         <TouchableOpacity
-          style={{ width: '100%', height: '70%' }}
-          onPress={() => {
-            if (onClick) {
-              onClick(base)
-            }
-          }}
-        >
-          <Image
-            style={{ width: '100%', height: '100%', borderRadius: rounded ? 10 : 0 }}
-            source={{ uri: base.media[0].standard_resolution.url }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ width: '90%', marginTop: 20 }}
+          style={{ width: 130, marginTop: 20 }}
           onPress={() => {
             if (onClick) {
               onClick(base)

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Linking } from 'react-native'
 import { connect } from 'react-redux'
 import OneSignal from 'react-native-onesignal'
 import { AppNavigator } from './navigation'
@@ -32,6 +32,8 @@ class MainView extends React.Component {
     OneSignal.addEventListener('opened', this.onOpenedListener)
     OneSignal.addEventListener('ids', this.onIdsListener)
 
+    Linking.addEventListener('url', this.handleOpenURL)
+
     OneSignal.inFocusDisplaying(0)
   }
 
@@ -39,6 +41,12 @@ class MainView extends React.Component {
     OneSignal.removeEventListener('received', this.onReceivedListener)
     OneSignal.removeEventListener('opened', this.onOpenedListener)
     OneSignal.removeEventListener('ids', this.onIdsListener)
+
+    Linking.removeEventListener('url', this.handleOpenURL)
+  }
+
+  handleOpenURL(event) {
+    console.log(event.url)
   }
 
   onReceived(notification) {

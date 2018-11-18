@@ -1,7 +1,7 @@
 import { NavigationActions } from 'react-navigation'
 import { RootNavigator } from '../navigation'
 
-const firstAction = RootNavigator.router.getActionForPathAndParams('Feeds')
+const firstAction = RootNavigator.router.getActionForPathAndParams('Bookmarks')
 const initialNavState = RootNavigator.router.getStateForAction(firstAction)
 
 const nav = (state = { ...initialNavState }, action) => {

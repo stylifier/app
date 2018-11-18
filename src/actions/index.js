@@ -362,8 +362,12 @@ const actions = {
       .catch(() => dispatch({ type: 'FINISH_LOADING_REFETCH_TOP_THREADS' }))
   },
 
-  moveToPage: (page) => (dispatch) => {
-    dispatch(NavigationActions.navigate({ routeName: page }))
+  moveToPage: (page, params) => (dispatch) => {
+    dispatch(NavigationActions.navigate({ routeName: page, params: { ...params } }))
+  },
+
+  goBack: () => (dispatch) => {
+    dispatch(NavigationActions.back())
   },
 
   colorSuggestionImagePicked: () => (dispatch) => {
@@ -504,10 +508,9 @@ const actions = {
   },
 
   fetchProducts: (q) => (dispatch) => {
-    dispatch({ type: 'CLEAR_PRODUCT_SUGGESTION' })
-    dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
+    dispatch({ type: 'LOADING_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
 
-    api.fetchUserProducts(q)
+    api.fetchProducts(q)
       .then(products => {
         dispatch({
           type: 'RENEW_PRODUCT_SUGGESTION',
@@ -515,28 +518,30 @@ const actions = {
             items: [...products.data],
             pagination: products.pagination,
             queries: { ...q },
+            key: JSON.stringify(q),
           },
         })
       })
       .catch(() => {})
   },
 
-  fetchMoreProducts: () => (dispatch, getState) => {
+  fetchMoreProducts: (q) => (dispatch, getState) => {
     const { productSuggestion } = getState()
 
     if (productSuggestion.loading || productSuggestion.finished) {
       return
     }
 
-    dispatch({ type: 'LOADING_PRODUCT_SUGGESTION' })
+    dispatch({ type: 'LOADING_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
 
-    api.fetchUserProducts(productSuggestion.queries, productSuggestion.pagination)
+    api.fetchProducts(productSuggestion.queries, productSuggestion.pagination)
       .then(products => {
         dispatch({
           type: 'ADD_TO_PRODUCT_SUGGESTION',
           payload: {
             items: [...products.data],
             pagination: products.pagination,
+            key: JSON.stringify(q),
           },
         })
       })

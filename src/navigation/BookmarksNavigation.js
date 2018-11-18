@@ -1,25 +1,35 @@
 import { createStackNavigator } from 'react-navigation'
-import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers'
+import React from 'react'
 import Bookmarks from '../pages/Bookmarks'
+import CreateOutfit from '../pages/CreateOutfit'
 
 const BookmarksNavigation = createStackNavigator({
   Bookmarks: {
     screen: Bookmarks,
-    path: 'messaging/threads',
+    path: 'bookmarks/index',
     navigationOptions: () => ({
       title: 'Bookmarks',
       header: null
     }),
+  },
+  CreateOutfit: {
+    screen: props => <CreateOutfit {...props.navigation.state.params} />,
+    path: 'bookmarks/CreateOutfit',
+    navigationOptions: () => ({
+      title: 'CreateOutfit',
+      headerStyle: {
+        backgroundColor: '#3b4e68',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }),
   }
 })
-
-const middleware = createReactNavigationReduxMiddleware(
-  'root',
-  state => state.bookmarksNav
-)
 
 BookmarksNavigation.navigationOptions = ({ navigation }) => ({
   tabBarVisible: navigation.state.index === 0
 })
 
-export { BookmarksNavigation, middleware }
+export default BookmarksNavigation
