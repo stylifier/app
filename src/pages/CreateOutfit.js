@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import {
   View, TouchableOpacity, Text, Picker, StatusBar,
   Animated, AsyncStorage, ScrollView } from 'react-native'
-import { Button } from 'react-native-elements'
+import { Button, Icon, Text as NBText } from 'native-base'
 import { connect } from 'react-redux'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
-import FadeView from 'react-native-fade-view'
 import actions from '../actions'
 import Viewer from '../components/Viewer'
 import ProductShowCase from '../components/ProductShowCase'
@@ -102,61 +101,59 @@ class CreateOutfit extends Component {
                 askForApproval({ country, ...user })
                 goBack()
               }}
-              buttonStyle={{
+              style={{
                 backgroundColor: '#3b4e68',
                 borderRadius: 15
               }}
-              title="Submit"
-              raised
-            />}
+            >
+              <Text> Submit </Text>
+            </Button>
+          }
         </View>
       </View>
     )
   }
 
   renderGernderChoice() {
-    const { gender } = this.state
     return (
-      <FadeView active={typeof gender === 'string'}>
-        <View
-          style={{
-            width: '100%',
-            padding: 20,
-            height: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {['ladies', 'men'].map((g, i) => (
-            <TouchableOpacity
+      <View
+        style={{
+          width: '100%',
+          padding: 20,
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {['ladies', 'men'].map((g, i) => (
+          <TouchableOpacity
+            style={{
+              width: 120,
+              height: 120,
+              marginBottom: 20,
+              marginTop: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 2,
+              borderColor: '#3b4e68',
+              borderRadius: 10,
+            }}
+            key={i}
+            onPress={() => this.setState({ gender: g })}
+          >
+            <FontAwesome
               style={{
-                width: 120,
-                height: 120,
-                marginBottom: 20,
-                marginTop: 20,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 2,
-                borderColor: '#3b4e68',
-                borderRadius: 10,
+                marginRight: 5,
+                marginTop: 2,
+                color: '#3b4e68',
+                fontSize: 90,
               }}
-              key={i}
-              onPress={() => this.setState({ gender: g })}
             >
-              <FontAwesome
-                style={{
-                  marginRight: 5,
-                  marginTop: 2,
-                  color: '#3b4e68',
-                  fontSize: 90,
-                }}
-              >
-                {g === 'men' ? Icons.mars : Icons.venus}
-              </FontAwesome>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </FadeView>
+              {g === 'men' ? Icons.mars : Icons.venus}
+            </FontAwesome>
+          </TouchableOpacity>
+        ))}
+      </View>
     )
   }
 
@@ -208,7 +205,7 @@ class CreateOutfit extends Component {
             justifyContent: 'center',
           }}
         >
-          {this.renderGernderChoice()}
+          {!gender && this.renderGernderChoice()}
           {gender &&
             <ScrollView style={{ width: '100%', height: '100%' }}>
               <Viewer
@@ -225,9 +222,31 @@ class CreateOutfit extends Component {
                       category: b.category,
                     })
                   },
+                  onRemovePressed: (b) =>
+                    this.setState({
+                      rows: rows.map(r => (r.index === b.index ? undefined : r)).filter(t => t)
+                    }),
                   colors: pallet.colors
                 }}
               />
+              <View style={{ width: '100%' }}>
+                <Button
+                  onPress={() => this.setState({
+                    rows: [...rows, { color: null, category: null, index: rows.length }]
+                  })}
+                  style={{
+                    backgroundColor: '#5b7495',
+                    borderRadius: 15,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                  }}
+                >
+                  <Icon style={{ fontSize: 30, color: '#f5f5f5' }} name="add" />
+                  <NBText style={{ color: '#f5f5f5' }}>
+                    Add Row
+                  </NBText>
+                </Button>
+              </View>
             </ScrollView>}
         </View>
       </View>

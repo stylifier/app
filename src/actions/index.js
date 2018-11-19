@@ -527,14 +527,21 @@ const actions = {
 
   fetchMoreProducts: (q) => (dispatch, getState) => {
     const { productSuggestion } = getState()
+    const key = JSON.stringify(q)
 
-    if (productSuggestion.loading || productSuggestion.finished) {
+    console.log(productSuggestion)
+
+    if (!productSuggestion[key] ||
+      productSuggestion[key].loading ||
+      productSuggestion[key].finished) {
       return
     }
 
+    console.log('===??', productSuggestion)
+
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
 
-    api.fetchProducts(productSuggestion.queries, productSuggestion.pagination)
+    api.fetchProducts(q, productSuggestion[key].pagination)
       .then(products => {
         dispatch({
           type: 'ADD_TO_PRODUCT_SUGGESTION',

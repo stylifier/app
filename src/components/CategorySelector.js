@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { View, Modal, ScrollView } from 'react-native'
-import { Header, Left, Icon, Text, Button as NBButton,
+import { Header, Left, Icon, Text, Button,
   Container, Body, Title, Right } from 'native-base'
-import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import actions from '../actions'
 
@@ -13,8 +12,27 @@ class CategorySelector extends React.Component {
     this.state = {
       show: false,
       categories: props.categories.sort((a, b) => a.address.localeCompare(b.address)),
-      renderSections: {}
+      renderSections: {
+      }
     }
+  }
+
+  componentDidMount() {
+    const { defaultValue } = this.props
+    if (!defaultValue) return
+    const pieces = defaultValue.split('>')
+
+    this._toggle({ address: pieces.slice(0, pieces.length - 2).join('>') })
+    let newRenderSections = {}
+
+    pieces.forEach((c, i) => {
+      if (i <= 1) return
+      newRenderSections = {
+        ...newRenderSections,
+        [pieces.slice(0, i).join('>')]: true
+      }
+    })
+    this.setState({ renderSections: newRenderSections })
   }
 
   _toggle(item) {
@@ -51,13 +69,13 @@ class CategorySelector extends React.Component {
     return (
       c.length > 1 ?
         <View key={item.address}>
-          <NBButton transparent dark onPress={() => this._toggle(item)} style={{ width: '100%' }}>
+          <Button transparent dark onPress={() => this._toggle(item)} style={{ width: '100%' }}>
             <Text style={{ marginLeft: 20 * item.address.split('>').length - 40 }}>{item.lable}</Text>
             <Icon name={!renderSections[item.address] ? 'arrow-forward' : 'arrow-down'} />
-          </NBButton>
+          </Button>
           {renderSections[item.address] && this._body(item)}
         </View> :
-        <NBButton
+        <Button
           transparent
           dark
           key={item.address}
@@ -68,7 +86,7 @@ class CategorySelector extends React.Component {
           style={{ width: '100%' }}
         >
           <Text style={{ marginLeft: 20 * item.address.split('>').length - 40 }}>{item.lable}</Text>
-        </NBButton>
+        </Button>
     )
   }
 
@@ -83,16 +101,17 @@ class CategorySelector extends React.Component {
     return (
       c.length > 1 ?
         items.map(i => this._head(i)) :
-        <NBButton transparent dark disabled style={{ width: '100%' }}>
+        <Button transparent dark disabled style={{ width: '100%' }}>
           <Text style={{ marginLeft: 20 * item.address.split('>').length - 40 }}>{item.lable}</Text>
-        </NBButton>
+        </Button>
     )
   }
 
   render() {
     const { show, categories } = this.state
-    const { gender } = this.props
+    const { gender, defaultValue, categories: allCategories } = this.props
     const items = categories.filter(t => t.address.startsWith(gender) && t.address.split('>').length === 2)
+    const pieces = defaultValue && defaultValue.split('>')
     return (
       <View>
         <Modal
@@ -104,40 +123,46 @@ class CategorySelector extends React.Component {
           <Container>
             <Header>
               <Left>
-                <NBButton
+                <Button
                   transparent
                   onPress={() => this.setState({ show: false })}
                 >
                   <Icon name="arrow-back" />
                   <Text>Back</Text>
-                </NBButton>
+                </Button>
               </Left>
               <Body>
                 <Title>Categories</Title>
               </Body>
               <Right />
             </Header>
-            <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}>
+            <ScrollView
+              style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}
+              ref={ref => { this.scrollView = ref }}
+              onContentSizeChange={() => {
+                this.scrollView.scrollToEnd({ animated: true })
+              }}
+            >
               {items.map(i => this._head(i))}
             </ScrollView>
           </Container>
         </Modal>
         <Button
           onPress={() => this.setState({ show: true })}
-          raised
-          buttonStyle={{
-            backgroundColor: '#f0f0f0',
-            borderRadius: 15,
-            marginLeft: 0,
+          style={{
+            backgroundColor: !defaultValue ? '#5b7495' : '#f5f5f5',
+            borderRadius: !defaultValue ? 15 : 0,
           }}
-          containerViewStyle={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-          color="#0079ff"
-          large
-          title="Set a Category"
-        />
+        >
+          <Icon style={{ fontSize: 30, color: !defaultValue ? '#f5f5f5' : '#3b4e68', marginRight: 0 }} name={!defaultValue ? 'add' : 'swap'} />
+          <Text style={{ color: !defaultValue ? '#f5f5f5' : '#3b4e68', marginLeft: 0 }}>
+            {
+              !defaultValue ?
+                'Set a Category' :
+                `${allCategories.find(t => t.address === defaultValue).lable}`
+            }
+          </Text>
+        </Button>
       </View>
     )
   }
@@ -146,6 +171,7 @@ class CategorySelector extends React.Component {
 CategorySelector.propTypes = {
   onSelect: PropTypes.func,
   gender: PropTypes.string,
+  defaultValue: PropTypes.string,
   categories: PropTypes.array,
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { View, TouchableOpacity, Modal } from 'react-native'
-import { Header, Left, Icon, Text, Button as NBButton,
+import { Header, Left, Icon, Text, Button,
   Container, Body, Title, Right } from 'native-base'
 
 class ColorSelector extends React.Component {
@@ -27,13 +27,13 @@ class ColorSelector extends React.Component {
           <Container>
             <Header>
               <Left>
-                <NBButton
+                <Button
                   transparent
                   onPress={() => this.setState({ show: false })}
                 >
                   <Icon name="arrow-back" />
                   <Text>Back</Text>
-                </NBButton>
+                </Button>
               </Left>
               <Body>
                 <Title>Categories</Title>
@@ -71,17 +71,30 @@ class ColorSelector extends React.Component {
             </View>
           </Container>
         </Modal>
-        <TouchableOpacity
-          onPress={() => this.setState({ show: true })}
-          style={{
-            backgroundColor: defaultValue,
-            width: 30,
-            height: 250,
-            margin: 5,
-            borderRadius: 10,
-            borderWidth: 1,
-          }}
-        />
+        {defaultValue ?
+          <TouchableOpacity
+            onPress={() => this.setState({ show: true })}
+            style={{
+              backgroundColor: defaultValue,
+              width: 30,
+              height: 250,
+              margin: 5,
+              borderRadius: 10,
+              borderWidth: 1,
+            }}
+          /> :
+          <Button
+            onPress={() => this.setState({ show: true })}
+            style={{
+              backgroundColor: '#5b7495',
+              borderRadius: 15,
+            }}
+          >
+            <Icon style={{ fontSize: 30, color: '#f5f5f5', marginRight: 0 }} name="add" />
+            <Text style={{ color: '#f5f5f5', marginLeft: 0 }}>
+              Set Base Color
+            </Text>
+          </Button>}
       </View>
     )
   }

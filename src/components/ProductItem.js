@@ -42,7 +42,6 @@ class ProductItem extends Component {
                 resizeMode: 'contain',
               }
             }}
-            supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
           >
             <Image
               style={{ width: 130, height: 140, borderRadius: rounded ? 10 : 0 }}
