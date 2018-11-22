@@ -72,7 +72,7 @@ class ProductItem extends Component {
             {base.price.original}
           </Text>
         </TouchableOpacity>
-        {!hideBookmarkBotton &&
+        {false &&
           <TouchableOpacity
             style={{
               position: 'absolute',

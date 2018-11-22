@@ -4,7 +4,7 @@ import moment from 'moment'
 class API {
   constructor() {
     this.baseAddress = 'https://cloud.stylifier.com'
-    // this.baseAddress = 'http://192.168.178.20:3000'
+    this.baseAddress = 'http://192.168.178.20:3000'
     AsyncStorage.getItem('user_token')
       .then(t => { this.token = t })
 
@@ -372,10 +372,8 @@ class API {
     return this.get('/products',
       [
         ...(q.name ? ['name=' + q.name] : []),
-        ...(q.color ? ['color=' + q.color] : []),
-        ...(q.subColor ? ['sub_color=' + q.subColor] : []),
         ...(q.category ? ['category=' + q.category] : []),
-        ...(q.hex ? ['hex=' + q.hex] : []),
+        ...(q.color ? ['hex=' + q.color] : []),
         ...(pagination ? ['pagination=' + pagination] : [])
       ]
     )
@@ -451,6 +449,14 @@ class API {
 
   fetchCategories() {
     return this.get('/product_categories')
+  }
+
+  addOutfit(outfit) {
+    return this.post('/outfits', { ...outfit })
+  }
+
+  fetchOutfits() {
+    return this.get('/outfits')
   }
 }
 

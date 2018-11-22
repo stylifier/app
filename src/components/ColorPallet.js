@@ -66,7 +66,7 @@ class ColorPallet extends Component {
             )
             return
           }
-          navigateToCreateOutfit(base.code, base.id, base.title)
+          navigateToCreateOutfit(base.code, base.id, outfitId)
         }}
       >
         <FontAwesome
@@ -147,16 +147,9 @@ class ColorPallet extends Component {
   }
 
   renderOutfits() {
-    const { productBookmarks, base } = this.props
-    const pbs =
-      productBookmarks.filter(p =>
-        p.palletId === base.id) || []
+    const { outfits, base } = this.props
 
-    const titles = pbs
-      .map(tt => tt.title)
-      .filter((item, ii, ar) => ar.indexOf(item) === ii)
-
-    return titles.map((title, i) => (
+    return outfits.map((outfit, i) => (
       <View
         key={i}
         style={{
@@ -166,8 +159,7 @@ class ColorPallet extends Component {
           padding: 10,
         }}
       >
-        {pbs
-          .filter(pt => pt.title === title)
+        {outfit.items
           .map((t, ind) => (
             <ProductItem
               key={ind}
@@ -177,7 +169,7 @@ class ColorPallet extends Component {
           ))}
         <View style={{ width: '100%' }}>
           <View style={{ width: 'auto', marginLeft: 'auto' }}>
-            {this.renderCreateOutfitButton(title)}
+            {this.renderCreateOutfitButton(outfit.id)}
           </View>
         </View>
       </View>))
@@ -185,15 +177,11 @@ class ColorPallet extends Component {
 
   render() {
     const { base, bookmarks, deleteBookmarkedColorPallet,
-      bookmarkColorPallet, productBookmarks } = this.props
+      bookmarkColorPallet, outfits } = this.props
     const { openedIndex, showCopied, showProfile } = this.state
 
     const bookmarked =
       bookmarks.filter(p => p.code === base.code).length > 0
-
-    const pbs =
-      productBookmarks.filter(p =>
-        p.palletId === base.id) || []
 
     return (
       <View
@@ -369,7 +357,7 @@ class ColorPallet extends Component {
             </View>
           </View>
 
-          {pbs.length > 0 &&
+          {outfits.length > 0 &&
             <View
               style={{
                 width: '100%',
@@ -419,15 +407,16 @@ ColorPallet.propTypes = {
   navigateToCreateOutfit: PropTypes.func,
   base: PropTypes.object,
   bookmarks: PropTypes.array,
-  productBookmarks: PropTypes.array,
+  outfits: PropTypes.array,
   user: PropTypes.object,
   navigateToLogin: PropTypes.func,
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   user: state.user,
   bookmarks: state.bookmarks,
-  productBookmarks: state.productBookmarks,
+  outfits: state.outfits
+    .filter(t => t.palletId === ownProps.base.id).filter(t => t.items.length > 0)
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -444,8 +433,8 @@ const mapDispatchToProps = dispatch => ({
   navigateToLogin: () => dispatch(
     actions.moveToPage('Profile')
   ),
-  navigateToCreateOutfit: (colorPallet, colorPalletId, title) => dispatch(
-    actions.moveToPage('CreateOutfit', { colorPallet, colorPalletId, title })
+  navigateToCreateOutfit: (colorPallet, colorPalletId, outfitId) => dispatch(
+    actions.moveToPage('CreateOutfit', { colorPallet, colorPalletId, outfitId })
   ),
 })
 

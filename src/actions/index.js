@@ -529,15 +529,11 @@ const actions = {
     const { productSuggestion } = getState()
     const key = JSON.stringify(q)
 
-    console.log(productSuggestion)
-
     if (!productSuggestion[key] ||
       productSuggestion[key].loading ||
       productSuggestion[key].finished) {
       return
     }
-
-    console.log('===??', productSuggestion)
 
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
 
@@ -599,6 +595,7 @@ const actions = {
     dispatch(actions.getMoreThreads())
     dispatch(actions.fetchUserFollowers(info.username))
     dispatch(actions.fetchFeeds())
+    dispatch(actions.getOutfits())
 
     AsyncStorage.getItem('subscription_id')
       .then((sid) => sid && dispatch(actions.addSubsctiption(sid)))
@@ -644,6 +641,16 @@ const actions = {
         AsyncStorage.removeItem('guest_submitted'))
       .then(() => dispatch(actions.initiateUser()))
       .catch(() => {})
+  },
+
+  createOutfit: (o) => (dispatch) => {
+    api.addOutfit(o)
+      .then(co => dispatch({ type: 'UPDATE_OUTFIT', payload: co }))
+  },
+
+  getOutfits: () => (dispatch) => {
+    api.fetchOutfits()
+      .then(co => dispatch({ type: 'UPDATE_OUTFITS', payload: co }))
   },
 
   initiateUser: () => (dispatch) => {

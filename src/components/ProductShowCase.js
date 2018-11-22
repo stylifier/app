@@ -12,12 +12,10 @@ import ColorSelector from './ColorSelector'
 class ProductShowCase extends Component {
   componentDidMount() {
     const { fetchProducts, base } = this.props
-    if (!base.color || !base.category) return
+    const { query } = base
+    if (!query.color || !query.category) return
 
-    fetchProducts({
-      hex: base.color,
-      category: base.category,
-    })
+    fetchProducts({ ...query })
   }
 
   renderItem({ item }) {
@@ -32,29 +30,32 @@ class ProductShowCase extends Component {
 
   renderColorSelector() {
     const { base, onQueryChanged, colors } = this.props
-    const { color } = base
+    const { query } = base
+    const { color } = query
 
     return (<ColorSelector
       defaultValue={color}
       colors={colors}
-      onDone={c => onQueryChanged && onQueryChanged({ ...base, color: c })}
+      onDone={c => onQueryChanged && onQueryChanged({ ...base, query: { ...query, color: c } })}
     />)
   }
 
   renderCategorySelector() {
     const { base, gender, onQueryChanged } = this.props
-    const { category } = base
+    const { query } = base
+    const { category } = query
 
     return (<CategorySelector
       gender={gender}
       defaultValue={category}
-      onSelect={c => onQueryChanged && onQueryChanged({ ...base, category: c })}
+      onSelect={c => onQueryChanged &&
+        onQueryChanged({ ...base, query: { ...query, category: c } })}
     />)
   }
 
   renderSlideShow() {
-    const { products, loading, fetchMoreProducts, base } = this.props
-    const { color, category } = base
+    const { products, loading, fetchMoreProducts, base, onSelectedItemChaned } = this.props
+    const { query } = base
 
     if (products.length < 1 && loading) {
       return (<Spinner color="#5b7495" style={{ width: '90%', marginTop: 50 }} />)
@@ -67,8 +68,10 @@ class ProductShowCase extends Component {
         layout="default"
         inactiveSlideScale={0.8}
         lockScrollTimeoutDuration={100}
-        onSnapToItem={(i) =>
-          (i > products.length - 8) && fetchMoreProducts({ hex: color, category })}
+        onSnapToItem={(i) => {
+          if (i > products.length - 8) fetchMoreProducts({ ...query })
+          if (onSelectedItemChaned) onSelectedItemChaned({ ...base, product: products[i] })
+        }}
         inactiveSlideOpacity={0.4}
         sliderWidth={Dimensions.get('window').width - 40}
         itemWidth={130}
@@ -78,7 +81,8 @@ class ProductShowCase extends Component {
 
   render() {
     const { base, onRemovePressed } = this.props
-    const { color, category } = base
+    const { query } = base
+    const { color, category } = query
     return (
       <View>
         <View style={{ width: '100%', height: 40, flexDirection: 'row' }}>
@@ -124,6 +128,7 @@ ProductShowCase.propTypes = {
   fetchProducts: PropTypes.func,
   onQueryChanged: PropTypes.func,
   onRemovePressed: PropTypes.func,
+  onSelectedItemChaned: PropTypes.func,
   fetchMoreProducts: PropTypes.func,
   gender: PropTypes.string,
   colors: PropTypes.array,
@@ -132,8 +137,8 @@ ProductShowCase.propTypes = {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { color: hex, category } = ownProps.base
-  const key = JSON.stringify({ hex, category })
+  const { query } = ownProps.base
+  const key = JSON.stringify(query)
   return {
     products: state.productSuggestion[key] && state.productSuggestion[key].items ?
       state.productSuggestion[key].items : [],

@@ -18,13 +18,32 @@ class CreateOutfit extends Component {
 
     this.state = {
       country: '',
-      gender: undefined,
-      rows:
-        props.pallet.colors.map((t, index) => ({ color: t, category: null, index }))
+      gender: props.base ? props.base.gender : undefined,
+      items: (props.base && props.base.items) ?
+        props.base.items.map((t, index) => ({ ...t, index })) :
+        props.pallet.colors.map(
+          (t, index) =>
+            ({ query: { color: t, category: null }, index, product: null }))
     }
 
     AsyncStorage.getItem('guest_submitted')
       .then(t => t && this.setState({ isSubmited: true }))
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { createOutfit, base, colorPalletId } = this.props
+    const { items, gender } = this.state
+
+    if (
+      items.map(t => t.product).filter(t => t).map(t => t.id).join('') !==
+      prevState.items.map(t => t.product).filter(t => t).map(t => t.id).join('')) {
+      createOutfit({
+        id: base.id,
+        palletId: colorPalletId,
+        gender,
+        items: items.filter(t => t.product)
+      })
+    }
   }
 
   renderUserIsGuest() {
@@ -182,8 +201,8 @@ class CreateOutfit extends Component {
   }
 
   render() {
-    const { user, fetchProducts, pallet } = this.props
-    const { gender, rows } = this.state
+    const { user, fetchProducts, pallet, createOutfit, colorPalletId, base } = this.props
+    const { gender, items } = this.state
 
     if (user.is_guest === true) {
       return this.renderUserIsGuest()
@@ -209,22 +228,24 @@ class CreateOutfit extends Component {
           {gender &&
             <ScrollView style={{ width: '100%', height: '100%' }}>
               <Viewer
-                items={rows}
+                items={items}
                 BaseItem={ProductShowCase}
                 itemExtraProps={{
                   gender,
+                  onSelectedItemChaned: (b) => {
+                    this.setState({
+                      items: items.map(r => (r.index === b.index ? b : r))
+                    })
+                  },
                   onQueryChanged: (b) => {
                     this.setState({
-                      rows: rows.map(r => (r.index === b.index ? b : r))
+                      items: items.map(r => (r.index === b.index ? b : r))
                     })
-                    fetchProducts({
-                      hex: b.color,
-                      category: b.category,
-                    })
+                    fetchProducts({ ...b.query })
                   },
                   onRemovePressed: (b) =>
                     this.setState({
-                      rows: rows.map(r => (r.index === b.index ? undefined : r)).filter(t => t)
+                      items: items.map(r => (r.index === b.index ? undefined : r)).filter(t => t)
                     }),
                   colors: pallet.colors
                 }}
@@ -232,7 +253,9 @@ class CreateOutfit extends Component {
               <View style={{ width: '100%' }}>
                 <Button
                   onPress={() => this.setState({
-                    rows: [...rows, { color: null, category: null, index: rows.length }]
+                    items: [
+                      ...items,
+                      { query: { color: null, category: null }, index: items.length }]
                   })}
                   style={{
                     backgroundColor: '#5b7495',
@@ -257,20 +280,25 @@ class CreateOutfit extends Component {
 CreateOutfit.propTypes = {
   goBack: PropTypes.func,
   askForApproval: PropTypes.func,
+  createOutfit: PropTypes.func,
   user: PropTypes.object,
+  colorPalletId: PropTypes.string,
   pallet: PropTypes.object,
   fetchProducts: PropTypes.func,
+  base: PropTypes.object,
 }
 
 const mapStateToProps = (state, ownProps) => ({
   user: state.user,
-  pallet: state.bookmarks.find(t => t.id === ownProps.colorPalletId)
+  pallet: state.bookmarks.find(t => t.id === ownProps.colorPalletId),
+  base: state.outfits.find(t => t.id === ownProps.outfitId)
 })
 
 const mapDispatchToProps = dispatch => ({
   goBack: () => dispatch(actions.goBack()),
   askForApproval: (metadata) => dispatch(actions.askForApproval(metadata)),
   fetchProducts: (q) => dispatch(actions.fetchProducts(q)),
+  createOutfit: (q) => dispatch(actions.createOutfit(q)),
   reportCreateOutfitIssues: (payload) => dispatch(actions.reportCreateOutfitIssues(payload)),
 })
 
