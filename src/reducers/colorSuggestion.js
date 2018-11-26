@@ -32,6 +32,13 @@ const colorSuggestion = (state = {}, action) => {
       }
       break
 
+    case 'TOGGLE_SHARING_SCREEN_IN_PROCESS_IMAGE':
+      newState = {
+        ...newState,
+        ...{ isSharingView: action.payload }
+      }
+      break
+
     default:
       break
   }

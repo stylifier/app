@@ -376,9 +376,8 @@ const actions = {
   },
 
   colorSuggestionImagePicked: () => (dispatch) => {
-    dispatch(
-      NavigationActions.navigate({ routeName: 'Adding' })
-    )
+    dispatch(NavigationActions.navigate({ routeName: 'Adding' }))
+    dispatch(actions.toggleSharingScreenInProcessImage(false))
   },
 
   getColorPalletRecommendation: (base) => (dispatch) => {
@@ -480,6 +479,13 @@ const actions = {
     api.bookmarkColorPallet(palletId, title)
       .then(() => dispatch(actions.refreshBookmarks()))
       .catch(() => {})
+  },
+
+  toggleSharingScreenInProcessImage: (t) => (dispatch) => {
+    dispatch({
+      type: 'TOGGLE_SHARING_SCREEN_IN_PROCESS_IMAGE',
+      payload: t,
+    })
   },
 
   createColorPallet: (mediaId, code) => (dispatch) => {
@@ -652,22 +658,26 @@ const actions = {
     const { outfits } = getState()
     const outfit = outfits.find(t => t.id === o.id)
 
-    const pids1 = o.items && o.items.filter(t => t.product).map(t => t.product.id).join(',')
+    const pids1 = o.items && o.items.filter(t => t.product).map(t => t.product.id)
 
-    const pids2 = outfit && outfit.items && outfit.items.filter(t => t.product).map(t => t.product.id).join(',')
+    const pids2 = outfit && outfit.items &&
+      outfit.items.filter(t => t.product).map(t => t.product.id)
 
-    if ((!o.id && !pids1) || pids1 === pids2) {
+    if ((!o.id && (!pids1 || !pids2)) || pids1.join('') === pids2.join('')) {
       dispatch({ type: 'UPDATE_OUTFIT', payload: o })
       return
     }
 
-    api.addOutfit({ ...o, items: o.items.filter(p => p.product) })
-      .then(co => {
-        dispatch({ type: 'UPDATE_OUTFIT', payload: { ...o, id: co.id } })
-        dispatch(actions.setPageProps('CreateOutfit', {
-          colorPalletId: o.palletId, outfitId: co.id
-        }))
-      })
+    clearTimeout(this.createOutfitTimeout)
+
+    this.createOutfitTimeout = setTimeout(() =>
+      api.addOutfit({ ...o, items: o.items.filter(p => p.product) })
+        .then(co => {
+          dispatch({ type: 'UPDATE_OUTFIT', payload: { ...o, id: co.id } })
+          dispatch(actions.setPageProps('CreateOutfit', {
+            colorPalletId: o.palletId, outfitId: co.id
+          }))
+        }), pids1.length !== pids2.length ? 0 : 2000)
   },
 
   getOutfits: () => (dispatch) => {

@@ -174,6 +174,7 @@ class ColorPallet extends Component {
             marginRight: 'auto',
             borderRadius: 10,
             marginTop: 10,
+            marginBottom: 5,
             width: '95%',
           }}
         >

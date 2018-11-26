@@ -50,7 +50,7 @@ class ColorPalletCreator extends React.Component {
       .promise.then(() => {}).catch(() => {})
 
     setTimeout(() =>
-      this.containerRef.measure((fx, fy, w, h) =>
+      this.containerRef && this.containerRef.measure((fx, fy, w, h) =>
         this.setState({ containerWidth: w, containerHeight: h })), 300)
   }
 

@@ -10,12 +10,30 @@ import CategorySelector from './CategorySelector'
 import ColorSelector from './ColorSelector'
 
 class ProductShowCase extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      defaultProduct: props.base.product
+    }
+  }
+
   componentDidMount() {
     const { fetchProducts, base } = this.props
     const { query } = base
     if (!query.color || !query.category) return
 
     fetchProducts({ ...query })
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { products: newProducts } = newProps
+    const { products: oldProducts, base } = this.props
+    const { defaultProduct } = this.state
+
+    if (newProducts[0] && newProducts[0].id !== (oldProducts[0] || {}).id && !defaultProduct) {
+      this.onQueryChanged({ ...base, product: newProducts[0] })
+    }
   }
 
   renderItem({ item }) {
@@ -28,34 +46,43 @@ class ProductShowCase extends Component {
     )
   }
 
+  onQueryChanged(newBase) {
+    const { onQueryChanged } = this.props
+
+    if (onQueryChanged) onQueryChanged(newBase)
+
+    this.setState({ defaultProduct: undefined })
+  }
+
   renderColorSelector() {
-    const { base, onQueryChanged, colors } = this.props
+    const { base, colors } = this.props
     const { query } = base
     const { color } = query
 
     return (<ColorSelector
       defaultValue={color}
       colors={colors}
-      onDone={c => onQueryChanged && onQueryChanged({ ...base, query: { ...query, color: c } })}
+      onDone={c => this.onQueryChanged({ ...base, query: { ...query, color: c } })}
     />)
   }
 
   renderCategorySelector() {
-    const { base, gender, onQueryChanged } = this.props
+    const { base, gender } = this.props
     const { query } = base
     const { category } = query
 
     return (<CategorySelector
       gender={gender}
       defaultValue={category}
-      onSelect={c => onQueryChanged &&
-        onQueryChanged({ ...base, query: { ...query, category: c } })}
+      onSelect={c =>
+        this.onQueryChanged({ ...base, query: { ...query, category: c } })}
     />)
   }
 
   renderSlideShow() {
     const { products, loading, fetchMoreProducts, base, onSelectedItemChaned } = this.props
     const { query } = base
+    const { defaultProduct } = this.state
 
     if (products.length < 1 && loading) {
       return (<Spinner color="#5b7495" style={{ width: '90%', marginTop: 50 }} />)
@@ -63,14 +90,16 @@ class ProductShowCase extends Component {
 
     return (
       <Carousel
-        data={products}
+        data={[defaultProduct, ...products].filter(t => t)}
         renderItem={this.renderItem}
         layout="default"
         inactiveSlideScale={0.8}
         lockScrollTimeoutDuration={100}
         onSnapToItem={(i) => {
           if (i > products.length - 8) fetchMoreProducts({ ...query })
-          if (onSelectedItemChaned) onSelectedItemChaned({ ...base, product: products[i] })
+          if (onSelectedItemChaned) {
+            onSelectedItemChaned({ ...base, product: products[defaultProduct ? i - 1 : i] })
+          }
         }}
         inactiveSlideOpacity={0.4}
         sliderWidth={Dimensions.get('window').width - 40}
