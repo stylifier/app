@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 class Viewer extends Component {
   render() {
-    const { items, BaseItem, itemExtraProps } = this.props
+    const { items, BaseItem, itemExtraProps, styleOverwrite } = this.props
 
     return (
       <View
@@ -13,6 +13,7 @@ class Viewer extends Component {
           flexWrap: 'wrap',
           width: '100%',
           marginBottom: 50,
+          ...styleOverwrite
         }}
       >
         {items.map((t, i) => (
@@ -30,6 +31,7 @@ Viewer.propTypes = {
   items: PropTypes.array,
   BaseItem: PropTypes.func,
   colNum: PropTypes.number,
+  styleOverwrite: PropTypes.object,
   itemExtraProps: PropTypes.object,
 }
 

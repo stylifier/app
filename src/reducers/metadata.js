@@ -1,4 +1,10 @@
-const colorSuggestion = (state = { colorCodes: [], categories: [], styles: [] }, action) => {
+const colorSuggestion = (
+  state = {
+    colorCodes: [],
+    categories: [],
+    styles: [],
+    pageProps: {}
+  }, action) => {
   switch (action.type) {
     case 'UPDATE_COLOR_CODE':
       return { ...state, colorCodes: action.payload }
@@ -8,6 +14,15 @@ const colorSuggestion = (state = { colorCodes: [], categories: [], styles: [] },
 
     case 'UPDATE_CATEGORIES':
       return { ...state, categories: action.payload }
+
+    case 'UPDATE_PAGE_PROPS':
+      return {
+        ...state,
+        pageProps: {
+          ...state.pageProps,
+          [action.route]: { ...action.payload }
+        }
+      }
 
     default:
       break

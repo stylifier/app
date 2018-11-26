@@ -139,8 +139,9 @@ ProductShowCase.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const { query } = ownProps.base
   const key = JSON.stringify(query)
+
   return {
-    products: state.productSuggestion[key] && state.productSuggestion[key].items ?
+    products: (state.productSuggestion[key] && state.productSuggestion[key].items) ?
       state.productSuggestion[key].items : [],
     loading: state.productSuggestion[key] ?
       state.productSuggestion[key].loading : false

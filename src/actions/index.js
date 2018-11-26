@@ -363,7 +363,12 @@ const actions = {
   },
 
   moveToPage: (page, params) => (dispatch) => {
-    dispatch(NavigationActions.navigate({ routeName: page, params: { ...params } }))
+    dispatch(actions.setPageProps(page, params))
+    dispatch(NavigationActions.navigate({ routeName: page }))
+  },
+
+  setPageProps: (page, params) => (dispatch) => {
+    dispatch({ type: 'UPDATE_PAGE_PROPS', route: page, payload: params })
   },
 
   goBack: () => (dispatch) => {
@@ -643,9 +648,26 @@ const actions = {
       .catch(() => {})
   },
 
-  createOutfit: (o) => (dispatch) => {
-    api.addOutfit(o)
-      .then(co => dispatch({ type: 'UPDATE_OUTFIT', payload: co }))
+  createOutfit: (o) => (dispatch, getState) => {
+    const { outfits } = getState()
+    const outfit = outfits.find(t => t.id === o.id)
+
+    const pids1 = o.items && o.items.filter(t => t.product).map(t => t.product.id).join(',')
+
+    const pids2 = outfit && outfit.items && outfit.items.filter(t => t.product).map(t => t.product.id).join(',')
+
+    if ((!o.id && !pids1) || pids1 === pids2) {
+      dispatch({ type: 'UPDATE_OUTFIT', payload: o })
+      return
+    }
+
+    api.addOutfit({ ...o, items: o.items.filter(p => p.product) })
+      .then(co => {
+        dispatch({ type: 'UPDATE_OUTFIT', payload: { ...o, id: co.id } })
+        dispatch(actions.setPageProps('CreateOutfit', {
+          colorPalletId: o.palletId, outfitId: co.id
+        }))
+      })
   },
 
   getOutfits: () => (dispatch) => {

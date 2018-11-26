@@ -80,6 +80,7 @@ class ProccessAddingImage extends Component {
           <ColorPallet
             key={i}
             base={cp}
+            hideOutfits
           />)
         )}
       </View>)

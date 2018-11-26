@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
   View, TouchableOpacity, Text, Picker, StatusBar,
-  Animated, AsyncStorage, ScrollView } from 'react-native'
+  AsyncStorage, ScrollView } from 'react-native'
 import { Button, Icon, Text as NBText } from 'native-base'
 import { connect } from 'react-redux'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
@@ -18,32 +18,22 @@ class CreateOutfit extends Component {
 
     this.state = {
       country: '',
-      gender: props.base ? props.base.gender : undefined,
-      items: (props.base && props.base.items) ?
-        props.base.items.map((t, index) => ({ ...t, index })) :
-        props.pallet.colors.map(
-          (t, index) =>
-            ({ query: { color: t, category: null }, index, product: null }))
     }
 
     AsyncStorage.getItem('guest_submitted')
       .then(t => t && this.setState({ isSubmited: true }))
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { createOutfit, base, colorPalletId } = this.props
-    const { items, gender } = this.state
+  createOutfit(i, g) {
+    const { createOutfit, base, pallet } = this.props
+    const { items, gender } = base
 
-    if (
-      items.map(t => t.product).filter(t => t).map(t => t.id).join('') !==
-      prevState.items.map(t => t.product).filter(t => t).map(t => t.id).join('')) {
-      createOutfit({
-        id: base.id,
-        palletId: colorPalletId,
-        gender,
-        items: items.filter(t => t.product)
-      })
-    }
+    createOutfit({
+      id: base.id,
+      palletId: pallet.id,
+      gender: g || gender,
+      items: i || items.filter(t => t.product)
+    })
   }
 
   renderUserIsGuest() {
@@ -134,6 +124,7 @@ class CreateOutfit extends Component {
   }
 
   renderGernderChoice() {
+    const { pallet } = this.props
     return (
       <View
         style={{
@@ -158,7 +149,10 @@ class CreateOutfit extends Component {
               borderRadius: 10,
             }}
             key={i}
-            onPress={() => this.setState({ gender: g })}
+            onPress={() => {
+              this.createOutfit(
+                pallet.colors.map((t, index) => ({ query: { color: t }, index })), g)
+            }}
           >
             <FontAwesome
               style={{
@@ -176,33 +170,9 @@ class CreateOutfit extends Component {
     )
   }
 
-  startLightingBackgroundColorAnimation() {
-    this.Animation.setValue(0)
-
-    Animated.timing(
-      this.Animation,
-      {
-        toValue: 1,
-        duration: 500,
-      }
-    ).start()
-  }
-
-  startDarkingBackgroundColorAnimation() {
-    this.Animation.setValue(1)
-
-    Animated.timing(
-      this.Animation,
-      {
-        toValue: 0,
-        duration: 500,
-      }
-    ).start()
-  }
-
   render() {
-    const { user, fetchProducts, pallet, createOutfit, colorPalletId, base } = this.props
-    const { gender, items } = this.state
+    const { user, fetchProducts, pallet, base } = this.props
+    const { gender, items } = base
 
     if (user.is_guest === true) {
       return this.renderUserIsGuest()
@@ -233,30 +203,27 @@ class CreateOutfit extends Component {
                 itemExtraProps={{
                   gender,
                   onSelectedItemChaned: (b) => {
-                    this.setState({
-                      items: items.map(r => (r.index === b.index ? b : r))
-                    })
+                    this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
                   },
                   onQueryChanged: (b) => {
-                    this.setState({
-                      items: items.map(r => (r.index === b.index ? b : r))
-                    })
+                    this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
                     fetchProducts({ ...b.query })
                   },
                   onRemovePressed: (b) =>
-                    this.setState({
-                      items: items.map(r => (r.index === b.index ? undefined : r)).filter(t => t)
-                    }),
+                    this.createOutfit(
+                      items.map(r => (r.index === b.index ? undefined : r))
+                        .filter(t => t)
+                    ),
                   colors: pallet.colors
                 }}
               />
               <View style={{ width: '100%' }}>
                 <Button
-                  onPress={() => this.setState({
-                    items: [
+                  onPress={() =>
+                    this.createOutfit([
                       ...items,
-                      { query: { color: null, category: null }, index: items.length }]
-                  })}
+                      { query: { color: null, category: null }, index: items.length }
+                    ])}
                   style={{
                     backgroundColor: '#5b7495',
                     borderRadius: 15,
@@ -282,17 +249,24 @@ CreateOutfit.propTypes = {
   askForApproval: PropTypes.func,
   createOutfit: PropTypes.func,
   user: PropTypes.object,
-  colorPalletId: PropTypes.string,
   pallet: PropTypes.object,
   fetchProducts: PropTypes.func,
   base: PropTypes.object,
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  user: state.user,
-  pallet: state.bookmarks.find(t => t.id === ownProps.colorPalletId),
-  base: state.outfits.find(t => t.id === ownProps.outfitId)
-})
+const mapStateToProps = (state, ownProps) => {
+  const { metadata } = state
+  const { pageProps } = metadata
+  const { colorPalletId, outfitId } = pageProps[ownProps.route]
+  const base = state.outfits.find(t => t.id === outfitId) || { items: [] }
+  const pallet = state.bookmarks.find(t => t.id === colorPalletId) || { colors: [] }
+
+  return {
+    user: state.user,
+    pallet,
+    base: { ...base, items: base.items.map((t, index) => ({ ...t, index })) },
+  }
+}
 
 const mapDispatchToProps = dispatch => ({
   goBack: () => dispatch(actions.goBack()),

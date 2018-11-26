@@ -56,6 +56,7 @@ const RootNavigator = createBottomTabNavigator({
       screen: ProccessAddingImage,
       navigationOptions: () => ({
         tabBarIcon: <AddButton ref={t => { this.addRef = t }} />,
+        tabBarVisible: false,
         tabBarOnPress: () => this.addRef.store.dispatch(actions.toggleAddMenu()),
       }),
     },

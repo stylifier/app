@@ -13,7 +13,7 @@ const BookmarksNavigation = createStackNavigator({
     }),
   },
   CreateOutfit: {
-    screen: props => <CreateOutfit {...props.navigation.state.params} />,
+    screen: () => <CreateOutfit route="CreateOutfit" />,
     path: 'bookmarks/CreateOutfit',
     navigationOptions: () => ({
       title: 'CreateOutfit',

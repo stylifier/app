@@ -8,8 +8,9 @@ import actions from '../actions'
 
 class ProductItem extends Component {
   render() {
-    const { base, colorPalletId, title, hideBookmarkBotton, deleteBookmarkedProduct,
+    const { base, colorPalletId, title, deleteBookmarkedProduct,
       bookmarkProduct, onClick, rounded, bookmarks } = this.props
+
     const bookmarked =
       bookmarks.filter(p =>
         p.productId === base.id && p.palletId === colorPalletId).length > 0
@@ -111,7 +112,6 @@ ProductItem.propTypes = {
   bookmarkProduct: PropTypes.func,
   onClick: PropTypes.func,
   colorPalletId: PropTypes.string,
-  hideBookmarkBotton: PropTypes.bool,
   rounded: PropTypes.bool,
   title: PropTypes.string,
 }

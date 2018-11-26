@@ -7,6 +7,7 @@ const colorSuggestion = (state = [], action) => {
 
     case 'UPDATE_OUTFIT':
       return [
+        ...(state.find(t => t.id === action.payload.id) ? [] : [action.payload]),
         ...state.map(t => (t.id === action.payload.id ? action.payload : t))
       ]
 
