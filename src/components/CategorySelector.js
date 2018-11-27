@@ -53,7 +53,7 @@ class CategorySelector extends React.Component {
 
     this.setState({
       categories: sortedCategories
-        .slice(0, addresses.lastIndexOf(newAddresses[newAddresses.length - 1])),
+        .slice(0, addresses.lastIndexOf(newAddresses[newAddresses.length - 1]) + 1),
       renderSections: {
         ...newRenderSections,
         [item.address]: !renderSections[item.address]
@@ -111,7 +111,6 @@ class CategorySelector extends React.Component {
     const { show, categories } = this.state
     const { gender, defaultValue, categories: allCategories } = this.props
     const items = categories.filter(t => t.address.startsWith(gender) && t.address.split('>').length === 2)
-    const pieces = defaultValue && defaultValue.split('>')
     return (
       <View>
         <Modal

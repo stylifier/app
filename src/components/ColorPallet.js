@@ -7,10 +7,12 @@ import {
   Easing,
   Text,
   Clipboard,
-  Modal,
+  Modal as RNModal,
   Alert,
   StatusBar,
 } from 'react-native'
+import { Button as RNEButton } from 'react-native-elements'
+import Modal from 'react-native-modal'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import PropTypes from 'prop-types'
 import { Text as NBText, Button, Separator, Icon } from 'native-base'
@@ -28,45 +30,109 @@ class ColorPallet extends Component {
     this.state = {
       openedIndex: -1,
       showProfile: false,
+      showMenuModal: false
     }
   }
 
-  renderCreateOutfitButton(outfitId) {
+  renderOutfitMoreModal(oufitId) {
+    const { showMenuModal } = this.state
+    const { removeOutfit } = this.props
+    return (
+      <View>
+        <Modal
+          isVisible={showMenuModal}
+          avoidKeyboard
+          swipeDirection="down"
+          onSwipe={() => this.setState({ showMenuModal: false })}
+        >
+          <TouchableOpacity
+            style={{ justifyContent: 'flex-end', height: '100%' }}
+            onPress={() => this.setState({ showMenuModal: false })}
+          >
+            <View style={{ width: '100%', justifyContent: 'center', marginTop: 20 }}>
+              <RNEButton
+                onPress={() => {
+                  this.setState({ showMenuModal: false })
+                  this.createOutfitPressed(oufitId)
+                }}
+                buttonStyle={{
+                  backgroundColor: '#f0f0f0',
+                  borderTopLeftRadius: 15,
+                  borderTopRightRadius: 15,
+                  marginLeft: 0,
+                }}
+                containerViewStyle={{ width: '100%', marginLeft: 0 }}
+                color="#0079ff"
+                title="Edit"
+                large
+              />
+              <RNEButton
+                onPress={() => {
+                  this.setState({ showMenuModal: false })
+                  removeOutfit(oufitId)
+                }}
+                buttonStyle={{
+                  backgroundColor: '#d9534f',
+                  borderBottomLeftRadius: 15,
+                  borderBottomRightRadius: 15,
+                  marginLeft: 0,
+                }}
+                containerViewStyle={{ width: '100%', marginLeft: 0 }}
+                color="#f5f5f5"
+                title="Remove"
+                large
+              />
+            </View>
+            <View style={{ width: '100%', justifyContent: 'center', marginTop: 20 }}>
+              <RNEButton
+                onPress={() => this.setState({ showMenuModal: false })}
+                buttonStyle={{
+                  backgroundColor: '#f0f0f0',
+                  borderRadius: 15,
+                  marginLeft: 0,
+                }}
+                containerViewStyle={{ width: '100%', marginLeft: 0 }}
+                color="#0079ff"
+                large
+                title="Cancel"
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        <Button
+          style={{ borderRadius: 15, backgroundColor: '#3b4e68', marginRight: 5, marginBottom: 5 }}
+          info
+          onPress={() => this.setState({ showMenuModal: true })}
+        >
+          <Icon
+            style={{ fontSize: 38, marginTop: -4 }}
+            name="ios-more"
+          />
+        </Button>
+      </View>
+    )
+  }
+
+  createOutfitPressed(outfitId) {
     const { refereshUserInfo, refreshCategories, navigateToCreateOutfit,
       user, refreshColorCode, navigateToLogin, base } = this.props
 
-    return (
-      <Button
-        onPress={() => {
-          refereshUserInfo()
-          refreshCategories()
-          refreshColorCode()
+    refereshUserInfo()
+    refreshCategories()
+    refreshColorCode()
 
-          if (user.isLoggedInUser) return navigateToCreateOutfit(base.id, outfitId)
+    if (user.isLoggedInUser) return navigateToCreateOutfit(base.id, outfitId)
 
-          return Alert.alert(
-            'You are not logged in',
-            'In order to use "Creating Outfit" feature you need to login or create a user.',
-            [
-              { text: 'Dismiss' },
-              { text: 'Login', onPress: () => navigateToLogin() },
-            ],
-            { cancelable: false }
-          )
-        }}
-        style={{
-          backgroundColor: outfitId ? '#3b4e68' : '#ea5e85',
-          marginBottom: 5,
-          borderRadius: 15
-        }}
-      >
-        <Icon name={outfitId ? 'swap' : 'add'} style={{ marginRight: -5 }} />
-        <NBText>
-          {outfitId ? 'Edit Outfit' : 'Create Outfit'}
-        </NBText>
-      </Button>)
+    return Alert.alert(
+      'You are not logged in',
+      'In order to use "Creating Outfit" feature you need to login or create a user.',
+      [
+        { text: 'Dismiss' },
+        { text: 'Login', onPress: () => navigateToLogin() },
+      ],
+      { cancelable: false }
+    )
   }
-
 
   renderTitle() {
     const { base, bookmarkColorPallet } = this.props
@@ -93,8 +159,17 @@ class ColorPallet extends Component {
               bookmarkColorPallet(base.id, text), 2000)
           }}
         />
-        {this.renderCreateOutfitButton()}
-
+        <Button
+          onPress={() => this.createOutfitPressed()}
+          style={{
+            backgroundColor: '#ea5e85',
+            marginBottom: 5,
+            borderRadius: 15
+          }}
+        >
+          <Icon name="add" style={{ marginRight: -5 }} />
+          <NBText> Create Outfit </NBText>
+        </Button>
       </View>
     )
   }
@@ -143,7 +218,7 @@ class ColorPallet extends Component {
           <View style={{ width: '100%' }}>
             <Separator bordered style={{ height: 54 }}>
               <View style={{ width: 'auto', marginLeft: 'auto', marginRight: 5, marginTop: 2 }}>
-                {this.renderCreateOutfitButton(outfit.id)}
+                {this.renderOutfitMoreModal(outfit.id)}
               </View>
             </Separator>
           </View>
@@ -350,7 +425,7 @@ class ColorPallet extends Component {
               {base.creator_username.replace('m_g_i_o_s_', '')}
             </NBText>}
           {base.creator_username &&
-            <Modal
+            <RNModal
               animationType="slide"
               transparent={false}
               visible={showProfile}
@@ -359,7 +434,7 @@ class ColorPallet extends Component {
                 onDismissPressed={() => this.setState({ showProfile: false })}
                 base={{ username: base.creator_username }}
               />
-            </Modal>}
+            </RNModal>}
         </View>
         {outfits.length > 0 && !hideOutfits && this.renderOutfits()}
       </View>
@@ -380,6 +455,7 @@ ColorPallet.propTypes = {
   user: PropTypes.object,
   hideOutfits: PropTypes.bool,
   navigateToLogin: PropTypes.func,
+  removeOutfit: PropTypes.func,
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -405,6 +481,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(actions.moveToPage('CreateOutfit', { colorPalletId, outfitId }))
     if (outfitId) return
     dispatch(actions.createOutfit({ items: [] }))
+  },
+  removeOutfit: (outfitId) => {
+    dispatch(actions.createOutfit({ id: outfitId, items: [] }))
   },
 })
 
