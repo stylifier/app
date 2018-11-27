@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, TextInput } from 'react-native'
+import { View, TextInput, TouchableOpacity } from 'react-native'
 import Modal from 'react-native-modal'
 import { Button, Divider } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -26,7 +26,10 @@ class DescriptionChenger extends React.Component {
           swipeDirection="down"
           onSwipe={() => this.setState({ show: false })}
         >
-          <View style={{ justifyContent: 'flex-end', height: '100%', width: '100%' }}>
+          <TouchableOpacity
+            style={{ justifyContent: 'flex-end', height: '100%', width: '100%' }}
+            onPress={() => this.setState({ show: false })}
+          >
             <View
               style={{
                 borderTopLeftRadius: 15,
@@ -57,8 +60,6 @@ class DescriptionChenger extends React.Component {
                   backgroundColor: '#f0f0f0',
                   borderBottomLeftRadius: 15,
                   borderBottomRightRadius: 15,
-                  paddingTop: 10,
-                  paddingBottom: 10,
                   marginLeft: 0,
                 }}
                 containerViewStyle={{ width: '100%', marginLeft: 0 }}
@@ -73,8 +74,6 @@ class DescriptionChenger extends React.Component {
                 buttonStyle={{
                   backgroundColor: '#f0f0f0',
                   borderRadius: 15,
-                  paddingTop: 10,
-                  paddingBottom: 10,
                   marginLeft: 0,
                 }}
                 containerViewStyle={{ width: '100%', marginLeft: 0 }}
@@ -83,7 +82,7 @@ class DescriptionChenger extends React.Component {
                 title="Cancel"
               />
             </View>
-          </View>
+          </TouchableOpacity>
         </Modal>
         <Button
           onPress={() => this.setState({ show: true })}

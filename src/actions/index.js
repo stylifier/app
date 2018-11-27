@@ -677,12 +677,14 @@ const actions = {
           dispatch(actions.setPageProps('CreateOutfit', {
             colorPalletId: o.palletId, outfitId: co.id
           }))
-        }), pids1.length !== pids2.length ? 0 : 2000)
+        })
+        .catch(() => {}), pids1.length !== pids2.length ? 0 : 2000)
   },
 
   getOutfits: () => (dispatch) => {
     api.fetchOutfits()
       .then(co => dispatch({ type: 'UPDATE_OUTFITS', payload: co }))
+      .catch(() => {})
   },
 
   initiateUser: () => (dispatch) => {

@@ -6,31 +6,27 @@ import {
   View,
   Alert,
   Linking,
-  ScrollView,
   Modal,
 } from 'react-native'
 import { GiftedChat, Bubble } from 'react-native-gifted-chat'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
-import { Header, Left, Icon as NBIcon, Button as NBButton,
-  Container, Body, Title, Right } from 'native-base'
 import { NavigationActions } from 'react-navigation'
 import ImageCropPicker from 'react-native-image-crop-picker'
 import PropTypes from 'prop-types'
-import { Icon, Button } from 'react-native-elements'
+import { Button } from 'react-native-elements'
 import moment from 'moment'
 import { connect } from 'react-redux'
 import ProfilePage from '../Profile'
 import actions from '../../actions'
 import ProductItem from '../../components/ProductItem'
-import Viewer from '../../components/Viewer'
 import ImageItem from '../../components/ImageItem'
+import ProductSelector from '../../components/ProductSelector'
 
 
 class Conversation extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showProductPickerModal: false,
       showProfile: false,
       selectedProfile: '',
     }
@@ -45,22 +41,14 @@ class Conversation extends Component {
   }
 
   renderProductPick() {
+    const { messages, createMessage } = this.props
     return (
-      <TouchableOpacity
-        onPress={() => this.setState({ showProductPickerModal: true })}
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 40,
-          height: 40,
-          borderRadius: 20,
-          marginLeft: 10,
-          backgroundColor: '#66bfc7',
+      <ProductSelector
+        small
+        onSelect={(product) => {
+          createMessage(messages.selectedThreadId, '', [], [product])
         }}
-      >
-        <Icon name="ios-shirt" type="ionicon" size={28} color="#f5f5f5" />
-      </TouchableOpacity>
-    )
+      />)
   }
 
   renderCameraPick() {
@@ -215,50 +203,6 @@ class Conversation extends Component {
       </View>)
   }
 
-  renderProductPickModal() {
-    const { productBookmarks, createMessage, messages } = this.props
-    const { showProductPickerModal } = this.state
-
-    return (
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={showProductPickerModal}
-      >
-        <Container>
-          <Header>
-            <Left>
-              <NBButton
-                transparent
-                onPress={() => this.setState({ showProductPickerModal: false })}
-              >
-                <NBIcon name="arrow-back" />
-              </NBButton>
-            </Left>
-            <Body>
-              <Title>Items</Title>
-            </Body>
-            <Right />
-          </Header>
-          <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}>
-            <Viewer
-              items={productBookmarks.map(t => t.product)}
-              BaseItem={ProductItem}
-              itemExtraProps={{
-                hideBookmarkBotton: true,
-                onClick: (item) => {
-                  createMessage(messages.selectedThreadId, '', [], [item])
-                  this.setState({ showProductPickerModal: false })
-                },
-              }}
-            />
-            {(!productBookmarks || productBookmarks.length <= 0) && this.renderEmptyScreen()}
-          </ScrollView>
-        </Container>
-      </Modal>
-    )
-  }
-
   renderMessaging() {
     const { messages, user, fetchButtomMessages } = this.props
     const { selectedProfile, showProfile } = this.state
@@ -273,7 +217,6 @@ class Conversation extends Component {
 
     return (
       <View style={{ width: '100%', height: '100%' }}>
-        {this.renderProductPickModal()}
         <Modal
           animationType="slide"
           transparent={false}

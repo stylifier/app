@@ -22,6 +22,7 @@ class ProductItem extends Component {
           marginRight: 'auto',
           backgroundColor: '#f5f5f5',
           borderRadius: 10,
+          padding: 10
         }}
       >
         {onClick &&

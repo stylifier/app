@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, Modal, ScrollView } from 'react-native'
+import { View, Modal, ScrollView, TouchableOpacity } from 'react-native'
 import { Header, Left, Text, Icon, Button as NBButton,
   Container, Body, Title, Right } from 'native-base'
 import { Button } from 'react-native-elements'
@@ -57,7 +57,7 @@ class ProductSelector extends React.Component {
 
   render() {
     const { show } = this.state
-    const { productBookmarks, full } = this.props
+    const { products, full, small } = this.props
 
     return (
       <View style={{ width: '100%', justifyContent: 'center' }}>
@@ -75,6 +75,7 @@ class ProductSelector extends React.Component {
                   onPress={() => this.setState({ show: false })}
                 >
                   <Icon name="arrow-back" />
+                  <Text> Back </Text>
                 </NBButton>
               </Left>
               <Body>
@@ -82,20 +83,20 @@ class ProductSelector extends React.Component {
               </Body>
               <Right />
             </Header>
-            <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5' }}>
+            <ScrollView style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5', padding: 10 }}>
               <Viewer
-                items={productBookmarks.map(t => t.product)}
+                items={products}
                 BaseItem={ProductItem}
                 itemExtraProps={{
                   hideBookmarkBotton: true,
                   onClick: (item) => this.onSelectItem(item),
                 }}
               />
-              {(!productBookmarks || productBookmarks.length <= 0) && renderEmptyScreen()}
+              {(!products || products.length <= 0) && renderEmptyScreen()}
             </ScrollView>
           </Container>
         </Modal>
-        <Button
+        {!small ? <Button
           onPress={() => this.setState({ show: true })}
           raised={!full}
           buttonStyle={{
@@ -111,7 +112,21 @@ class ProductSelector extends React.Component {
           color="#0079ff"
           large
           title="Add Bookmarked Items"
-        />
+        /> :
+        <TouchableOpacity
+          onPress={() => this.setState({ show: true })}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            marginLeft: 10,
+            backgroundColor: '#66bfc7',
+          }}
+        >
+          <Icon name="ios-shirt" style={{ fontSize: 28, color: '#f5f5f5' }} />
+        </TouchableOpacity>}
       </View>
     )
   }
@@ -119,12 +134,18 @@ class ProductSelector extends React.Component {
 
 ProductSelector.propTypes = {
   onSelect: PropTypes.func,
-  productBookmarks: PropTypes.array,
+  products: PropTypes.array,
   full: PropTypes.bool,
+  small: PropTypes.bool,
 }
 
 const mapStateToProps = state => ({
-  productBookmarks: state.productBookmarks,
+  products:
+    [].concat(
+      ...state.outfits
+        .filter(t => t && t.id)
+        .map(t => t.items.filter(p => p.product).map(p => p.product)),
+      state.productBookmark ? state.productBookmark.map(t => t.product) : []).filter(t => t)
 })
 
 const mapDispatchToProps = (dispatch) => ({

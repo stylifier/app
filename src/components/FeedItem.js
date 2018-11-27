@@ -320,7 +320,10 @@ class FeedItem extends Component {
         swipeDirection="down"
         onSwipe={() => this.setState({ showMenuModal: false })}
       >
-        <View style={{ justifyContent: 'flex-end', height: '100%' }}>
+        <TouchableOpacity
+          style={{ justifyContent: 'flex-end', height: '100%' }}
+          onPress={() => this.setState({ showMenuModal: false })}
+        >
           <View style={{ borderRadius: 15, width: '100%', overflow: 'hidden' }}>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
               <Divider />
@@ -362,7 +365,7 @@ class FeedItem extends Component {
               title="Cancel"
             />
           </View>
-        </View>
+        </TouchableOpacity>
       </Modal>
     )
   }
