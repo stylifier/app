@@ -12,7 +12,7 @@ import MessagingNavigation from './MessagingNavigation'
 import BookmarksNavigation from './BookmarksNavigation'
 import Profile from '../pages/Profile'
 import Feeds from '../pages/Feeds'
-import ProccessAddingImage from '../pages/ProccessAddingImage'
+import ProccessImageNavigation from './ProccessImageNavigation'
 import actions from '../actions'
 
 
@@ -53,7 +53,7 @@ const RootNavigator = createBottomTabNavigator({
   },
   ...{
     Adding: {
-      screen: ProccessAddingImage,
+      screen: ProccessImageNavigation,
       navigationOptions: () => ({
         tabBarIcon: <AddButton ref={t => { this.addRef = t }} />,
         tabBarVisible: false,

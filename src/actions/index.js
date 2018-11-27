@@ -364,7 +364,7 @@ const actions = {
 
   moveToPage: (page, params) => (dispatch) => {
     dispatch(actions.setPageProps(page, params))
-    dispatch(NavigationActions.navigate({ routeName: page }))
+    dispatch(NavigationActions.navigate({ routeName: page, params }))
   },
 
   setPageProps: (page, params) => (dispatch) => {

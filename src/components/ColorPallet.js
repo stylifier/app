@@ -393,22 +393,19 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+  refereshUserInfo: () => dispatch(actions.refereshUserInfo()),
+  refreshCategories: () => dispatch(actions.refreshCategories()),
+  refreshColorCode: () => dispatch(actions.refreshColorCode()),
+  navigateToLogin: () => dispatch(actions.moveToPage('Profile')),
   bookmarkColorPallet: (palletId, title) =>
     dispatch(actions.bookmarkColorPallet(palletId, title)),
   deleteBookmarkedColorPallet: (palletId) =>
     dispatch(actions.deleteBookmarkedColorPallet(palletId)),
-  refereshUserInfo: () =>
-    dispatch(actions.refereshUserInfo()),
-  refreshCategories: () =>
-    dispatch(actions.refreshCategories()),
-  refreshColorCode: () =>
-    dispatch(actions.refreshColorCode()),
-  navigateToLogin: () => dispatch(
-    actions.moveToPage('Profile')
-  ),
-  navigateToCreateOutfit: (colorPalletId, outfitId) => dispatch(
-    actions.moveToPage('CreateOutfit', { colorPalletId, outfitId })
-  ),
+  navigateToCreateOutfit: (colorPalletId, outfitId) => {
+    dispatch(actions.moveToPage('CreateOutfit', { colorPalletId, outfitId }))
+    if (outfitId) return
+    dispatch(actions.createOutfit({ items: [] }))
+  },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ColorPallet)
