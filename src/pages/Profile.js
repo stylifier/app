@@ -226,18 +226,7 @@ class Profile extends Component {
     }
 
     return (
-      <SafeAreaView
-        style={{
-          justifyContent: 'center',
-          marginTop: 50,
-          padding: 20,
-          width: '100%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        <ProfilePage base={user} style={{ width: '100%' }} />
-      </SafeAreaView>
+      <ProfilePage base={user} style={{ width: '100%' }} />
     )
   }
 }

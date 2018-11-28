@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { View, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
+import { View, ScrollView } from 'react-native'
+import { Header, Left, Icon, Text as NBText, Button as NBButton,
+  Container, Body, Title, Right } from 'native-base'
 import { Button, Avatar, Text } from 'react-native-elements'
 import actions from '../actions'
 import FeedItem from './FeedItem'
@@ -41,33 +43,21 @@ class Profile extends Component {
         followers.followers.map(t => t.username).indexOf(base.username) !== -1 : false
 
     return (
-      <SafeAreaView>
+      <Container>
         {onDismissPressed &&
-          <View
-            style={{
-              width: '100%',
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                marginRight: 'auto',
-                flexDirection: 'row',
-                paddingTop: 10,
-                position: 'absolute',
-                right: 10,
-              }}
-              onPress={() => onDismissPressed()}
-            >
-              <Text
-                style={{
-                  color: 'black',
-                  fontSize: 16,
-                }}
+          <Header>
+            <Left>
+              <NBButton
+                transparent
+                onPress={() => onDismissPressed()}
               >
-                Close
-              </Text>
-            </TouchableOpacity>
-          </View>}
+                <Icon name="arrow-back" />
+                <NBText>Back</NBText>
+              </NBButton>
+            </Left>
+            <Body />
+            <Right />
+          </Header>}
         <ScrollView style={{ width: '100%', marginTop: onDismissPressed ? 40 : 0 }}>
           <View
             style={{
@@ -136,7 +126,7 @@ class Profile extends Component {
             <Viewer items={metadata.media || []} BaseItem={FeedItem} />
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </Container>
     )
   }
 }
