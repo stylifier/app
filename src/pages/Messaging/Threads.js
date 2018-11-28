@@ -91,9 +91,9 @@ class Threads extends Component {
     const { user, messages, refetchTopThreads } = this.props
 
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{ backgroundColor: '#f5f5f5' }}>
         <KeyboardAwareScrollView
-          style={{ width: '100%', height: '100%', backgroundColor: '#f5f5f5', paddingTop: 10 }}
+          style={{ width: '100%', height: '100%', paddingTop: -10 }}
           refreshControl={
             user.isLoggedInUser ? <RefreshControl
               refreshing={messages.loadingTop}

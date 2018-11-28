@@ -6,6 +6,7 @@ import {
   RefreshControl,
   ScrollView,
   ActivityIndicator,
+  SafeAreaView
 } from 'react-native'
 import { Header, Item, Input, Icon, Button as BaseButton, Container } from 'native-base'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
@@ -219,8 +220,8 @@ class Feeds extends Component {
     }
 
     return (
-      <Container>
-        <Header searchBar rounded>
+      <SafeAreaView>
+        <Header searchBar rounded style={{ marginTop: -25 }}>
           <Item>
             <Icon name="ios-search" />
             <Input
@@ -240,7 +241,7 @@ class Feeds extends Component {
             </BaseButton>}
         </Header>
         {searchPhrase.trim().length > 0 ? this.renderSearch() : this.renderFeeds()}
-      </Container>
+      </SafeAreaView>
     )
   }
 }

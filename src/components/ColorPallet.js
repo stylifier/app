@@ -244,7 +244,6 @@ class ColorPallet extends Component {
       <View>
         <View
           style={{
-            flex: 1,
             marginLeft: 'auto',
             marginRight: 'auto',
             borderRadius: 10,

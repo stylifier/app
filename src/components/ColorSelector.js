@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, TouchableOpacity, Modal } from 'react-native'
+import { View, TouchableOpacity, Modal, SafeAreaView } from 'react-native'
 import { Header, Left, Icon, Text, Button,
-  Container, Body, Title, Right } from 'native-base'
+  Body, Title, Right } from 'native-base'
 
 class ColorSelector extends React.Component {
   constructor(props) {
@@ -24,8 +24,8 @@ class ColorSelector extends React.Component {
           visible={show}
           onRequestClose={() => {}}
         >
-          <Container>
-            <Header>
+          <SafeAreaView>
+            <Header style={{ marginTop: -25 }}>
               <Left>
                 <Button
                   transparent
@@ -69,7 +69,7 @@ class ColorSelector extends React.Component {
                   }}
                 />)}
             </View>
-          </Container>
+          </SafeAreaView>
         </Modal>
         {defaultValue ?
           <TouchableOpacity

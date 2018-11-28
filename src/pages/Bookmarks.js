@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, SafeAreaView, View } from 'react-native'
+import { Text, View, SafeAreaView } from 'react-native'
 import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import PropTypes from 'prop-types'
@@ -12,8 +12,7 @@ class Bookmarks extends Component {
     const { bookmarks } = this.props
     return (
       <SafeAreaView
-        style={{
-          flex: 1,
+        contentContainerStyle={{
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#f5f5f5',
@@ -59,7 +58,7 @@ class Bookmarks extends Component {
           <KeyboardAwareScrollView
             style={{
               height: '100%',
-              width: '100%',
+              width: '100%'
             }}
           >
             {bookmarks.map((cp, i) => (<ColorPallet
@@ -68,9 +67,6 @@ class Bookmarks extends Component {
               base={cp}
             />)
             )}
-            <View
-              style={{ height: 150 }}
-            />
           </KeyboardAwareScrollView>
         }
       </SafeAreaView>

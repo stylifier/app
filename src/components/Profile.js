@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, SafeAreaView } from 'react-native'
 import { Header, Left, Icon, Text as NBText, Button as NBButton,
   Container, Body, Title, Right } from 'native-base'
 import { Button, Avatar, Text } from 'react-native-elements'
@@ -43,9 +43,9 @@ class Profile extends Component {
         followers.followers.map(t => t.username).indexOf(base.username) !== -1 : false
 
     return (
-      <Container>
+      <SafeAreaView>
         {onDismissPressed &&
-          <Header>
+          <Header style={{ marginTop: -25 }}>
             <Left>
               <NBButton
                 transparent
@@ -58,7 +58,7 @@ class Profile extends Component {
             <Body />
             <Right />
           </Header>}
-        <ScrollView style={{ width: '100%', marginTop: onDismissPressed ? 40 : 0 }}>
+        <ScrollView style={{ width: '100%', height: '100%' }}>
           <View
             style={{
               width: '100%',
@@ -126,7 +126,7 @@ class Profile extends Component {
             <Viewer items={metadata.media || []} BaseItem={FeedItem} />
           </View>
         </ScrollView>
-      </Container>
+      </SafeAreaView>
     )
   }
 }
