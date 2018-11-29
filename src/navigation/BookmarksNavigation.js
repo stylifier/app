@@ -16,7 +16,7 @@ const BookmarksNavigation = createStackNavigator({
     screen: () => <CreateOutfit route="CreateOutfit" />,
     path: 'bookmarks/CreateOutfit',
     navigationOptions: () => ({
-      title: 'CreateOutfit',
+      title: 'Create Outfit',
       headerStyle: {
         backgroundColor: '#3b4e68',
       },
