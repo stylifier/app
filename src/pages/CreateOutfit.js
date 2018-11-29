@@ -196,7 +196,10 @@ class CreateOutfit extends Component {
         >
           {!gender && this.renderGernderChoice()}
           {gender &&
-            <ScrollView style={{ width: '100%', height: '100%' }}>
+            <ScrollView
+              style={{ width: '100%', height: '100%' }}
+              ref={scrollView => { this.scrollView = scrollView }}
+            >
               <Viewer
                 items={items}
                 BaseItem={ProductShowCase}
@@ -226,11 +229,13 @@ class CreateOutfit extends Component {
               />
               <View style={{ width: '100%' }}>
                 <Button
-                  onPress={() =>
+                  onPress={() => {
                     this.createOutfit([
                       ...items,
                       { query: { color: null, category: null }, index: items.length }
-                    ])}
+                    ])
+                    setTimeout(() => this.scrollView.scrollToEnd(), 200)
+                  }}
                   style={{
                     backgroundColor: '#5b7495',
                     borderRadius: 15,
