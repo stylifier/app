@@ -24,7 +24,7 @@ class CreateOutfit extends Component {
       .then(t => t && this.setState({ isSubmited: true }))
   }
 
-  createOutfit(i, g) {
+  createOutfit(i, g, noDelayUpdate) {
     const { createOutfit, base, pallet } = this.props
     const { items, gender } = base
 
@@ -33,7 +33,7 @@ class CreateOutfit extends Component {
       palletId: pallet.id,
       gender: g || gender,
       items: i || items.filter(t => t.product)
-    })
+    }, noDelayUpdate)
   }
 
   renderUserIsGuest() {
@@ -206,8 +206,15 @@ class CreateOutfit extends Component {
                     this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
                   },
                   onQueryChanged: (b) => {
-                    this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
+                    if (!b.query.color || !b.query.category) {
+                      this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
+                      return
+                    }
                     fetchProducts({ ...b.query })
+                      .then((p) => this.createOutfit(
+                        items.map(r =>
+                          (r.index === b.index ? { ...b, product: p.data[0] } : r)),
+                        undefined, true))
                   },
                   onRemovePressed: (b) =>
                     this.createOutfit(
@@ -272,7 +279,7 @@ const mapDispatchToProps = dispatch => ({
   goBack: () => dispatch(actions.goBack()),
   askForApproval: (metadata) => dispatch(actions.askForApproval(metadata)),
   fetchProducts: (q) => dispatch(actions.fetchProducts(q)),
-  createOutfit: (q) => dispatch(actions.createOutfit(q)),
+  createOutfit: (q, ndu) => dispatch(actions.createOutfit(q, ndu)),
   reportCreateOutfitIssues: (payload) => dispatch(actions.reportCreateOutfitIssues(payload)),
 })
 

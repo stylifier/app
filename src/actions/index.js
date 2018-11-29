@@ -521,7 +521,7 @@ const actions = {
   fetchProducts: (q) => (dispatch) => {
     dispatch({ type: 'LOADING_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
 
-    api.fetchProducts(q)
+    return api.fetchProducts(q)
       .then(products => {
         dispatch({
           type: 'RENEW_PRODUCT_SUGGESTION',
@@ -532,8 +532,9 @@ const actions = {
             key: JSON.stringify(q),
           },
         })
+        return products
       })
-      .catch(() => {})
+      .catch(() => Promise.resolve())
   },
 
   fetchMoreProducts: (q) => (dispatch, getState) => {
@@ -654,7 +655,7 @@ const actions = {
       .catch(() => {})
   },
 
-  createOutfit: (o) => (dispatch, getState) => {
+  createOutfit: (o, noDelayUpdate) => (dispatch, getState) => {
     const { outfits } = getState()
     const outfit = outfits.find(t => t.id === o.id)
 
@@ -678,7 +679,7 @@ const actions = {
             colorPalletId: o.palletId, outfitId: co.id
           }))
         })
-        .catch(() => {}), pids1.length !== pids2.length ? 0 : 2000)
+        .catch(() => {}), (pids1.length !== pids2.length || noDelayUpdate) ? 0 : 2000)
   },
 
   getOutfits: () => (dispatch) => {

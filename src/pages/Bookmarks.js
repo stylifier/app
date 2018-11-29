@@ -12,7 +12,7 @@ class Bookmarks extends Component {
     const { bookmarks } = this.props
     return (
       <SafeAreaView
-        contentContainerStyle={{
+        style={{
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#f5f5f5',

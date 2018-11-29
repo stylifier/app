@@ -26,15 +26,15 @@ class ProductShowCase extends Component {
     fetchProducts({ ...query })
   }
 
-  componentWillReceiveProps(newProps) {
-    const { products: newProducts } = newProps
-    const { products: oldProducts, base } = this.props
-    const { defaultProduct } = this.state
-
-    if (newProducts[0] && newProducts[0].id !== (oldProducts[0] || {}).id && !defaultProduct) {
-      this.onQueryChanged({ ...base, product: newProducts[0] })
-    }
-  }
+  // componentWillReceiveProps(newProps) {
+  //   const { products: newProducts } = newProps
+  //   const { products: oldProducts, base } = this.props
+  //   const { defaultProduct } = this.state
+  //
+  //   if (newProducts[0] && newProducts[0].id !== (oldProducts[0] || {}).id && !defaultProduct) {
+  //     //this.onQueryChanged({ ...base, product: newProducts[0] })
+  //   }
+  // }
 
   renderItem({ item }) {
     return (

@@ -210,9 +210,9 @@ class ColorPallet extends Component {
       <View key={i}>
         <View
           style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
             width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <View style={{ width: '100%' }}>
@@ -223,10 +223,10 @@ class ColorPallet extends Component {
             </Separator>
           </View>
           <Viewer
-            styleOverwrite={{ padding: 10 }}
             items={outfit.items.map(t => t.product)}
             BaseItem={ProductItem}
             itemExtraProps={{ colorPalletId: base.id }}
+            itemStyleOverwrite={{ margin: 10, marginLeft: 'auto', marginRight: 'auto' }}
           />
         </View>
       </View>))
