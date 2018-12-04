@@ -216,7 +216,7 @@ class Conversation extends Component {
     const isFromMe = selectedThread.from.username === user.username
 
     return (
-      <View style={{ width: '100%', height: '100%' }}>
+      <SafeAreaView style={{ width: '100%', height: '100%' }}>
         <Modal
           animationType="slide"
           transparent={false}
@@ -232,7 +232,6 @@ class Conversation extends Component {
           />
         </Modal>
         <GiftedChat
-          bottomOffset={50}
           user={isFromMe ?
             ({
               avatar: selectedThread.from.profile_picture,
@@ -315,7 +314,7 @@ class Conversation extends Component {
           }))}
           onSend={msgs => this.onSend(msgs)}
         />
-      </View>
+      </SafeAreaView>
     )
   }
 
@@ -326,11 +325,7 @@ class Conversation extends Component {
       return this.renderUserIsGuest()
     }
 
-    return (
-      <SafeAreaView style={{ width: '100%', height: '100%' }}>
-        {this.renderMessaging()}
-      </SafeAreaView>
-    )
+    return this.renderMessaging()
   }
 }
 
