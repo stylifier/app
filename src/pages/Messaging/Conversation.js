@@ -216,7 +216,7 @@ class Conversation extends Component {
     const isFromMe = selectedThread.from.username === user.username
 
     return (
-      <SafeAreaView style={{ width: '100%', height: '100%' }}>
+      <View style={{ width: '100%', height: '100%' }}>
         <Modal
           animationType="slide"
           transparent={false}
@@ -314,7 +314,7 @@ class Conversation extends Component {
           }))}
           onSend={msgs => this.onSend(msgs)}
         />
-      </SafeAreaView>
+      </View>
     )
   }
 
@@ -325,7 +325,11 @@ class Conversation extends Component {
       return this.renderUserIsGuest()
     }
 
-    return this.renderMessaging()
+    return (
+      <SafeAreaView>
+        {this.renderMessaging()}
+      </SafeAreaView>
+    )
   }
 }
 

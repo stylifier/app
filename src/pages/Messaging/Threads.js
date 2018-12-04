@@ -8,6 +8,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import FontAwesome, { Icons } from 'react-native-fontawesome'
 import { NavigationActions } from 'react-navigation'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -18,6 +19,10 @@ import ThreadItem from '../../components/ThreadItem'
 class Threads extends Component {
   renderThreads() {
     const { messages, user, setSelectedThreadId } = this.props
+
+    if (!messages.threads || messages.threads.length < 1) {
+      return this.renderEmptySearch()
+    }
 
     return (
       <View>
@@ -47,6 +52,30 @@ class Threads extends Component {
           )}
       </View>
     )
+  }
+
+  renderEmptySearch() {
+    return (
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <FontAwesome
+          style={{
+            marginTop: '30%',
+            marginBottom: 30,
+            fontSize: 70,
+            color: '#3b4e68',
+          }}
+        >
+          {Icons.road}
+        </FontAwesome>
+        <Text style={{ textAlign: 'center' }}>
+          You have no conversation!
+        </Text>
+      </View>)
   }
 
   renderUserIsGuest() {
