@@ -20,7 +20,7 @@ class Threads extends Component {
   renderThreads() {
     const { messages, user, setSelectedThreadId } = this.props
 
-    if (!messages.threads || messages.threads.length < 1) {
+    if (!messages.threadLoading && (!messages.threads || messages.threads.length < 1)) {
       return this.renderEmptySearch()
     }
 

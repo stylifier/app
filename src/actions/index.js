@@ -342,22 +342,39 @@ const actions = {
 
     if (messages.threadLoading) { return }
 
+    AsyncStorage.getItem('threads')
+      .then((cached) => {
+        dispatch({ type: 'GET_MORE_THREADS', payload: JSON.parse(cached) })
+        dispatch(actions.updateUnreadThreads(JSON.parse(cached).data))
+      })
+
     dispatch({ type: 'LOADING_THREAD_FETCH' })
     api.fetchThreads(undefined, messages.pagination)
       .then((tds) => {
         dispatch({ type: 'GET_MORE_THREADS', payload: tds })
         dispatch({ type: 'FINISHED_THREAD_FETCH' })
         dispatch(actions.updateUnreadThreads(tds.data))
+        setTimeout(() => {
+          const { messages: m } = getState()
+          AsyncStorage.setItem('threads', JSON.stringify({
+            data: m.threads,
+            pagination: m.pagination
+          }))
+        }, 2000)
       })
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
-  refetchTopThreads: () => (dispatch) => {
+  refetchTopThreads: () => (dispatch, getState) => {
     dispatch({ type: 'LOADING_REFETCH_TOP_THREADS' })
     api.fetchThreads(undefined, 0)
       .then((tds) => {
         dispatch({ type: 'REFETCH_TOP_THREADS', payload: tds })
         dispatch(actions.updateUnreadThreads(tds.data))
+        setTimeout(() => {
+          const { messages: m } = getState()
+          AsyncStorage.setItem('threads', JSON.stringify(m.threads))
+        }, 2000)
       })
       .catch(() => dispatch({ type: 'FINISH_LOADING_REFETCH_TOP_THREADS' }))
   },
@@ -534,7 +551,10 @@ const actions = {
         })
         return products
       })
-      .catch(() => Promise.resolve())
+      .catch(() => {
+        dispatch({ type: 'FAILED_PRODUCT_SUGGESTION', payload: { key: JSON.stringify(q) } })
+        Promise.resolve()
+      })
   },
 
   fetchMoreProducts: (q) => (dispatch, getState) => {

@@ -209,10 +209,8 @@ class CreateOutfit extends Component {
                     this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
                   },
                   onQueryChanged: (b) => {
-                    if (!b.query.color || !b.query.category) {
-                      this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
-                      return
-                    }
+                    this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
+
                     fetchProducts({ ...b.query })
                       .then((p) => this.createOutfit(
                         items.map(r =>

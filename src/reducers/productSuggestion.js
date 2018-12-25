@@ -31,6 +31,17 @@ const productSuggestion = (state = {}, action) => {
         [action.payload.key]: {
           ...state[action.payload.key],
           loading: true,
+          failed: false,
+        }
+      }
+
+    case 'FAILED_PRODUCT_SUGGESTION':
+      return {
+        ...state,
+        [action.payload.key]: {
+          ...state[action.payload.key],
+          loading: false,
+          failed: true,
         }
       }
 
