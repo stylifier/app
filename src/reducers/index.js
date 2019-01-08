@@ -8,6 +8,7 @@ import productBookmarks from './productBookmarks'
 import messages from './messages'
 import metadata from './metadata'
 import feeds from './feeds'
+import conversation from './conversation'
 import followers from './followers'
 import searchs from './searchs'
 import outfits from './outfits'
@@ -21,6 +22,7 @@ const todoApp = combineReducers({
   metadata,
   messages,
   outfits,
+  conversation,
   feeds,
   searchs,
   followers,

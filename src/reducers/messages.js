@@ -63,15 +63,6 @@ const messages = (
     case 'FINISHED_THREAD_FETCH':
       return { ...state, threadLoading: false }
 
-    case 'LOADING_MESSAGES_FETCH':
-      return { ...state, messagesLoading: false }
-
-    case 'FINISHED_MESSAGES_FETCH':
-      return { ...state, messagesLoading: false }
-
-    case 'CLEAR_MESSAGES':
-      return { ...state, messages: [] }
-
     case 'ADD_UNREAD_THREAD':
       return { ...state, unreadThreadIds: [...new Set([...state.unreadThreadIds, action.payload])] }
 
@@ -82,34 +73,6 @@ const messages = (
           ...state.unreadThreadIds.slice(0, state.unreadThreadIds.indexOf(action.payload)),
           ...state.unreadThreadIds.slice(state.unreadThreadIds.indexOf(action.payload) + 1),
         ],
-      }
-
-    case 'REFERESH_MESSAGES':
-      return {
-        ...state,
-        messages: action.payload.data,
-        messagesPagination: action.payload.pagination,
-      }
-
-    case 'ADD_TOP_MESSAGES':
-      return {
-        ...state,
-        messages: [
-          ...action.payload.data.filter(m =>
-            state.messages.filter(t => t.id === m.id).length === 0),
-          ...state.messages,
-        ],
-      }
-
-    case 'ADD_BOTTOM_MESSAGES':
-      return {
-        ...state,
-        messages: [
-          ...state.messages,
-          ...action.payload.data.filter(m =>
-            state.messages.filter(t => t.id === m.id).length === 0),
-        ],
-        messagesPagination: action.payload.pagination,
       }
 
     case 'SET_SELECTED_THREAD_ID':

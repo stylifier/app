@@ -87,7 +87,6 @@ const actions = {
         pagination: messages.pagination,
       },
     })
-    dispatch({ type: 'CLEAR_MESSAGES' })
     dispatch(actions.moveToPage('Messages'))
     dispatch(actions.setSelectedThreadId('new'))
   },
@@ -252,42 +251,46 @@ const actions = {
   },
 
   fetchButtomMessages: (threadId) => (dispatch, getState) => {
-    const { messages } = getState()
+    const { conversation } = getState()
 
-    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
-    api.fetchMessages(threadId, messages.messagesPagination)
+    dispatch(actions.loadCachedConversation())
+    dispatch({ type: 'LOADING_CONVERSATION_FETCH', threadId })
+    api.fetchMessages(threadId, conversation[threadId].pagination)
       .then((msgs) => {
-        dispatch({ type: 'ADD_BOTTOM_MESSAGES', payload: msgs })
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+        dispatch({ type: 'ADD_BOTTOM_CONVERSATION', payload: msgs, threadId })
+        dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId })
+        setTimeout(() => dispatch(actions.saveCachedConversations()), 2000)
       })
-      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId }))
   },
 
   fetchTopMessages: (threadId) => (dispatch) => {
-    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
+    dispatch(actions.loadCachedConversation())
+    dispatch({ type: 'LOADING_CONVERSATION_FETCH', threadId })
     api.fetchMessages(threadId)
       .then((msgs) => {
-        dispatch({ type: 'ADD_TOP_MESSAGES', payload: msgs })
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+        dispatch({ type: 'ADD_TOP_CONVERSATION', payload: msgs, threadId })
+        dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId })
         dispatch(actions.removeUnreadThread(threadId))
+        setTimeout(() => dispatch(actions.saveCachedConversations()), 2000)
       })
-      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId }))
   },
 
   fetchMessages: (threadId) => (dispatch) => {
-    dispatch({ type: 'LOADING_MESSAGES_FETCH' })
-    dispatch({ type: 'CLEAR_MESSAGES' })
+    dispatch(actions.loadCachedConversation())
+    dispatch({ type: 'LOADING_CONVERSATION_FETCH', threadId })
     api.fetchMessages(threadId)
       .then((msgs) => {
-        dispatch({ type: 'REFERESH_MESSAGES', payload: msgs })
-        dispatch({ type: 'FINISHED_MESSAGES_FETCH' })
+        dispatch({ type: 'REFERESH_CONVERSATION', payload: msgs, threadId })
+        dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId })
         dispatch(actions.removeUnreadThread(threadId))
+        setTimeout(() => dispatch(actions.saveCachedConversations()), 2000)
       })
-      .catch(() => dispatch({ type: 'FINISHED_MESSAGES_FETCH' }))
+      .catch(() => dispatch({ type: 'FINISHED_CONVERSATION_FETCH', threadId }))
   },
 
   clearSelectedThreadId: () => (dispatch) => {
-    dispatch({ type: 'CLEAR_MESSAGES' })
     dispatch({ type: 'SET_SELECTED_THREAD_ID', payload: false })
   },
 
@@ -308,6 +311,8 @@ const actions = {
 
     if (!isRefetchThreadsFirst) dispatch(actions.openConversation(threadId))
     dispatch({ type: 'LOADING_THREAD_FETCH' })
+    dispatch(actions.loadCachedThreads())
+    dispatch(actions.loadCachedConversation())
     return api.fetchThreads(undefined, 0)
       .then((tds) => {
         dispatch(actions.fetchTopMessages(threadId))
@@ -337,44 +342,62 @@ const actions = {
     })
   },
 
-  getMoreThreads: () => (dispatch, getState) => {
-    const { messages } = getState()
+  loadCachedConversation: () => (dispatch) => {
+    AsyncStorage.getItem('conversations')
+      .then((cached) => {
+        const conversations = JSON.parse(cached)
+        dispatch({ type: 'ADD_CONVERSATIONS', payload: conversations })
+      })
+  },
 
-    if (messages.threadLoading) { return }
+  saveCachedConversations: () => (dispatch, getState) => {
+    const { conversation } = getState()
 
+    AsyncStorage.setItem('conversations', JSON.stringify(conversation))
+  },
+
+  loadCachedThreads: () => (dispatch) => {
     AsyncStorage.getItem('threads')
       .then((cached) => {
         dispatch({ type: 'GET_MORE_THREADS', payload: JSON.parse(cached) })
         dispatch(actions.updateUnreadThreads(JSON.parse(cached).data))
       })
+  },
 
+  saveCachedThreads: () => (dispatch, getState) => {
+    const { messages: m } = getState()
+
+    AsyncStorage.setItem('threads', JSON.stringify({
+      data: m.threads,
+      pagination: m.pagination
+    }))
+  },
+
+  getMoreThreads: () => (dispatch, getState) => {
+    const { messages } = getState()
+
+    if (messages.threadLoading) { return }
+
+    dispatch(actions.loadCachedThreads())
     dispatch({ type: 'LOADING_THREAD_FETCH' })
+
     api.fetchThreads(undefined, messages.pagination)
       .then((tds) => {
         dispatch({ type: 'GET_MORE_THREADS', payload: tds })
         dispatch({ type: 'FINISHED_THREAD_FETCH' })
         dispatch(actions.updateUnreadThreads(tds.data))
-        setTimeout(() => {
-          const { messages: m } = getState()
-          AsyncStorage.setItem('threads', JSON.stringify({
-            data: m.threads,
-            pagination: m.pagination
-          }))
-        }, 2000)
+        setTimeout(() => dispatch(actions.saveCachedThreads()), 2000)
       })
       .catch(() => dispatch({ type: 'FINISHED_THREAD_FETCH' }))
   },
 
-  refetchTopThreads: () => (dispatch, getState) => {
+  refetchTopThreads: () => (dispatch) => {
     dispatch({ type: 'LOADING_REFETCH_TOP_THREADS' })
     api.fetchThreads(undefined, 0)
       .then((tds) => {
         dispatch({ type: 'REFETCH_TOP_THREADS', payload: tds })
         dispatch(actions.updateUnreadThreads(tds.data))
-        setTimeout(() => {
-          const { messages: m } = getState()
-          AsyncStorage.setItem('threads', JSON.stringify(m.threads))
-        }, 2000)
+        setTimeout(() => dispatch(actions.saveCachedThreads()), 2000)
       })
       .catch(() => dispatch({ type: 'FINISH_LOADING_REFETCH_TOP_THREADS' }))
   },

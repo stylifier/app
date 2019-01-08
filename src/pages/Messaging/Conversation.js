@@ -204,7 +204,7 @@ class Conversation extends Component {
   }
 
   renderMessaging() {
-    const { messages, user, fetchButtomMessages } = this.props
+    const { messages, user, fetchButtomMessages, base } = this.props
     const { selectedProfile, showProfile } = this.state
     const selectedThread =
       messages.threads.filter(t => t.id === messages.selectedThreadId)[0]
@@ -294,7 +294,7 @@ class Conversation extends Component {
               )}
             />
           )}
-          messages={messages.messages.map(m => ({
+          messages={base.data && base.data.map(m => ({
             _id: m.id,
             text: m.text,
             products: m.products,
@@ -342,11 +342,13 @@ Conversation.propTypes = {
   user: PropTypes.object,
   productBookmarks: PropTypes.array,
   messages: PropTypes.object,
+  base: PropTypes.object,
   navigator: PropTypes.object,
 }
 
 const mapStateToProps = state => ({
   user: state.user,
+  base: state.conversation[state.messages.selectedThreadId] || { data: [] },
   messages: state.messages,
   productBookmarks: state.productBookmarks,
 })
