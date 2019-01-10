@@ -57,8 +57,8 @@ class Conversation extends Component {
       <TouchableOpacity
         onPress={() => {
           ImageCropPicker.openCamera({
-            width: 500,
-            height: 500,
+            width: 1000,
+            height: 1000,
             cropping: true,
           }).then(image => sendImageMessage(messages.selectedThreadId, image.path))
             .catch((e) => {
@@ -114,8 +114,8 @@ class Conversation extends Component {
       <TouchableOpacity
         onPress={() => {
           ImageCropPicker.openPicker({
-            width: 500,
-            height: 500,
+            width: 1000,
+            height: 1000,
             cropping: true,
           })
             .then(image => sendImageMessage(messages.selectedThreadId, image.path))
