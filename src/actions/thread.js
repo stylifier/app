@@ -72,6 +72,7 @@ export default {
   loadCachedThreads: () => (dispatch) => {
     AsyncStorage.getItem('threads')
       .then((cached) => {
+        if (!cached) return
         dispatch({ type: 'GET_MORE_THREADS', payload: JSON.parse(cached) })
         dispatch(actions.updateUnreadThreads(JSON.parse(cached).data))
       })

@@ -36,26 +36,30 @@ class FeedItem extends Component {
     const dp = RNFS.DocumentDirectoryPath
 
     this.state = {
-      imageLoading: false,
+      imageLoading: true,
       showProfile: false,
       base: props.base,
       showMenuModal: false,
       imageWidth: 0,
       imageHeight: 0,
       draggableColor: 'lightgray',
-      imageName: `${dp}/${props.base.id}.${u.substr(u.lastIndexOf('.') + 1)}`,
+      imageName: `${dp}/${props.base.id}.${u.substr(u.lastIndexOf('.') + 1)}`
     }
 
-    const { showColordeaggablePicker, base } = this.props
-    const { imageName } = this.state
-
-    if (!showColordeaggablePicker) return
+    const { base } = this.props
+    const imageName = `${dp}/${props.base.id}.${u.substr(u.lastIndexOf('.') + 1)}`
 
     const imageUrl = base.images.standard_resolution.url
     Image.getSize(imageUrl,
       (width, height) => this.setState({ imageWidth: width, imageHeight: height }))
-    RNFS.downloadFile({ fromUrl: imageUrl, toFile: imageName })
-      .promise.then(() => {}).catch(() => {})
+
+    RNFS.exists(imageName)
+      .then((exists) => {
+        if (exists) return true
+        return RNFS.downloadFile({ fromUrl: imageUrl, toFile: imageName }).promise
+      })
+      .then(() => this.setState({ imageLoading: false }))
+      .catch(() => {})
   }
 
   renderBottomMenu() {
@@ -400,7 +404,7 @@ class FeedItem extends Component {
 
   render() {
     const { hideBottomMenu, hideTopMenu, user, showColordeaggablePicker } = this.props
-    const { base, imageLoading } = this.state
+    const { base, imageLoading, imageName } = this.state
 
     const isMe = base.userUsername === user.username
 
@@ -409,61 +413,61 @@ class FeedItem extends Component {
     }
 
     return (
-      <View
-        style={{
-          width: Dimensions.get('window').width - 20,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 10,
-          borderColor: '#abbbcf',
-        }}
-      >
-        {imageLoading &&
+      <View>
+        { imageLoading &&
           <ActivityIndicator
-            style={{ marginBottom: '-50%', marginTop: '30%' }}
+            style={{ width: Dimensions.get('window').width }}
             size="large"
-          />}
-        }
-        <View ref={t => { this.autoHeightImageView = t }}>
-          <AutoHeightImage
-            z={2}
-            width={Dimensions.get('window').width - 22}
-            style={{ borderRadius: 9 }}
-            onLoadStart={() => this.setState({ imageLoading: true })}
-            onLoadEnd={() => this.setState({ imageLoading: false })}
-            source={{ uri: base.images.standard_resolution.url }}
-          />
-        </View>
-        {showColordeaggablePicker && (
-          <View style={{ width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
-            <Text style={{ marginBottom: 10 }}>
-              Drag the box below to the color you want to find the pallet for
-            </Text>
-            {this.renderDraggable('draggableColor')}
-          </View>
-        )}
-        {isMe && !imageLoading && !hideTopMenu &&
-          <View
-            style={{ flexDirection: 'row', padding: 5, position: 'absolute', right: 0, top: 0 }}
-          >
-            <Icon
-              raised
-              color="#f5f5f5"
-              containerStyle={{ backgroundColor: '#a0a0a0' }}
-              onPress={() => this.setState({ showMenuModal: true })}
-              name="ellipsis-h"
-              type="font-awesome"
+          /> }
+        <View
+          style={{
+            width: Dimensions.get('window').width - 20,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 10,
+            borderColor: '#abbbcf',
+          }}
+        >
+          <View ref={t => { this.autoHeightImageView = t }}>
+            <AutoHeightImage
+              z={2}
+              width={Dimensions.get('window').width - 22}
+              style={{ borderRadius: 9 }}
+              onLoadEnd={() => this.setState({ imageLoading: false })}
+              source={{ uri: `file://${imageName}` }}
             />
-            {this.renderMenuModal()}
           </View>
-        }
+          {showColordeaggablePicker && (
+            <View style={{ width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
+              <Text style={{ marginBottom: 10 }}>
+                Drag the box below to the color you want to find the pallet for
+              </Text>
+              {this.renderDraggable('draggableColor')}
+            </View>
+          )}
+          {isMe && !hideTopMenu &&
+            <View
+              style={{ flexDirection: 'row', padding: 5, position: 'absolute', right: 0, top: 0 }}
+            >
+              <Icon
+                raised
+                color="#f5f5f5"
+                containerStyle={{ backgroundColor: '#a0a0a0' }}
+                onPress={() => this.setState({ showMenuModal: true })}
+                name="ellipsis-h"
+                type="font-awesome"
+              />
+              {this.renderMenuModal()}
+            </View>
+          }
 
-        {!hideBottomMenu && this.renderBottomMenu()}
+          {!hideBottomMenu && this.renderBottomMenu()}
 
-        {!showColordeaggablePicker &&
-          <Divider style={{ width: '200%' }} />}
+          {!showColordeaggablePicker &&
+            <Divider style={{ width: '200%' }} />}
+        </View>
       </View>
     )
   }

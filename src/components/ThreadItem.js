@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import PropTypes from 'prop-types'
 import moment from 'moment'
+import ProfileImage from './ProfileImage'
 
 class ThreadItem extends Component {
   render() {
@@ -23,10 +24,7 @@ class ThreadItem extends Component {
         }}
         onPress={() => onPress && onPress(base)}
       >
-        <Image
-          style={{ width: 100, height: 100, borderRadius: 50 }}
-          source={{ uri: recipient.profile_picture }}
-        />
+        <ProfileImage source={recipient.profile_picture} />
         <View style={{ marginLeft: 40, flex: 7 }}>
           <Text style={{ fontWeight: 'bold', color: textColor }}>
             {recipient.full_name}

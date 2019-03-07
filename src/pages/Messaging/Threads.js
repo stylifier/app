@@ -28,6 +28,7 @@ class Threads extends Component {
       <View>
         {messages.threads
           .filter(t => t.id !== 'new')
+          .filter(t => t.to && t.from)
           .sort((a, b) => {
             const aDate = a.from.username === user.username ?
               moment(a.to_last_message_at || a.created_time) :

@@ -86,16 +86,37 @@ export default {
       .catch(e => dispatch({ type: 'USER_REGISTRATION_FAILED', payload: e }))
   },
 
+  clearCache: () => () => {
+    AsyncStorage.removeItem('conversations')
+    AsyncStorage.removeItem('threads')
+    AsyncStorage.removeItem('color_bookmarks')
+    AsyncStorage.removeItem('color_code')
+    AsyncStorage.removeItem('categories')
+    AsyncStorage.removeItem('feeds')
+  },
+
   loginUser: (username, password) => (dispatch) => {
     dispatch({ type: 'LOGGING_IN' })
 
     actions.api.login({ username, password })
-      .then(token =>
+      .then(token => {
+        dispatch(actions.clearCache())
         actions.setTokenAndUserInfo(token)
-          .then(info => dispatch(actions.userInitiated(info))))
+          .then(info => dispatch(actions.userInitiated(info)))
+      })
       .catch(e => {
         dispatch({ type: 'LOGIN_FAILED', payload: e })
       })
+  },
+
+  logoutUser: () => (dispatch) => {
+    AsyncStorage.removeItem('user_info')
+      .then(() => {
+        dispatch(actions.clearCache())
+        AsyncStorage.removeItem('guest_submitted')
+      })
+      .then(() => dispatch(actions.initiateUser()))
+      .catch(() => {})
   },
 
   userInitiated: (info) => (dispatch) => {
@@ -125,14 +146,6 @@ export default {
         Alert.alert('Thanks for your submission. We will inform you when your account is ready.'))
       .catch(() =>
         Alert.alert('Ops... Something went wrong, please try again later.'))
-  },
-
-  logoutUser: () => (dispatch) => {
-    AsyncStorage.removeItem('user_info')
-      .then(() =>
-        AsyncStorage.removeItem('guest_submitted'))
-      .then(() => dispatch(actions.initiateUser()))
-      .catch(() => {})
   },
 
   initiateUser: () => (dispatch) => {

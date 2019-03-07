@@ -7,6 +7,7 @@ import outfitAction from './outfit'
 import productAction from './product'
 import threadAction from './thread'
 import navigationAction from './navigation'
+import feedAction from './feed'
 import colorPalletAction from './colorPallet'
 
 const actions = {
@@ -17,6 +18,7 @@ const actions = {
   ...threadAction,
   ...navigationAction,
   ...colorPalletAction,
+  ...feedAction,
 
   api: new API(),
 
@@ -80,66 +82,10 @@ const actions = {
       })
   },
 
-  fetchFeeds: () => (dispatch, getState) => {
-    const { feeds } = getState()
-    if (feeds.loading) {
-      return
-    }
-
-    dispatch({ type: 'LOADING_TOP_FEEDS_FETCH' })
-
-    actions.api.fetchFeeds(0)
-      .then((r) => dispatch({ type: 'SET_FEEDS', payload: r }))
-      .catch(() => dispatch({ type: 'FINISH_TOP_FEEDS_FETCH' }))
-  },
-
-  fetchMoreFeeds: () => (dispatch, getState) => {
-    const { feeds } = getState()
-
-    if (feeds.noMore || feeds.loading) {
-      return
-    }
-
-    dispatch({ type: 'LOADING_BOTTOM_FEEDS_FETCH' })
-
-    actions.api.fetchFeeds(feeds.pagination)
-      .then((r) => dispatch({ type: 'ADD_MORE_FEEDS', payload: r }))
-      .catch(() => dispatch({ type: 'FINISH_BOTTOM_FEEDS_FETCH' }))
-  },
-
   fetchUserMedia: (username) => (dispatch) => {
     actions.api.fetchUserMedia(username, 0)
       .then((r) => dispatch({ type: 'ADD_USER_MEDIA', payload: { ...r, username } }))
       .catch(() => {})
-  },
-
-  setFeedsSearchPhrase: (phrase) => (dispatch) => {
-    dispatch({ type: 'SET_SEARCH_PHRASE', payload: phrase })
-
-    actions.api.searchMedia(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_STYLE_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_STYLE_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
-
-    actions.api.fetchBrands(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_BRAND_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_BRAND_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
-
-    actions.api.fetchUsers(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_USER_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_USER_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
-  },
-
-  clearFeedsSearchPhrase: () => (dispatch) => {
-    dispatch({ type: 'CLEAR_SEARCH_PHRASE' })
   },
 
   colorSuggestionImagePicked: () => (dispatch) => {
