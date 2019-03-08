@@ -20,7 +20,7 @@ export default {
       .then(() => actions.api.setColorCode(code))
       .then(() => dispatch(actions.refreshBookmarks(true)))
       .then(() => setTimeout(() => Alert.alert(
-        'Color Pallet Created',
+        'Color Palette Created',
         'And added to your bookmarks',
         [
           { text: 'Dismiss', onPress: () => {} },

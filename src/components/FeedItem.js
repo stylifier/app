@@ -442,7 +442,7 @@ class FeedItem extends Component {
           {showColordeaggablePicker && (
             <View style={{ width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
               <Text style={{ marginBottom: 10 }}>
-                Drag the box below to the color you want to find the pallet for
+                Drag the box below to the color you want to find the palette for
               </Text>
               {this.renderDraggable('draggableColor')}
             </View>

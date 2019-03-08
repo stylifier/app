@@ -367,8 +367,8 @@ class ColorPallet extends Component {
                 onPress={() => {
                   if (bookmarked) {
                     Alert.alert(
-                      'Remove Bookmarked Colorpallet',
-                      'Removeing bookmarked Colorpallet woule cause your created outfit ' +
+                      'Remove Bookmarked Color Palette',
+                      'Removeing bookmarked Color Palette woule cause your created outfit ' +
                         'to be removed as well. Are you sure you want to continue?',
                       [
                         { text: 'Cancel' },

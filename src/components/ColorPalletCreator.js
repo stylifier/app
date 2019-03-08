@@ -118,7 +118,7 @@ class ColorPalletCreator extends React.Component {
                 />
               </View>
               <Text>
-                Create color pallet by dragging boxes below on your image
+                Create color palette by dragging boxes below on your image
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                 {this.renderDraggable('color1')}
@@ -186,7 +186,7 @@ class ColorPalletCreator extends React.Component {
           containerViewStyle={{ marginLeft: 'auto', marginRight: 'auto', width: full && '100%' }}
           color="#0079ff"
           large
-          title="Create a New Color Pallet"
+          title="Create a New Color Palette"
         />
       </View>
     )
