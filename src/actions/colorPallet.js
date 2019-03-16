@@ -17,7 +17,7 @@ export default {
   createColorPallet: (mediaId, code) => (dispatch) => {
     actions.api.createColorPallet(code)
       .then((r) => actions.api.bookmarkColorPallet(r.id))
-      .then(() => actions.api.setColorCode(code))
+      .then(() => actions.api.setColorCode(mediaId, code))
       .then(() => dispatch(actions.refreshBookmarks(true)))
       .then(() => setTimeout(() => Alert.alert(
         'Color Palette Created',
