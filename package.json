@@ -57,6 +57,7 @@
     "react-native-photo-upload": "^1.2.0",
     "react-native-slide-view": "^1.0.2",
     "react-native-snap-carousel": "^3.7.5",
+    "react-native-store-review": "^0.1.5",
     "react-native-vector-icons": "^4.6.0",
     "react-navigation": "^2.6.2",
     "react-navigation-redux-helpers": "^2.0.2",
