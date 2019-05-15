@@ -65,6 +65,21 @@ export default {
       .catch(() => {})
   },
 
+  registerInstagramUser: (instagram_code) => (dispatch, getState) => {
+    dispatch({ type: 'REGISTERING_USER' })
+
+    actions.api.register({ instagram_code })
+      .then(token => actions.setTokenAndUserInfo(token))
+      .then(info =>
+        Promise.all(getState()
+          .bookmarks.reverse()
+          .map(cp => actions.api.bookmarkColorPallet(cp.id, cp.title)))
+          .then(() => info)
+          .catch(() => info))
+      .then(info => dispatch(actions.userInitiated(info)))
+      .catch(e => dispatch({ type: 'USER_REGISTRATION_FAILED', payload: e }))
+  },
+
   registerUser: (username, password, email, fullname) => (dispatch, getState) => {
     dispatch({ type: 'REGISTERING_USER' })
 

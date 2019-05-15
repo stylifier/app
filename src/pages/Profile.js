@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { Text, SafeAreaView, View, Button, ActivityIndicator, Linking, Switch } from 'react-native'
+import { Text, SafeAreaView, View, Button, ActivityIndicator, Linking, Switch, Icon } from 'react-native'
+import { Button as NBButton, Icon as NBIcon } from 'native-base'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import tcomb from 'tcomb-form-native'
 import actions from '../actions'
+import Instagram from '../common/instagram'
 import ProfilePage from '../components/Profile'
 
 const { Form } = tcomb.form
@@ -50,7 +52,7 @@ class Profile extends Component {
   }
 
   renderLoginRegisterView() {
-    const { user } = this.props
+    const { user, registerInstagramUser } = this.props
     const { registerFormValue, loginFormValue, termAgreed, termErrorShow } = this.state
 
     return (
@@ -70,6 +72,20 @@ class Profile extends Component {
             width: '100%',
           }}
         >
+          <View>
+            <NBButton transparent onPress={() => this.instagramLogin.show()} style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+              <NBIcon name="instagram" type="FontAwesome" />
+              <Text style={{ fontSize: 18 }}>Login with Instagram</Text>
+            </NBButton>
+            <Instagram
+              ref={ref => { this.instagramLogin = ref }}
+              clientId="5818518da819445c85250c7637b7eb4c"
+              redirectUrl="https://www.stylifier.com/instagram_callback"
+              scopes={['public_content']}
+              onLoginSuccess={(data) => registerInstagramUser(data)}
+              onLoginFailure={(data) => console.log('onLoginFailure', data)}
+            />
+          </View>
           <Text
             style={{
               marginTop: 20,
@@ -235,6 +251,7 @@ Profile.propTypes = {
   loginUser: PropTypes.func,
   registerUser: PropTypes.func,
   user: PropTypes.object,
+  registerInstagramUser: PropTypes.func,
 }
 
 const mapStateToProps = state => ({ user: state.user })
@@ -243,6 +260,8 @@ const mapDispatchToProps = dispatch => ({
   loginUser: (username, password) => dispatch(actions.loginUser(username, password)),
   registerUser: (username, password, email, fullname) =>
     dispatch(actions.registerUser(username, password, email, fullname)),
+  registerInstagramUser: (code) =>
+    dispatch(actions.registerInstagramUser(code)),
 })
 
 
