@@ -13,6 +13,7 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* stylifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* stylifierTests.m */; };
+		0907553F5A1342DD84FDEB74 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B0C86A1745AD495AAEF5DEBA /* libz.tbd */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -487,6 +488,7 @@
 		95193A27964A4130A92B6BB2 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		9C2593FE603B2578C39ED5C2 /* Pods-stylifier.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-stylifier.release.xcconfig"; path = "Pods/Target Support Files/Pods-stylifier/Pods-stylifier.release.xcconfig"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		B0C86A1745AD495AAEF5DEBA /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		C2A797ECCABC44C8B5E7C24C /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		C59404C022B645E74E10CF02 /* libPods-stylifier.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-stylifier.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7AD62D22967434A90AC1D82 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -528,6 +530,7 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				AF92F1A566FC5C88654F7488 /* libPods-stylifier.a in Frameworks */,
+				0907553F5A1342DD84FDEB74 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +706,7 @@
 				410B01F62163C19500E65227 /* UIKit.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				C59404C022B645E74E10CF02 /* libPods-stylifier.a */,
+				B0C86A1745AD495AAEF5DEBA /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -916,6 +920,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				D55C44BAD3BAFABF7B2FD8C0 /* [CP] Copy Pods Resources */,
 				410B01F52163C0D200E65227 /* Embed App Extensions */,
+				CCD1BA7081484217B2B3F4C0 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -1527,7 +1532,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "# First set the path to sentry.properties\nexport SENTRY_PROPERTIES=sentry.properties\n\n# Setup nvm and set node\n[ -z \"$NVM_DIR\" ] && export NVM_DIR=\"$HOME/.nvm\"\n\nif [[ -s \"$HOME/.nvm/nvm.sh\" ]]; then\n. \"$HOME/.nvm/nvm.sh\"\nelif [[ -x \"$(command -v brew)\" && -s \"$(brew --prefix nvm)/nvm.sh\" ]]; then\n. \"$(brew --prefix nvm)/nvm.sh\"\nfi\n\n# Set up the nodenv node version manager if present\nif [[ -x \"$HOME/.nodenv/bin/nodenv\" ]]; then\neval \"$(\"$HOME/.nodenv/bin/nodenv\" init -)\"\nfi\n\n# Trying notion\nif [ -z \"$NODE_BINARY\" ]; then\nif [[ -s \"$HOME/.notion/bin/node\" ]]; then\nexport NODE_BINARY=\"$HOME/.notion/bin/node\"\nfi\nfi\n\n[ -z \"$NODE_BINARY\" ] && export NODE_BINARY=\"node\"\n\n$NODE_BINARY ../node_modules/@sentry/cli/bin/sentry-cli react-native xcode \\\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1541,7 +1546,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		CCD1BA7081484217B2B3F4C0 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# First set the path to sentry.properties\nexport SENTRY_PROPERTIES=sentry.properties\n\n# Setup nvm and set node\n[ -z \"$NVM_DIR\" ] && export NVM_DIR=\"$HOME/.nvm\"\n\nif [[ -s \"$HOME/.nvm/nvm.sh\" ]]; then\n. \"$HOME/.nvm/nvm.sh\"\nelif [[ -x \"$(command -v brew)\" && -s \"$(brew --prefix nvm)/nvm.sh\" ]]; then\n. \"$(brew --prefix nvm)/nvm.sh\"\nfi\n\n# Set up the nodenv node version manager if present\nif [[ -x \"$HOME/.nodenv/bin/nodenv\" ]]; then\neval \"$(\"$HOME/.nodenv/bin/nodenv\" init -)\"\nfi\n\n# Trying notion\nif [ -z \"$NODE_BINARY\" ]; then\nif [[ -s \"$HOME/.notion/bin/node\" ]]; then\nexport NODE_BINARY=\"$HOME/.notion/bin/node\"\nfi\nfi\n\n[ -z \"$NODE_BINARY\" ] && export NODE_BINARY=\"node\"\n\n# Run sentry cli script to upload debug symbols\n$NODE_BINARY ../node_modules/@sentry/cli/bin/sentry-cli upload-dif \"$DWARF_DSYM_FOLDER_PATH\"\n";
 		};
 		D55C44BAD3BAFABF7B2FD8C0 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1720,6 +1739,19 @@
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = P53KE7TK85;
 				ENABLE_BITCODE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/OneSignal\"",
+					"\"${PODS_ROOT}/Headers/Public/QBImagePickerController\"",
+					"\"${PODS_ROOT}/Headers/Public/RNImageCropPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/RSKImageCropper\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-onesignal\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+				);
 				INFOPLIST_FILE = stylifier/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1746,6 +1778,19 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P53KE7TK85;
 				ENABLE_BITCODE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/OneSignal\"",
+					"\"${PODS_ROOT}/Headers/Public/QBImagePickerController\"",
+					"\"${PODS_ROOT}/Headers/Public/RNImageCropPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/RSKImageCropper\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-onesignal\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-webview\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+				);
 				INFOPLIST_FILE = stylifier/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

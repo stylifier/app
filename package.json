@@ -57,6 +57,7 @@
     "react-native-modal": "^6.5.0",
     "react-native-onesignal": "^3.2.7",
     "react-native-photo-upload": "^1.2.0",
+    "react-native-sentry": "^0.42.0",
     "react-native-slide-view": "^1.0.2",
     "react-native-snap-carousel": "^3.7.5",
     "react-native-store-review": "^0.1.5",

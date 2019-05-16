@@ -26,15 +26,19 @@ export default {
           dispatch(actions.setPageProps('CreateOutfit', {
             colorPalletId: o.palletId, outfitId: co.id
           }))
-          setTimeout(() =>
-            AsyncStorage.getItem('asked_for_review_date')
-              .then((hasAsked) => {
-                if (!StoreReview.isAvailable || hasAsked) return
+          setTimeout(() => {
+            try {
+              console.log(StoreReview.isAvailable);
+              AsyncStorage.getItem('asked_for_review_date')
+                .then((hasAsked) => {
+                  if (!StoreReview.isAvailable || hasAsked) return
 
-                StoreReview.requestReview()
-                AsyncStorage.setItem('asked_for_review_date', new Date())
-              })
-              .catch(() => {}), 30000)
+                  StoreReview.requestReview()
+                  AsyncStorage.setItem('asked_for_review_date', new Date())
+                })
+                .catch(() => {})
+            } catch (e) { /* ignore */ }
+          }, 30000)
         })
         .catch(() => {}), (pids1.length !== pids2.length || noDelayUpdate) ? 0 : 2000)
   },

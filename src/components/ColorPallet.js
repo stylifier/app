@@ -170,7 +170,7 @@ class ColorPallet extends Component {
             borderRadius: 15
           }}
         >
-          <Icon name="add" style={{ marginRight: -5 }} />
+          <Icon name="add" style={{ marginRight: -10, color: 'white' }} />
           <NBText> Create Outfit </NBText>
         </Button>
       </View>
