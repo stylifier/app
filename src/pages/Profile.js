@@ -74,7 +74,7 @@ class Profile extends Component {
         >
           <View>
             <NBButton transparent onPress={() => this.instagramLogin.show()} style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-              <NBIcon name="instagram" type="FontAwesome" />
+              <NBIcon style={{ color: '#3f729b' }} name="instagram" type="FontAwesome" />
               <Text style={{ fontSize: 18 }}>Login with Instagram</Text>
             </NBButton>
             <Instagram

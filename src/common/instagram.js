@@ -106,8 +106,7 @@ export default class Instagram extends Component {
                 transparent
                 onPress={() => this.setState({ modalVisible: false })}
               >
-                <Icon name="arrow-back" />
-                <Text>Back</Text>
+                <Text>Close</Text>
               </Button>
             </Left>
             <Body />
