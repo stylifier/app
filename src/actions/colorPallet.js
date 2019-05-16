@@ -27,7 +27,8 @@ export default {
         ],
         { cancelable: false }
       ), 1000))
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         Alert.alert('Ops... Something went wrong, please try again later.')
       })
   },

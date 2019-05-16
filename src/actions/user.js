@@ -108,6 +108,7 @@ export default {
     AsyncStorage.removeItem('color_code')
     AsyncStorage.removeItem('categories')
     AsyncStorage.removeItem('feeds')
+    AsyncStorage.removeItem('asked_for_review_date')
   },
 
   loginUser: (username, password) => (dispatch) => {
