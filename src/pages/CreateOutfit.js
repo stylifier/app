@@ -211,11 +211,13 @@ class CreateOutfit extends Component {
                   onQueryChanged: (b) => {
                     this.createOutfit(items.map(r => (r.index === b.index ? b : r)))
 
-                    fetchProducts({ ...b.query })
-                      .then((p) => this.createOutfit(
-                        items.map(r =>
-                          (r.index === b.index ? { ...b, product: p.data[0] } : r)),
-                        undefined, true))
+                    if (b.query.color && b.query.category) {
+                      fetchProducts({ ...b.query })
+                        .then((p) => this.createOutfit(
+                          items.map(r =>
+                            (r.index === b.index ? { ...b, product: p.data[0] } : r)),
+                          undefined, true))
+                    }
                   },
                   onRemovePressed: (b) =>
                     this.createOutfit(

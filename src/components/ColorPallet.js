@@ -30,7 +30,8 @@ class ColorPallet extends Component {
     this.state = {
       openedIndex: -1,
       showProfile: false,
-      showMenuModal: false
+      showMenuModal: false,
+      title: props.base && props.base.title,
     }
   }
 
@@ -136,6 +137,7 @@ class ColorPallet extends Component {
 
   renderTitle() {
     const { base, bookmarkColorPallet } = this.props
+    const { title } = this.state
 
     return (
       <View
@@ -151,9 +153,10 @@ class ColorPallet extends Component {
             maxWidth: '50%',
           }}
           placeholder="Your custom title message"
-          value={base.title}
+          value={title}
           returnKeyType="done"
           onChangeText={(text) => {
+            this.setState({ title: text })
             clearTimeout(this.editTimer)
             this.editTimer = setTimeout(() =>
               bookmarkColorPallet(base.id, text), 2000)
@@ -253,9 +256,7 @@ class ColorPallet extends Component {
           }}
         >
           <StatusBar barStyle="dark-content" />
-
           {bookmarked && this.renderTitle()}
-
           <View
             style={{
               borderRadius: 10,
@@ -415,7 +416,7 @@ class ColorPallet extends Component {
               </View>
             </View>
           </View>
-          {base.creator_username &&
+          {base.creator_username && base.creator_username.length < 30 &&
             <NBText
               style={{ marginLeft: 'auto' }}
               onPress={() => this.setState({ showProfile: true })}

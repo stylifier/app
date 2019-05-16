@@ -98,14 +98,7 @@ class Draggable extends Component {
                   borderWidth: 1,
                   borderColor: 'lightblue',
                 }}
-              >
-                {renderText &&
-                  <Badge
-                    containerStyle={{ backgroundColor: '#5b7495' }}
-                  >
-                    <Text style={{ color: '#f5f5f5' }}>{renderText}</Text>
-                  </Badge>}
-              </View>
+              />
             </TouchableWithoutFeedback>
           </Animated.View>
         </View>

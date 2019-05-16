@@ -148,7 +148,6 @@ class Feeds extends Component {
                 {searchPhrase}
                 "
               </Text>
-            )}
               <Viewer items={brandResult} BaseItem={UserItem} />
             </View>)}
           {styleResult.length > 0 && (
@@ -158,7 +157,6 @@ class Feeds extends Component {
                 {searchPhrase}
               "
               </Text>
-            )}
               <Viewer
                 items={styleResult}
                 BaseItem={FeedItem}

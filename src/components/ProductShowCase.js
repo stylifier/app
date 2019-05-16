@@ -23,6 +23,8 @@ class ProductShowCase extends Component {
     const { query } = base
     if (!query.color || !query.category) return
 
+    console.log('>>>>', query)
+
     fetchProducts({ ...query })
   }
 
@@ -188,7 +190,6 @@ const mapStateToProps = (state, ownProps) => {
   const { query } = ownProps.base
   const key = JSON.stringify(query)
   const ps = state.productSuggestion[key]
-  console.log('---->>>', ps)
 
   return {
     products: (ps && ps.items) ? ps.items : [],
