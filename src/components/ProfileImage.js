@@ -41,7 +41,7 @@ class ProfileImage extends Component {
     const { source } = this.props
 
     if (source !== prev.source) {
-      this.downloadFile(source)
+      this.downloadImage(source)
     }
   }
 

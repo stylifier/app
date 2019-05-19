@@ -122,7 +122,9 @@ const actions = {
             payload: pallets.data[0],
           })
         }
-        AsyncStorage.setItem('color_bookmarks', JSON.stringify(pallets.data))
+        if (pallets.data) {
+          AsyncStorage.setItem('color_bookmarks', JSON.stringify(pallets.data))
+        }
       })
       .catch(() => {})
 
@@ -139,7 +141,9 @@ const actions = {
           type: 'UPDATE_PRODUCT_BOOKMARKS',
           payload: [...p.data],
         })
-        AsyncStorage.setItem('product_bookmarks', JSON.stringify(p.data))
+        if (p.data) {
+          AsyncStorage.setItem('product_bookmarks', JSON.stringify(p.data))
+        }
       })
       .catch(() => {})
   },
@@ -158,7 +162,9 @@ const actions = {
           type: 'UPDATE_COLOR_CODE',
           payload: [...data],
         })
-        AsyncStorage.setItem('color_code', JSON.stringify(data))
+        if (data) {
+          AsyncStorage.setItem('color_code', JSON.stringify(data))
+        }
       })
       .catch(() => {})
   },
@@ -177,7 +183,9 @@ const actions = {
           type: 'UPDATE_CATEGORIES',
           payload: [...data],
         })
-        AsyncStorage.setItem('categories', JSON.stringify(data))
+        if (data) {
+          AsyncStorage.setItem('categories', JSON.stringify(data))
+        }
       })
       .catch(() => {})
   },

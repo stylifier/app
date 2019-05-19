@@ -15,6 +15,7 @@ class API {
   }
 
   setToken(token) {
+    if (!token) return
     AsyncStorage.setItem('user_token', token)
     this.token = token
   }

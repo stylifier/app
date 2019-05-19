@@ -4,6 +4,7 @@ import actions from '.'
 
 export default {
   addSubsctiption: (id) => () => {
+    if (!id) return
     AsyncStorage.setItem('subscription_id', id)
       .then(() => actions.api.addSubsctiption(id, 'IOS_NOTIFICATION'))
       .then(() => {})
@@ -14,7 +15,7 @@ export default {
     actions.api.setToken(token)
     return actions.api.fetchUserInfo()
       .then((info) =>
-        AsyncStorage.setItem('user_info', JSON.stringify(info))
+        info && AsyncStorage.setItem('user_info', JSON.stringify(info))
           .then(() => info))
   },
 
@@ -56,7 +57,7 @@ export default {
   refereshUserInfo: () => (dispatch) => {
     actions.api.fetchUserInfo()
       .then((info) =>
-        AsyncStorage.setItem('user_info', JSON.stringify(info))
+        info && AsyncStorage.setItem('user_info', JSON.stringify(info))
           .then(() => dispatch({
             type: 'REFERESH_USER_INFO',
             payload: { ...info },

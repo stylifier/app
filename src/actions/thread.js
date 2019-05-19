@@ -81,6 +81,8 @@ export default {
   saveCachedThreads: () => (dispatch, getState) => {
     const { messages: m } = getState()
 
+    if (!m || !m.threads) return
+
     AsyncStorage.setItem('threads', JSON.stringify({
       data: m.threads,
       pagination: m.pagination

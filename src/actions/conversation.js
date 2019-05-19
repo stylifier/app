@@ -13,6 +13,7 @@ export default {
 
   saveCachedConversations: () => (dispatch, getState) => {
     const { conversation } = getState()
+    if (!conversation) return
 
     AsyncStorage.setItem('conversations', JSON.stringify(conversation))
   },

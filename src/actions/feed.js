@@ -13,6 +13,7 @@ export default {
 
   saveCachedFeeds: () => (dispatch, getState) => {
     const { feeds } = getState()
+    if (!feeds) return
     AsyncStorage.setItem('feeds', JSON.stringify(feeds.items))
   },
 
