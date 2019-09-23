@@ -131,10 +131,10 @@ class Threads extends Component {
             /> : undefined
           }
         >
-          {user.isLoggedInUser && this.renderThreads()}
-          {user.isLoggedInUser && messages.threadLoading &&
-            <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" />}
-          {!user.isLoggedInUser && this.renderUserIsGuest()}
+          {user.isLoggedInUser ? this.renderThreads() : undefined}
+          {(user.isLoggedInUser && messages.threadLoading) ?
+            <ActivityIndicator style={{ marginTop: 50 }} size="small" color="#3b4e68" /> : undefined}
+          {!user.isLoggedInUser ? this.renderUserIsGuest() : undefined}
         </KeyboardAwareScrollView>
       </SafeAreaView>
     )

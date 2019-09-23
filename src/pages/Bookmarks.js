@@ -18,7 +18,7 @@ class Bookmarks extends Component {
           backgroundColor: '#f5f5f5',
         }}
       >
-        {(!bookmarks || bookmarks.length <= 0) &&
+        {(!bookmarks || bookmarks.length <= 0) ?
           <View
             style={{
               width: '50%',
@@ -51,10 +51,10 @@ class Bookmarks extends Component {
             >
               Start adding color schemes by clicking on + button
             </Text>
-          </View>}
+          </View> : undefined}
 
 
-        {bookmarks && bookmarks.length > 0 &&
+        {(bookmarks && bookmarks.length > 0) ?
           <KeyboardAwareScrollView
             style={{
               height: '100%',
@@ -67,7 +67,7 @@ class Bookmarks extends Component {
               base={cp}
             />)
             )}
-          </KeyboardAwareScrollView>
+          </KeyboardAwareScrollView> : undefined
         }
       </SafeAreaView>
     )

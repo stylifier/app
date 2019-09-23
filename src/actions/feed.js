@@ -1,6 +1,8 @@
 import { AsyncStorage } from 'react-native'
 import actions from '.'
 
+let timer
+
 export default {
   loadCachedFeeds: () => (dispatch) => {
     AsyncStorage.getItem('feeds')
@@ -55,26 +57,29 @@ export default {
   setFeedsSearchPhrase: (phrase) => (dispatch) => {
     dispatch({ type: 'SET_SEARCH_PHRASE', payload: phrase })
 
-    actions.api.searchMedia(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_STYLE_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_STYLE_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      actions.api.searchMedia(phrase, 0)
+        .then((r) => dispatch({ type: 'SET_STYLE_SEARCH_RESULT', payload: r }))
+        .catch(() => dispatch({
+          type: 'SET_STYLE_SEARCH_RESULT',
+          payload: { data: [], pagination: 0 },
+        }))
 
-    actions.api.fetchBrands(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_BRAND_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_BRAND_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
+      actions.api.fetchBrands(phrase, 0)
+        .then((r) => dispatch({ type: 'SET_BRAND_SEARCH_RESULT', payload: r }))
+        .catch(() => dispatch({
+          type: 'SET_BRAND_SEARCH_RESULT',
+          payload: { data: [], pagination: 0 },
+        }))
 
-    actions.api.fetchUsers(phrase, 0)
-      .then((r) => dispatch({ type: 'SET_USER_SEARCH_RESULT', payload: r }))
-      .catch(() => dispatch({
-        type: 'SET_USER_SEARCH_RESULT',
-        payload: { data: [], pagination: 0 },
-      }))
+      actions.api.fetchUsers(phrase, 0)
+        .then((r) => dispatch({ type: 'SET_USER_SEARCH_RESULT', payload: r }))
+        .catch(() => dispatch({
+          type: 'SET_USER_SEARCH_RESULT',
+          payload: { data: [], pagination: 0 },
+        }))
+    }, 600)
   },
 
   clearFeedsSearchPhrase: () => (dispatch) => {

@@ -102,25 +102,26 @@ class FeedItem extends Component {
               />
             </RNModal>
           </TouchableOpacity>
-          {base.style &&
+          {base.style ?
             <Badge
               containerStyle={{ backgroundColor: '#5b7495' }}
               onPress={() => isStyleClickEnabled && setFeedsSearchPhrase(base.style)}
             >
               <Text style={{ color: '#f5f5f5' }}>{base.style}</Text>
-            </Badge>
+            </Badge> : undefined
           }
         </View>
 
-        {hideTopMenu && isMe && !isProfilePicture && this.renderSetProfilePictureButton()}
-        {hideTopMenu && isMe && this.renderStyleSelectorButtton()}
-        {base.description &&
+        {(hideTopMenu && isMe && !isProfilePicture) ?
+          this.renderSetProfilePictureButton() : undefined}
+        {(hideTopMenu && isMe) ? this.renderStyleSelectorButtton() : undefined}
+        {base.description ?
           <Text style={{ width: Dimensions.get('window').width, padding: 20 }}>
             {base.description}
-          </Text>}
+          </Text> : undefined}
 
-        {hideTopMenu && isMe && this.renderDescriptionChangeButton()}
-        {base.products && base.products.length > 0 && (
+        {(hideTopMenu && isMe) ? this.renderDescriptionChangeButton() : undefined}
+        {(base.products && base.products.length > 0) ? (
           <View style={{ padding: 3, width: Dimensions.get('window').width }}>
             <Viewer
               items={base.products}
@@ -131,8 +132,8 @@ class FeedItem extends Component {
                 rounded: true,
               }}
             />
-          </View>)}
-        {hideTopMenu && isMe && this.renderProductSelectButton()}
+          </View>) : undefined}
+        {(hideTopMenu && isMe) ? this.renderProductSelectButton() : undefined}
       </View>)
   }
 
@@ -331,7 +332,7 @@ class FeedItem extends Component {
           <View style={{ borderRadius: 15, width: '100%', overflow: 'hidden' }}>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
               <Divider />
-              {!isProfilePicture && this.renderSetProfilePictureButton(true)}
+              {!isProfilePicture ? this.renderSetProfilePictureButton(true) : undefined}
             </View>
             <View style={{ alignSelf: 'flex-end', width: '100%' }}>
               <Divider />
@@ -414,11 +415,11 @@ class FeedItem extends Component {
 
     return (
       <View>
-        { imageLoading &&
+        { imageLoading ?
           <ActivityIndicator
             style={{ width: Dimensions.get('window').width }}
             size="large"
-          /> }
+          /> : undefined}
         <View
           style={{
             width: Dimensions.get('window').width - 20,
@@ -439,15 +440,15 @@ class FeedItem extends Component {
               source={{ uri: `file://${imageName}` }}
             />
           </View>
-          {showColordeaggablePicker && (
+          {showColordeaggablePicker ? (
             <View style={{ width: '100%', padding: 10, marginLeft: 'auto', marginRight: 'auto' }}>
               <Text style={{ marginBottom: 10 }}>
                 Drag the box below to the color you want to find the palette for
               </Text>
               {this.renderDraggable('draggableColor')}
             </View>
-          )}
-          {isMe && !hideTopMenu &&
+          ) : undefined}
+          {(isMe && !hideTopMenu) ?
             <View
               style={{ flexDirection: 'row', padding: 5, position: 'absolute', right: 0, top: 0 }}
             >
@@ -460,13 +461,13 @@ class FeedItem extends Component {
                 type="font-awesome"
               />
               {this.renderMenuModal()}
-            </View>
+            </View> : undefined
           }
 
-          {!hideBottomMenu && this.renderBottomMenu()}
+          {!hideBottomMenu ? this.renderBottomMenu() : undefined}
 
-          {!showColordeaggablePicker &&
-            <Divider style={{ width: '200%' }} />}
+          {!showColordeaggablePicker ?
+            <Divider style={{ width: '200%' }} /> : undefined}
         </View>
       </View>
     )

@@ -270,7 +270,7 @@ class Conversation extends Component {
                     padding: 0,
                   }}
                 >
-                  {props.currentMessage.products.length > 0 && (
+                  {props.currentMessage.products.length > 0 ? (
                     <View style={{ padding: 3 }}>
                       {props.currentMessage.products
                         .map((t, ind) => (
@@ -282,7 +282,7 @@ class Conversation extends Component {
                             base={t}
                           />
                         ))}
-                    </View>)}
+                    </View>) : undefined}
                   {props.currentMessage.media
                     .map((t, i) => (
                       <ImageItem

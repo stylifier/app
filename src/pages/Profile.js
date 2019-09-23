@@ -122,10 +122,10 @@ class Profile extends Component {
               },
             }}
           />
-          {user.loginError && user.loginError.message === '401' &&
+          {(user.loginError && user.loginError.message === '401') ?
             <Text style={{ color: 'red' }}>
               Please check your username and password and try again.
-            </Text>}
+            </Text> : undefined}
           <Button
             title="Login"
             onPress={() => this.onLogin()}
@@ -195,14 +195,14 @@ class Profile extends Component {
               })}
             />
           </View>
-          {user.registeringError && user.registeringError.message === '403' &&
+          {(user.registeringError && user.registeringError.message === '403') ?
             <Text style={{ color: 'red' }}>
               Your username is taken, please try another username.
-            </Text>}
-          {termErrorShow &&
+            </Text> : undefined}
+          {termErrorShow ?
             <Text style={{ color: 'red' }}>
               Please agree to terms and condictions in order to register
-            </Text>}
+            </Text> : undefined}
           <View
             style={{ height: 20 }}
           />

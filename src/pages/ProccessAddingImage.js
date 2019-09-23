@@ -58,22 +58,22 @@ class ProccessAddingImage extends Component {
 
     return (
       <View>
-        { remoteImage && remoteImage.colorCode && this.renderColorPick() }
-        {!remoteImage && <ActivityIndicator size="small" color="#3b4e68" />}
-        {remoteImage &&
+        { remoteImage ? remoteImage.colorCode && this.renderColorPick() : undefined}
+        {!remoteImage ? <ActivityIndicator size="small" color="#3b4e68" /> : undefined}
+        {remoteImage ?
           <View style={{ padding: 20, margin: 'auto' }}>
             <ColorPalletCreator
               base={remoteImage}
               onDone={() => {}}
             />
-          </View>}
-        {colorPalletRecommendation && colorPalletRecommendation.map((cp, i) => (
+          </View> : undefined}
+        {colorPalletRecommendation ? colorPalletRecommendation.map((cp, i) => (
           <ColorPallet
             key={i}
             base={cp}
             hideOutfits
           />)
-        )}
+        ) : undefined}
       </View>)
   }
 
@@ -140,21 +140,21 @@ class ProccessAddingImage extends Component {
           ref={scrollView => { this.scrollView = scrollView }}
         >
           {
-            remoteImage &&
-            <FeedItem
-              hideTopMenu
-              hideBottomMenu={!isSharingView}
-              base={remoteImage}
-              showColordeaggablePicker={!isSharingView}
-              onPickedColor={(t) => {
-                getColorPalletRecommendation(t.replace('#', ''))
-                this.scrollView.scrollToPosition(0, 350)
-              }}
-              onStartDrag={() => this.setState({ desableScroll: true })}
-              onFinishDrag={() => this.setState({ desableScroll: false })}
-            />
-          }
-          {!isSharingView && this.renderColorPalletSection()}
+            remoteImage ?
+              <FeedItem
+                hideTopMenu
+                hideBottomMenu={!isSharingView}
+                base={remoteImage}
+                showColordeaggablePicker={!isSharingView}
+                onPickedColor={(t) => {
+                  getColorPalletRecommendation(t.replace('#', ''))
+                  this.scrollView.scrollToPosition(0, 350)
+                }}
+                onStartDrag={() => this.setState({ desableScroll: true })}
+                onFinishDrag={() => this.setState({ desableScroll: false })}
+              />
+              : undefined}
+          {!isSharingView ? this.renderColorPalletSection() : undefined}
 
         </KeyboardAwareScrollView>
       </Container>

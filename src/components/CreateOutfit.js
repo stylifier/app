@@ -75,7 +75,7 @@ class CreateOutfit extends Component {
           backgroundColor: '#f5f5f5',
         }}
       >
-        {isSubmited &&
+        {isSubmited ?
           <View
             style={{
               width: '100%',
@@ -86,26 +86,26 @@ class CreateOutfit extends Component {
             <Text>
               You have submitted for this feature. We will inform you once your account is ready.
             </Text>
-          </View>}
-        {!isSubmited &&
-        <View
-          style={{
-            flex: 2,
-            width: '100%',
-            justifyContent: 'center',
-            height: '100%',
-          }}
-        >
-          <Text>
-            "Create Outfit" is not available in all locations.
-          </Text>
-          <Text style={{ marginTop: 10 }}>
-            You can submit your country of residence and in
-            case the feature become available we will notify you immediately.
-          </Text>
-        </View>}
+          </View> : undefined}
+        {!isSubmited ?
+          <View
+            style={{
+              flex: 2,
+              width: '100%',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <Text>
+              "Create Outfit" is not available in all locations.
+            </Text>
+            <Text style={{ marginTop: 10 }}>
+              You can submit your country of residence and in
+              case the feature become available we will notify you immediately.
+            </Text>
+          </View> : undefined}
 
-        {!isSubmited &&
+        {!isSubmited ?
           <View style={{ flex: 8 }}>
             <Picker
               selectedValue={country}
@@ -115,7 +115,7 @@ class CreateOutfit extends Component {
               <Picker.Item label="Select your country" value="" />
               {countries.getNames().map((t, i) => <Picker.Item key={i} label={t} value={t} />)}
             </Picker>
-          </View>}
+          </View> : undefined}
 
         <View
           style={{
@@ -138,7 +138,7 @@ class CreateOutfit extends Component {
           >
             <Text>Dismiss</Text>
           </TouchableOpacity>
-          {!isSubmited &&
+          {!isSubmited ?
             <TouchableOpacity
               disabled={country === ''}
               onPress={() => {
@@ -153,7 +153,7 @@ class CreateOutfit extends Component {
               >
                 Submit
               </Text>
-            </TouchableOpacity>}
+            </TouchableOpacity> : undefined}
         </View>
       </View>
     )
@@ -274,9 +274,9 @@ class CreateOutfit extends Component {
         key={category}
       >
         <Text style={{ color: 'white', fontSize: 20, marginBottom: 10 }}>
-          {perCat && perCat.length > 3 &&
-            categories.filter(r => r.address === perCat.slice(0, perCat.length - 1))[0] &&
-            `${categories.filter(r => r.address === perCat.slice(0, perCat.length - 1))[0].lable}:`}
+          {(perCat && perCat.length > 3 &&
+            categories.filter(r => r.address === perCat.slice(0, perCat.length - 1))[0]) ?
+            `${categories.filter(r => r.address === perCat.slice(0, perCat.length - 1))[0].lable}:` : undefined}
         </Text>
         <ScrollView
           style={{
@@ -351,7 +351,7 @@ class CreateOutfit extends Component {
           onPress={() => this.setState({ gender: undefined, category: undefined })}
         >
           <Text style={{ fontSize: 18 }}>
-            {gender && gender.slice(0, 1).toUpperCase() + gender.slice(1)}
+            {gender ? gender.slice(0, 1).toUpperCase() + gender.slice(1) : undefined}
           </Text>
         </TouchableOpacity>
         <FontAwesome style={iconStyle}>
@@ -363,7 +363,7 @@ class CreateOutfit extends Component {
         <FontAwesome style={iconStyle}>
           {Icons.chevronRight}
         </FontAwesome>
-        {category && (
+        {category ? (
           <TouchableOpacity
             style={{
               height: 20,
@@ -374,11 +374,11 @@ class CreateOutfit extends Component {
               })}
           >
             <Text style={{ fontSize: 18 }}>
-              {category && category.length > 3 &&
-                categories.filter(r => r.address === category)[0] &&
-                categories.filter(r => r.address === category)[0].lable}
+              { (category && category.length > 3 &&
+                categories.filter(r => r.address === category)[0]) ?
+                categories.filter(r => r.address === category)[0].lable : undefined}
             </Text>
-          </TouchableOpacity>)}
+          </TouchableOpacity>) : undefined}
       </View>
     )
   }
@@ -456,7 +456,7 @@ class CreateOutfit extends Component {
               />
             )}
           </View>
-          {isFetching && <ActivityIndicator size="small" color="#3b4e68" />}
+          {isFetching ? <ActivityIndicator size="small" color="#3b4e68" /> : undefined}
         </ScrollView>
         <TouchableOpacity
           style={{

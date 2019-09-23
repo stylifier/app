@@ -43,7 +43,7 @@ class Profile extends Component {
 
     return (
       <SafeAreaView>
-        {onDismissPressed &&
+        {onDismissPressed ?
           <Header style={{ marginTop: -25 }}>
             <Left>
               <NBButton
@@ -56,7 +56,7 @@ class Profile extends Component {
             </Left>
             <Body />
             <Right />
-          </Header>}
+          </Header> : undefined}
         <ScrollView style={{ width: '100%', height: '100%' }}>
           <View
             style={{
@@ -76,7 +76,7 @@ class Profile extends Component {
               }}
             />
 
-            {!isMe && (
+            {!isMe ? (
               <Button
                 style={{ margin: 10, marginTop: 20 }}
                 rounded
@@ -87,9 +87,9 @@ class Profile extends Component {
                 backgroundColor="#ea5e85"
                 title={isFollowing ? 'Following' : 'Follow'}
               />
-            )}
+            ) : undefined}
 
-            {!isMe && (
+            {!isMe ? (
               <Button
                 style={{ margin: 10, marginTop: 10 }}
                 rounded
@@ -101,9 +101,9 @@ class Profile extends Component {
                 backgroundColor="#5b7495"
                 title="Send a Message"
               />
-            )}
+            ) : undefined}
 
-            {isMe && (
+            {isMe ? (
               <Button
                 style={{ margin: 10 }}
                 rounded
@@ -113,7 +113,7 @@ class Profile extends Component {
                 backgroundColor="#5b7495"
                 title="Logout"
               />
-            )}
+            ) : undefined}
 
             <Text h4>
               {base.username.replace('m_g_i_o_s_', '')}

@@ -127,12 +127,12 @@ class Feeds extends Component {
 
     return (
       <View style={{ width: '100%' }}>
-        {userResult.length <= 0 &&
+        {(userResult.length <= 0 &&
           brandResult.length <= 0 &&
-          styleResult.length <= 0 &&
-          this.renderEmptySearch()}
+          styleResult.length <= 0) ?
+          this.renderEmptySearch() : undefined}
         <ScrollView style={{ width: '100%' }}>
-          {userResult.length > 0 && (
+          {userResult.length > 0 ? (
             <View>
               <Text style={tst}>
               Users with phrase "
@@ -140,8 +140,8 @@ class Feeds extends Component {
               "
               </Text>
               <Viewer items={userResult} BaseItem={UserItem} />
-            </View>)}
-          {brandResult.length > 0 && (
+            </View>) : undefined}
+          {brandResult.length > 0 ? (
             <View>
               <Text style={tst}>
                 Brands with phrase "
@@ -149,8 +149,8 @@ class Feeds extends Component {
                 "
               </Text>
               <Viewer items={brandResult} BaseItem={UserItem} />
-            </View>)}
-          {styleResult.length > 0 && (
+            </View>) : undefined}
+          {styleResult.length > 0 ? (
             <View>
               <Text style={tst}>
               Images with phrase "
@@ -162,7 +162,7 @@ class Feeds extends Component {
                 BaseItem={FeedItem}
                 itemExtraProps={{ isStyleClickEnabled: true }}
               />
-            </View>)}
+            </View>) : undefined}
         </ScrollView>
       </View>
     )
@@ -200,7 +200,7 @@ class Feeds extends Component {
           BaseItem={FeedItem}
           itemExtraProps={{ isStyleClickEnabled: true }}
         />
-        {feeds.loadingBottom && <ActivityIndicator size="small" color="#3b4e68" />}
+        {feeds.loadingBottom ? <ActivityIndicator size="small" color="#3b4e68" /> : undefined}
       </ScrollView>)
   }
 
@@ -228,15 +228,14 @@ class Feeds extends Component {
               placeholder="Search for Style, Brand or People"
               onChangeText={(t) => {
                 clearTimeout(this.searchPhraseChangeTimeout)
-                this.searchPhraseChangeTimeout =
-                  setTimeout(() => setFeedsSearchPhrase(t), 600)
+                this.searchPhraseChangeTimeout = setFeedsSearchPhrase(t)
               }}
             />
           </Item>
-          {searchPhrase.trim().length > 0 &&
+          {searchPhrase.trim().length > 0 ?
             <BaseButton transparent onPress={() => clearFeedsSearchPhrase()}>
               <Text>Cancel</Text>
-            </BaseButton>}
+            </BaseButton> : undefined}
         </Header>
         {searchPhrase.trim().length > 0 ? this.renderSearch() : this.renderFeeds()}
       </SafeAreaView>

@@ -25,7 +25,7 @@ class ProductItem extends Component {
           padding: 10
         }}
       >
-        {onClick &&
+        {onClick ?
           <TouchableOpacity
             style={{ width: 130, height: 130 }}
             onPress={() => onClick(base)}
@@ -34,9 +34,9 @@ class ProductItem extends Component {
               style={{ width: 130, height: 140, borderRadius: rounded ? 10 : 0 }}
               source={{ uri: base.media[0].standard_resolution.url }}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> : undefined
         }
-        {!onClick &&
+        {!onClick ?
           <Lightbox
             activeProps={{
               style: {
@@ -49,7 +49,7 @@ class ProductItem extends Component {
               style={{ width: 130, height: 140, borderRadius: rounded ? 10 : 0 }}
               source={{ uri: base.media[0].standard_resolution.url }}
             />
-          </Lightbox>
+          </Lightbox> : undefined
         }
         <TouchableOpacity
           style={{ width: 130, marginTop: 20 }}

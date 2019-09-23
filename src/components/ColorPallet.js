@@ -416,15 +416,15 @@ class ColorPallet extends Component {
               </View>
             </View>
           </View>
-          {base.creator_username && base.creator_username.length < 30 &&
+          {base.creator_username ? base.creator_username.length < 30 &&
             <NBText
               style={{ marginLeft: 'auto' }}
               onPress={() => this.setState({ showProfile: true })}
             >
               Created By: @
               {base.creator_username.replace('m_g_i_o_s_', '')}
-            </NBText>}
-          {base.creator_username &&
+            </NBText> : undefined}
+          {base.creator_username ?
             <RNModal
               animationType="slide"
               transparent={false}
@@ -434,7 +434,7 @@ class ColorPallet extends Component {
                 onDismissPressed={() => this.setState({ showProfile: false })}
                 base={{ username: base.creator_username }}
               />
-            </RNModal>}
+            </RNModal> : undefined}
         </View>
         {outfits.length > 0 && !hideOutfits && this.renderOutfits()}
       </View>

@@ -50,7 +50,7 @@ class CreateOutfit extends Component {
         }}
       >
         <StatusBar barStyle="light-content" />
-        {isSubmited &&
+        {isSubmited ?
           <View
             style={{
               width: '100%',
@@ -61,26 +61,26 @@ class CreateOutfit extends Component {
             <Text>
               You have submitted for this feature. We will inform you once your account is ready.
             </Text>
-          </View>}
-        {!isSubmited &&
-        <View
-          style={{
-            flex: 2,
-            width: '100%',
-            justifyContent: 'center',
-            height: '100%',
-          }}
-        >
-          <Text>
-            "Create Outfit" is not available in all locations.
-          </Text>
-          <Text style={{ marginTop: 10 }}>
-            You can submit your country of residence and in
-            case the feature become available we will notify you immediately.
-          </Text>
-        </View>}
+          </View> : undefined}
+        {!isSubmited ?
+          <View
+            style={{
+              flex: 2,
+              width: '100%',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <Text>
+              "Create Outfit" is not available in all locations.
+            </Text>
+            <Text style={{ marginTop: 10 }}>
+              You can submit your country of residence and in
+              case the feature become available we will notify you immediately.
+            </Text>
+          </View> : undefined}
 
-        {!isSubmited &&
+        {!isSubmited ?
           <View style={{ flex: 8 }}>
             <Picker
               selectedValue={country}
@@ -90,7 +90,7 @@ class CreateOutfit extends Component {
               <Picker.Item label="Select your country" value="" />
               {countries.getNames().map((t, i) => <Picker.Item key={i} label={t} value={t} />)}
             </Picker>
-          </View>}
+          </View> : undefined}
 
         <View
           style={{
@@ -103,7 +103,7 @@ class CreateOutfit extends Component {
             bottom: 30,
           }}
         >
-          {!isSubmited &&
+          {!isSubmited ?
             <Button
               disabled={country === ''}
               onPress={() => {
@@ -116,7 +116,7 @@ class CreateOutfit extends Component {
               }}
             >
               <Text> Submit </Text>
-            </Button>
+            </Button> : undefined
           }
         </View>
       </View>
@@ -194,8 +194,8 @@ class CreateOutfit extends Component {
             justifyContent: 'center',
           }}
         >
-          {!gender && this.renderGernderChoice()}
-          {gender &&
+          {!gender ? this.renderGernderChoice() : undefined}
+          {gender ?
             <ScrollView
               style={{ width: '100%', height: '100%' }}
               ref={scrollView => { this.scrollView = scrollView }}
@@ -249,7 +249,7 @@ class CreateOutfit extends Component {
                   </NBText>
                 </Button>
               </View>
-            </ScrollView>}
+            </ScrollView> : undefined}
         </View>
       </View>
     )

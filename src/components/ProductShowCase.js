@@ -147,11 +147,11 @@ class ProductShowCase extends Component {
             name="ios-remove-circle"
             onPress={() => onRemovePressed(base)}
           />
-          {category && this.renderCategorySelector(true)}
+          {category ? this.renderCategorySelector(true) : undefined}
         </View>
         <View style={{ width: '100%', flexDirection: 'row' }}>
-          {color && this.renderColorSelector()}
-          {category && products.length > 0 ?
+          {color ? this.renderColorSelector() : undefined}
+          {(category && products.length > 0) ?
             this.renderSlideShow() :
             <View
               style={{
@@ -162,8 +162,8 @@ class ProductShowCase extends Component {
                 justifyContent: 'center',
               }}
             >
-              {!color && this.renderColorSelector()}
-              {color && this.renderCategorySelector()}
+              {!color ? this.renderColorSelector() : undefined}
+              {color ? this.renderCategorySelector() : undefined}
             </View>
           }
         </View>
